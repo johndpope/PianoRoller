@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT name="PianoRoller" projectType="audioplug" buildStandalone="1"
+              jucerVersion="5.4.1" pluginFormats="buildAU,buildAUv3,buildStandalone,buildVST,buildVST3"
+              buildVST="1" buildVST3="1" buildAU="1" buildAUv3="1" buildRTAS="0"
+              buildAAX="0" enableIAA="0" cppLanguageStandard="17" pluginCharacteristicsValue="pluginProducesMidiOut,pluginWantsMidiIn"
+              id="BgPZPy" pluginVST3Category="Fx" pluginVSTCategory="kPlugCategSynth"
+              pluginAUMainType="'aumi'">
+  <MAINGROUP id="ynztv4" name="PianoRoller">
+    <GROUP id="{277EFBB5-C798-67D1-6142-B45D6435B6AD}" name="Source">
+      <FILE id="pLlB52" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="UwPDAg" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="BFvpN8" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="fraCGE" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="iNO1eZ" name="PianoRoll.cpp" compile="1" resource="0" file="Source/PianoRoll.cpp"/>
+      <FILE id="Ektl0v" name="PianoRoll.h" compile="0" resource="0" file="Source/PianoRoll.h"/>
+      <FILE id="fwHeSf" name="PlayCursorWindow.cpp" compile="1" resource="0"
+            file="Source/PlayCursorWindow.cpp"/>
+      <FILE id="OIC0z8" name="PlayCursorWindow.h" compile="0" resource="0"
+            file="Source/PlayCursorWindow.h"/>
+      <FILE id="MRSOjh" name="VolumePanel.cpp" compile="1" resource="0" file="Source/VolumePanel.cpp"/>
+      <FILE id="btSZ0t" name="VolumePanel.h" compile="0" resource="0" file="Source/VolumePanel.h"/>
+      <FILE id="qDMBuC" name="Setup.cpp" compile="1" resource="0" file="Source/Setup.cpp"/>
+      <FILE id="gltkkR" name="Setup.h" compile="0" resource="0" file="Source/Setup.h"/>
+      <FILE id="wJhAgm" name="Theory.h" compile="0" resource="0" file="Source/Theory.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="PianoRoller4"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../Library/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../../Library/JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="1"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_VST3_CAN_REPLACE_VST2="0"/>
+</JUCERPROJECT>
