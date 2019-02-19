@@ -37,7 +37,6 @@ public:
  
     
     
-    
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
@@ -79,7 +78,6 @@ public:
     //==============================================================================
     int preset, numerator, denominator;
     AudioProcessorValueTreeState treeState;
-    //void parameterChanged(const String& parameterID, float newValue) override;
     
     
     // this keeps a copy of the last set of time info that was acquired during an audio
