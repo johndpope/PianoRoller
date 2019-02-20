@@ -16,79 +16,93 @@ class Theory{
     
 public:
     
-    struct Scale{
+    struct Mode{
         Array<int> mode;
         Array<int> enharmIndex;
+        Mode(const Array<int> Array1, const Array<int> Array2){
+            mode = Array1;
+            enharmIndex = Array2;
+        }
     };
     
-    const Scale foo = {{0,1,2,3}, {0,0,0,0,0,0,0}};
+    struct Scale : Mode{
+        
+    };
+    
+    struct Chord : Mode{
+        
+    };
+    
+    
+    const Mode foo = {{0,1,2,3}, {0,0,0,0,0,0,0}};
     
     class Scales{
     public:
         Scales(){}
         
-        Array<int> major =      {0,2,4,5,7,9,11};
-        Array<int> natMinor =   {0,2,3,5,7,8,10};
-        Array<int> harmMinor =  {0,2,3,5,7,8,11};
-        Array<int> melMinor =   {0,2,3,5,7,9,11};
-        Array<int> locrian =    {0,1,3,5,6,8,1};
-        Array<int> dorian =     {0,2,3,5,7,8,10};
-        Array<int> phrygian =   {0,1,3,5,7,8,10};
-        Array<int> lydian =     {0,2,4,6,7,9,11};
-        Array<int> mixolydian = {0,2,4,5,7,9,10};
-        Array<int> wholeTone =  {0,2,4,6,8,10};
-        Array<int> pentaMaj =   {0,2,4,7,9};
-        Array<int> pentaMin =   {0,3,5,7,10};
-        Array<int> pentaMajB =  {0,2,3,4,7,9};
-        Array<int> pentaMinB =  {0,3,5,6,7,10};
-        Array<int> dimWholeHalf={0,2,3,5,6,8,9,11};
-        Array<int> dimHalfWhole={0,1,3,4,6,7,9,10};
-        Array<int> hungarMinor= {0,2,3,6,7,8,11};
-        Array<int> phrygDom =   {0,1,4,5,7,8,10};
-        Array<int> lydDom =     {0,2,4,6,7,9,10};
-        Array<int> yo =         {0,2,5,7,9};
-        Array<int> insen =      {0,1,5,7,10};
-        Array<int> bebopDom =   {0,2,4,5,7,9,10,11};
-        Array<int> bebopMaj =   {0,2,4,5,7,8,9,11};
+        Array<int>  major =      {0,2,4,5,7,9,11},
+                    natMinor =   {0,2,3,5,7,8,10},
+                    harmMinor =  {0,2,3,5,7,8,11},
+                    melMinor =   {0,2,3,5,7,9,11},
+                    locrian =    {0,1,3,5,6,8,1},
+                    dorian =     {0,2,3,5,7,8,10},
+                    phrygian =   {0,1,3,5,7,8,10},
+                    lydian =     {0,2,4,6,7,9,11},
+                    mixolydian = {0,2,4,5,7,9,10},
+                    wholeTone =  {0,2,4,6,8,10},
+                    pentaMaj =   {0,2,4,7,9},
+                    pentaMin =   {0,3,5,7,10},
+                    pentaMajB =  {0,2,3,4,7,9},
+                    pentaMinB =  {0,3,5,6,7,10},
+                    dimWholeHalf={0,2,3,5,6,8,9,11},
+                    dimHalfWhole={0,1,3,4,6,7,9,10},
+                    hungarMinor= {0,2,3,6,7,8,11},
+                    phrygDom =   {0,1,4,5,7,8,10},
+                    lydDom =     {0,2,4,6,7,9,10},
+                    yo =         {0,2,5,7,9},
+                    insen =      {0,1,5,7,10},
+                    bebopDom =   {0,2,4,5,7,9,10,11},
+                    bebopMaj =   {0,2,4,5,7,8,9,11};
     };
+    
     
     class Chords{
     public:
         Chords(){}
         
-        Array<int> majChord =       {0,4,7};
-        Array<int> minChord =       {0,3,7};
-        Array<int> augChord =       {0,4,8};
-        Array<int> dimChord =       {0,3,6};
-        Array<int> seventhChord =   {0,4,7,10};
-        Array<int> min7Chord =      {0,3,7,10};
-        Array<int> min7b5Chord =    {0,3,6,10};
-        Array<int> dim7Chord =      {0,3,6,9};
-        Array<int> maj7Chord =      {0,4,7,11};
-        Array<int> minMaj7Chord =   {0,3,7,11};
-        Array<int> ninthChord =     {0,2,4,7,10};
-        Array<int> min9Chord =      {0,2,3,7,10};
-        Array<int> min7b9Chord =    {0,1,3,7,10};
-        Array<int> maj9Chord =      {0,2,4,7,11};
-        Array<int> add9Chord =      {0,2,4,7};
-        Array<int> minAdd9Chord =   {0,2,3,7};
-        Array<int> sevenSharp9Chord={0,3,4,7,10};
-        Array<int> sus2Chord =      {0,2,7};
-        Array<int> sus4Chord =      {0,5,7};
-        Array<int> powerChord =     {0,7};
-        Array<int> sixthChord =     {0,4,7,9};
-        Array<int> minSixthChord =  {0,3,7,8};
-        Array<int> sixNineChord =   {0,2,4,7,9};
-        Array<int> thirteenthChord= {0,4,7,9,10};
-        Array<int> min13thChord =   {0,3,7,8,10};
-        Array<int> maj13thChord =   {0,4,7,9,11};
-        Array<int> eleventhChord =  {0,4,5,7,10};
-        Array<int> sharp11Chord =   {0,4,6,7,10};
-        Array<int> minSharp11Chord= {0,3,6,7,10};
-        Array<int> min7Flat5Flat9Chord={0,1,3,10};
-        Array<int> aug7thChord =    {0,4,8,10};
-        Array<int> petrushka =      {0,1,4,6,7,10};
-        Array<int> farben =         {0,4,8,9,11};
+        Array<int>  majChord =       {0,4,7},
+                    minChord =       {0,3,7},
+                    augChord =       {0,4,8},
+                    dimChord =       {0,3,6},
+                    seventhChord =   {0,4,7,10},
+                    min7Chord =      {0,3,7,10},
+                    min7b5Chord =    {0,3,6,10},
+                    dim7Chord =      {0,3,6,9},
+                    maj7Chord =      {0,4,7,11},
+                    minMaj7Chord =   {0,3,7,11},
+                    ninthChord =     {0,2,4,7,10},
+                    min9Chord =      {0,2,3,7,10},
+                    min7b9Chord =    {0,1,3,7,10},
+                    maj9Chord =      {0,2,4,7,11},
+                    add9Chord =      {0,2,4,7},
+                    minAdd9Chord =   {0,2,3,7},
+                    sevenSharp9Chord={0,3,4,7,10},
+                    sus2Chord =      {0,2,7},
+                    sus4Chord =      {0,5,7},
+                    powerChord =     {0,7},
+                    sixthChord =     {0,4,7,9},
+                    minSixthChord =  {0,3,7,8},
+                    sixNineChord =   {0,2,4,7,9},
+                    thirteenthChord= {0,4,7,9,10},
+                    min13thChord =   {0,3,7,8,10},
+                    maj13thChord =   {0,4,7,9,11},
+                    eleventhChord =  {0,4,5,7,10},
+                    sharp11Chord =   {0,4,6,7,10},
+                    minSharp11Chord= {0,3,6,7,10},
+                    min7Flat5Flat9Chord={0,1,3,10},
+                    aug7thChord =    {0,4,8,10},
+                    petrushka =      {0,1,4,6,7,10},
+                    farben =         {0,4,8,9,11};
     };
     
     
@@ -102,10 +116,20 @@ public:
     std::map<int, Array<int>> circleOfFifths;
     std::map<int, Array<String>> diatonicNoteNames;
     
+    //static std::map<String, Array<int>> modeMap2 = {{"Major", scales.major}, {"Natural Minor", scales.natMinor}};
+    
+    
+    HashMap<String, Array<int>> hashScales; //TODO, change everything to scales and Juce HashMaps
+    
+    
+    
     
     Theory(){
         scales = Scales();
         chords = Chords();
+        
+        //hashScales.set("Major", scales.major); //TODO
+        
         
         //Scales
         modeMap.insert({"Major", scales.major});
