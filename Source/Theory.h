@@ -122,7 +122,7 @@ public:
     HashMap<String, Array<int>> hashScales; //TODO, change everything to scales and Juce HashMaps
     
     
-    
+
     
     Theory(){
         scales = Scales();

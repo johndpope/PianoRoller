@@ -42,17 +42,15 @@ PianoRoll::~PianoRoll()
 
 void PianoRoll::paint (Graphics& g)
 {
-    g.fillAll (beatCanvasJungleGreen); //BACKGROUND COLOR
-    //g.fillAll(calmGreen);
+    const int numOfBeats = (*processorPresets)[currentPreset]->numOfBeats;
+    const int rootRow = topNote-65;
+    const float width = getWidth();
+    const float height = getHeight();
+    const float noteWidth = (width / ((float)numOfBeats * 4.0f) );
+    const float noteHeight = ( height / (float)numOfRows );
+    const float tripNoteWidth = width / ((float)numOfBeats * 3.0f);
     
-    //int numOfBeats = presets[currentPreset]->numOfBeats;
-    int numOfBeats = (*processorPresets)[currentPreset]->numOfBeats;
-    int rootRow = topNote-65;
-    float width = getWidth();
-    float height = getHeight();
-    float noteWidth = (width / ((float)numOfBeats * 4.0f) );
-    float noteHeight = ( height / (float)numOfRows );
-    float tripNoteWidth = width / ((float)numOfBeats * 3.0f);
+    g.fillAll (beatCanvasJungleGreen); //BACKGROUND COLOR
     
     for(int row=0;row<numOfRows;row++){
         float yPosition = 0. + (row * getHeight()/numOfRows);
@@ -79,10 +77,8 @@ void PianoRoll::paint (Graphics& g)
     //FILL IN NOTES
     
     for(int beat=0;beat<numOfBeats;beat++){
-        float xPosition;
-        int lineWidth;
-        int beatSwitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch[beat];
-        bool isMono = (*processorPresets)[currentPreset]->isMono;
+        const int beatSwitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch[beat];
+        const bool isMono = (*processorPresets)[currentPreset]->isMono;
         if (beatSwitch == 0){
             for(int subDiv=0;subDiv<4;subDiv++){
                 float col = (beat*4) + subDiv;
@@ -117,10 +113,13 @@ void PianoRoll::paint (Graphics& g)
                 }
                 
                 //DRAW COLUMN LINES
-                if(subDiv==0){lineWidth=3; g.setColour(Colours::black);}
-                else         {lineWidth=1; g.setColour(Colours::black);};
-                xPosition = 0.0f + ( col*noteWidth );
+                const int lineWidth = [subDiv]() -> int {
+                    if(subDiv==0){return 3;}
+                    else         {return 1;};
+                }();
+                const float xPosition = 0.0f + ( col*noteWidth );
                 
+                g.setColour(Colours::black);
                 g.drawLine(xPosition, 0., xPosition, height, lineWidth);
             }
         }else if(beatSwitch == 1){
@@ -131,9 +130,11 @@ void PianoRoll::paint (Graphics& g)
                     int pitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->triplets[tripCol];
                     if(pitch > 0){ //If note is active.
                         g.setColour (whiteBlue);
-                        float x = ( tripCol * tripNoteWidth );
-                        float y = ( ((float)topNote-(float)pitch)/(float)numOfRows * height );
-                        g.fillRect(x, y, tripNoteWidth, noteHeight);
+                        const Point<float> pos = {
+                            tripCol * tripNoteWidth,                                //X
+                            ((float)topNote-(float)pitch)/(float)numOfRows * height //Y
+                        };
+                        g.fillRect(pos.getX(), pos.getY(), tripNoteWidth, noteHeight);
                     }
                 }else{ //isPoly
                     
@@ -143,23 +144,29 @@ void PianoRoll::paint (Graphics& g)
                         int pitch = polyArray[polyNote];
                         if(pitch > 0){ //If note is active.
                             g.setColour (whiteBlue);
-                            float x = ( tripCol * tripNoteWidth );
-                            float y = ( ((float)topNote-(float)pitch)/(float)numOfRows * height );
-                            g.fillRect(x, y, tripNoteWidth, noteHeight);
-                            //stuff = (String) pitch;
+                            const Point<float> pos = {
+                                tripCol * tripNoteWidth,                                //X
+                                ((float)topNote-(float)pitch)/(float)numOfRows * height //Y
+                            };
+                            g.fillRect(pos.getX(), pos.getY(), tripNoteWidth, noteHeight);
                         }
                     }
                     
                 }
                 
                 //DRAW COLUMN LINES
-                if(subDiv==0){lineWidth=3; g.setColour(Colours::black);}
-                else         {lineWidth=1; g.setColour(Colours::black);};
-                xPosition = 0.0f + ( tripCol*tripNoteWidth );
+                const int lineWidth = [subDiv]() -> int {
+                    if(subDiv==0){return 3;}
+                    else         {return 1;};
+                }();
+                const int xPosition = 0.0f + ( tripCol*tripNoteWidth );
                 
+                g.setColour(Colours::black);
                 g.drawLine(xPosition, 0., xPosition, height, lineWidth);
             }
         }
+        
+        
     }
     
     
@@ -167,7 +174,7 @@ void PianoRoll::paint (Graphics& g)
     
     //DRAWS ROW LINES
     for(int i=0;i<=numOfRows;i++){
-        float yPosition = 0. + (i*getHeight()/numOfRows);
+        const float yPosition = 0. + (i*getHeight()/numOfRows);
         g.setColour(Colours::black);
         g.drawLine(0., yPosition, width, yPosition);
         if(i==numOfRows || i==0){ //Reasons to draw a thicker line.
@@ -223,24 +230,25 @@ void PianoRoll::mouseDoubleClick(const juce::MouseEvent &event){
 }
 
 void PianoRoll::mouseDown(const MouseEvent& event){
-    bool leftClick = event.mods.isLeftButtonDown();
+    const bool leftClick = event.mods.isLeftButtonDown();
     bool rightClick = event.mods.isRightButtonDown();
-    bool isMono = (*processorPresets)[currentPreset]->isMono;
-    bool isDragging = event.mouseWasDraggedSinceMouseDown();
+    const bool isMono = (*processorPresets)[currentPreset]->isMono;
+    const bool isDragging = event.mouseWasDraggedSinceMouseDown();
     if(isDoubleClick){rightClick = true; isDoubleClick=false;}
     
+    const Point<int> pos = {getMouseXYRelative().getX(), getMouseXYRelative().getY()};
     float x = getMouseXYRelative().getX();
     float y = getMouseXYRelative().getY();
     
-    int numOfBeats = (*processorPresets)[currentPreset]->numOfBeats;
-    int row = (int) (y/(float)getHeight() * (float) numOfRows); //Final (int) cast rounds it down.
-    int col = (int) (x/(float)getWidth() * (float) (numOfBeats*4)); //Final (int) cast rounds it down.
-    int tripCol = (int) (x/(float)getWidth() * (float) (numOfBeats*3)); //Final (int) cast rounds it down.
-    int currentBeat = col / 4;
-    int beatSwitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch[currentBeat];
+    const int numOfBeats = (*processorPresets)[currentPreset]->numOfBeats;
+    const int row = (int) (y/(float)getHeight() * (float) numOfRows); //Final (int) cast rounds it down.
+    const int col = (int) (x/(float)getWidth() * (float) (numOfBeats*4)); //Final (int) cast rounds it down.
+    const int tripCol = (int) (x/(float)getWidth() * (float) (numOfBeats*3)); //Final (int) cast rounds it down.
+    const int currentBeat = col / 4;
+    const int beatSwitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch[currentBeat];
+    int pitch = topNote - row;
     int beatDiv;
     int thisCol;
-    int pitch = topNote - row;
     int prevPitch;
 
     if(pitch<128 && pitch>8){

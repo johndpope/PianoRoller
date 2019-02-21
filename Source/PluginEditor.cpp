@@ -190,9 +190,10 @@ PianoRoll1AudioProcessorEditor::~PianoRoll1AudioProcessorEditor()
 //==============================================================================
 void PianoRoll1AudioProcessorEditor::paint (Graphics& g)
 {
-    float width = getWidth();
-    float height = getHeight();
-    float yBorder = getHeight()*0.01;
+    const float width = getWidth();
+    const float height = getHeight();
+    const float yBorder = getHeight()*0.01;
+    const int numOfBeats = pianoRoll.presets[currentPreset]->numOfBeats;
 
     //g.fillAll(Colour(156,168,152));
     g.fillAll(greyOff);
@@ -200,18 +201,14 @@ void PianoRoll1AudioProcessorEditor::paint (Graphics& g)
     tripletSwitches.clear();
     
     if(tripletButtons){
-        //int numOfBeats = pianoRoll.presets[currentPreset]->numOfBeats;
-        int numOfBeats = processor.presets[currentPreset]->numOfBeats;
-        float beatWidth = (width / ((float)numOfBeats) );
-        float ellipseWidth = beatWidth*0.333;
-        float ellipseHeight = height * topBorder * 0.225;
-        float x;
-        float y = height * topBorder * 0.66;
+        const float beatWidth = (width / ((float)numOfBeats) );
+        const float ellipseWidth = beatWidth*0.333;
+        const float ellipseHeight = height * topBorder * 0.225;
+        const float y = height * topBorder * 0.66;
 
         for(int beat=0; beat<numOfBeats;beat++){
-            x = beat * beatWidth + beatWidth*0.333;
+            const float x = beat * beatWidth + beatWidth*0.333;
             
-            //if(pianoRoll.presets[currentPreset]->tracks[currentTrack]->beatSwitch[beat] == 0){
             if(processor.presets[currentPreset]->tracks[currentTrack]->beatSwitch[beat] == 0){
                 g.setColour(Colour(156,168,152)); //If not a triplet
             }else{g.setColour(Colours::limegreen);} //If a triplet.
@@ -225,27 +222,25 @@ void PianoRoll1AudioProcessorEditor::paint (Graphics& g)
     }
     
     if(tripletToggleHeight){
-        float y = height*topBorder;
-        float bottom = y + (tripletToggleHeight*height);
-        int numOfBeats = pianoRoll.presets[currentPreset]->numOfBeats;
-        float beatWidth = (width / ((float)numOfBeats) );
-        float beatHeight = height * tripletToggleHeight;
-        float x;
+        const float y = height*topBorder;
+        const float bottom = y + (tripletToggleHeight*height);
+        const float beatWidth = (width / ((float)numOfBeats) );
+        const float beatHeight = height * tripletToggleHeight;
         int lineWidth;
         
         g.setColour(Colours::black);
         g.drawLine(0.0f, y, width, y, 3); //Top Line
         
         for(int beat=0; beat<=numOfBeats;beat++){
-            x = beat * beatWidth;
+            const float x = beat * beatWidth;
             
             g.drawLine(x, y, x, bottom, 3);
             g. drawText("3", x, y, beatWidth, beatHeight, Justification::centred);
         }
     }
     
-    if(textColumnWidth> 0.){
-        float x = textColumnWidth * 0.25 * width;
+    if(textColumnWidth > 0.0){
+        const float x = textColumnWidth * 0.25 * width;
     
         Path myPath;
         myPath.addRoundedRectangle(x, height*0.034f, textColumnWidth*0.5f*width, height*0.04f, 5.f, 1.f);
@@ -253,21 +248,18 @@ void PianoRoll1AudioProcessorEditor::paint (Graphics& g)
         g.setColour(whiteBlue);
         g.fillPath(myPath);
     
-    
         myPath.startNewSubPath(0., 0.);
         myPath.addRoundedRectangle(x, height*0.134f, textColumnWidth*0.5f*width, height*0.04f, 5.f, 1.f);
         myPath.closeSubPath();
         g.setColour(whiteBlue);
         g.fillPath(myPath);
     
-    
         g.setColour(Colours::black);
         g.drawRoundedRectangle(x, height*0.034f, textColumnWidth*0.5f*width, height*0.04f, 5.f, 1.f);
     
         g.setColour(Colours::black);
         g.drawRoundedRectangle(x, height*0.134f, textColumnWidth*0.5f*width, height*0.04f, 5.f, 1.f);
-    
-    
+        
         g.setFont(15);
         g.drawText("Preset", 0., yBorder, width*textColumnWidth, height*0.01, Justification::centred);
         g.drawText((String)currentPreset, 0., height*0.05, width*textColumnWidth, height*0.01, Justification::centred);
@@ -275,18 +267,17 @@ void PianoRoll1AudioProcessorEditor::paint (Graphics& g)
     
     if(topBorder){
         //PRESET SLIDER "PRESET" LABEL
-        float sliderWidth = presetSlider.getWidth();
-        float sliderHeight = presetSlider.getHeight();
-        float textWidth = presetSlider.getWidth() - presetSlider.getTextBoxWidth();
-        float textHeight = presetSlider.getHeight();
-        //float x = presetSlider.getX();
-        float x = presetSlider.getX() + (sliderWidth * presetSlider.getTextBoxWidth()/sliderWidth);
-        float y = presetSlider.getY()-  (topBorder*height*0.2);
+        const float sliderWidth = presetSlider.getWidth();
+        const float sliderHeight = presetSlider.getHeight();
+        const float textWidth = presetSlider.getWidth() - presetSlider.getTextBoxWidth();
+        const float textHeight = presetSlider.getHeight();
+        const float x = presetSlider.getX() + (sliderWidth * presetSlider.getTextBoxWidth()/sliderWidth);
+        const float y = presetSlider.getY()-  (topBorder*height*0.2);
+        const float spacing = sliderSpacing*width;
+        
         g.setFont(textHeight * 0.333);
         g.setColour(Colours::black);
         g.drawText("PRESET", x, y, textWidth, textHeight, Justification::centred);
-        
-        float spacing = sliderSpacing*width;
         
         //TRACK SLIDER "TRACK" LABEL
         g.drawText("TRACK", x+spacing, y, textWidth, textHeight, Justification::centred);
@@ -298,15 +289,13 @@ void PianoRoll1AudioProcessorEditor::paint (Graphics& g)
     
     //String playTime = (String) processor.lastPosInfo.ppqPosition;
     
-    //g.drawText(playPosition, (sliderSpacing*3*width), topBorder/6, width/10, height/10, Justification::centred);
-    
     
     g.setColour(Colours::black);
     g.setFont((height + width) / 80);
     
-    float noteNameX = 0.91*width; // X Position of displayed note name.
-    float noteNameY = height*0.004;
-    float noteNameHeight = height * topBorder * 0.25;
+    const float noteNameX = 0.91*width; // X Position of displayed note name.
+    const float noteNameY = height*0.004;
+    const float noteNameHeight = height * topBorder * 0.25;
     
     if(isChildOfBeatCanvas == false){
         g.drawText(noteName.getValue().toString(), noteNameX, noteNameY, width/10, noteNameHeight, Justification::centred);
@@ -329,16 +318,15 @@ void PianoRoll1AudioProcessorEditor::resized()
     
     
     if(topBorder){
-        float halfTopBorder = topBorder/2;
-        float panelX = 0.726;
-        float panelY = topBorder * 0.05;
-        float smallInput = 0.06f;
-        float largeInput = 0.09;
-        float inputHeight = topBorder * 0.225;
-        float inputRow = inputHeight*1.1f;
-        float rowTwo = panelY + inputRow;
-        float rowThree = rowTwo + inputRow;
-        float spacing = 0.001;
+        const Point<float> panelXY = {0.726f, (float)topBorder * 0.05f};
+        const float halfTopBorder = topBorder/2;
+        const float smallInput = 0.06f;
+        const float largeInput = 0.09;
+        const float inputHeight = topBorder * 0.225;
+        const float inputRow = inputHeight*1.1f;
+        const float rowTwo = panelXY.getY() + inputRow;
+        const float rowThree = rowTwo + inputRow;
+        const float spacing = 0.001;
         
         presetSlider.setBoundsRelative(0.01f, topBorder/8, 0.2f, halfTopBorder);
         trackSlider.setBoundsRelative(0.01f+sliderSpacing, topBorder/8, 0.2f, halfTopBorder);
@@ -346,13 +334,13 @@ void PianoRoll1AudioProcessorEditor::resized()
         
         if (isChildOfBeatCanvas == false){
             //Row 1
-            rootMenu.setBoundsRelative(panelX, panelY, smallInput-spacing, inputHeight);
-            monoPolyMenu.setBoundsRelative(panelX+smallInput, panelY, smallInput-spacing, inputHeight);
-            generateButton.setBoundsRelative(panelX + (smallInput*2), panelY, smallInput-spacing, inputHeight);
+            rootMenu.setBoundsRelative(panelXY.getX(), panelXY.getY(), smallInput-spacing, inputHeight);
+            monoPolyMenu.setBoundsRelative(panelXY.getX()+smallInput, panelXY.getY(), smallInput-spacing, inputHeight);
+            generateButton.setBoundsRelative(panelXY.getX() + (smallInput*2), panelXY.getY(), smallInput-spacing, inputHeight);
             //Row 2
-            scaleMenu.setBoundsRelative(panelX, rowTwo, largeInput-spacing, inputHeight);
-            generatorMenu.setBoundsRelative(panelX+largeInput, rowTwo, largeInput-spacing, inputHeight);
-            arpDirectionMenu.setBoundsRelative(panelX + (largeInput*2), rowTwo, largeInput-spacing, inputHeight);
+            scaleMenu.setBoundsRelative(panelXY.getX(), rowTwo, largeInput-spacing, inputHeight);
+            generatorMenu.setBoundsRelative(panelXY.getX()+largeInput, rowTwo, largeInput-spacing, inputHeight);
+            arpDirectionMenu.setBoundsRelative(panelXY.getX() + (largeInput*2), rowTwo, largeInput-spacing, inputHeight);
             //Row3
             //arpSlider.setBoundsRelative(panelX, rowThree, largeInput*2, topBorder/5);
         }
@@ -392,7 +380,7 @@ void PianoRoll1AudioProcessorEditor::oscMessageReceived(const juce::OSCMessage &
         
         //setPreset(int preset)
         if(Message[0].getString() == "setPreset"){
-            int preset = Message[1].getInt32();
+            const int preset = Message[1].getInt32();
             currentPreset = preset;
             pianoRoll.currentPreset = preset;
             volumePanel.currentPreset = preset;
@@ -401,9 +389,9 @@ void PianoRoll1AudioProcessorEditor::oscMessageReceived(const juce::OSCMessage &
         
         //updateNote(int col, int pitch, int beatSwitch)
         else if(Message[0].getString() == "updateNote"){
-            int col = Message[1].getInt32();
-            int pitch = Message[2].getInt32();
-            int beatSwitch = Message[3].getInt32();
+            const int col = Message[1].getInt32();
+            const int pitch = Message[2].getInt32();
+            const int beatSwitch = Message[3].getInt32();
             pianoRoll.updateNote(col, pitch, beatSwitch);
             volumePanel.updateNote(col, pitch, beatSwitch);
         }
@@ -415,17 +403,20 @@ void PianoRoll1AudioProcessorEditor::oscMessageReceived(const juce::OSCMessage &
         }
         
         else if(Message[0].getString() == "updateVolume"){
-            int col = Message[1].getInt32();
-            int vol = Message[2].getInt32();
-            int beatSwitch = Message[3].getInt32();
+            const int col = Message[1].getInt32();
+            const int vol = Message[2].getInt32();
+            const int beatSwitch = Message[3].getInt32();
             //TODO
         }
         
         else if(Message[0].getString() == "updateNumOfBeats"){
-            int beats = Message[1].getInt32();
-            int preset;
-            if (Message.size() == 3){preset = Message[2].getInt32();}
-            else{preset = currentPreset;}
+            const int beats = Message[1].getInt32();
+            const int preset = [&]() -> int{
+                if (Message.size() == 3){return Message[2].getInt32();}
+                else{return currentPreset;}
+            }();
+            //if (Message.size() == 3){preset = Message[2].getInt32();}
+            //else{preset = currentPreset;}
             pianoRoll.updateNumOfBeats(beats, preset);
             volumePanel.updateNumOfBeats(beats, preset);
         }
@@ -435,15 +426,15 @@ void PianoRoll1AudioProcessorEditor::oscMessageReceived(const juce::OSCMessage &
         }
         
         if(Message[0].getString() == "changeRhythmDiv"){
-            int track = Message[1].getInt32();
-            int beat = Message[2].getInt32();
-            int beatSwitch = Message[3].getInt32();
+            const int track = Message[1].getInt32();
+            const int beat = Message[2].getInt32();
+            const int beatSwitch = Message[3].getInt32();
             pianoRoll.changeRhythmDiv(track, beat, beatSwitch);
             volumePanel.changeRhythmDiv(track, beat, beatSwitch);
         }
         
         if(Message[0].getString() == "currentPreset"){
-            int preset = Message[1].getInt32();
+            const int preset = Message[1].getInt32();
             currentPreset = preset;
             pianoRoll.updatePreset(preset);
             volumePanel.updatePreset(preset);
@@ -457,18 +448,18 @@ void PianoRoll1AudioProcessorEditor::oscMessageReceived(const juce::OSCMessage &
         
         //void PianoRollComponent::noteOnOff(int track, int div, int note, int onOff)
         if(Message[0].getString() == "noteOnOff"){
-            int track = Message[1].getInt32();
-            int div = Message[2].getInt32();
-            int note = Message[3].getInt32();
-            int onOff = Message[4].getInt32();
+            const int track = Message[1].getInt32();
+            const int div = Message[2].getInt32();
+            const int note = Message[3].getInt32();
+            const int onOff = Message[4].getInt32();
             pianoRoll.noteOnOff(track, div, note, onOff);
             volumePanel.noteOnOff(track, div, note, onOff);
         }
         
         //void PianoRollComponent::copyPreset(int presetSource, int presetReplaced)
         if(Message[0].getString() == "copyPresets"){
-            int presetSource = Message[1].getInt32();
-            int presetReplaced = Message[2].getInt32();
+            const int presetSource = Message[1].getInt32();
+            const int presetReplaced = Message[2].getInt32();
             pianoRoll.copyPreset(presetSource, presetReplaced);
             volumePanel.copyPreset(presetSource, presetReplaced);
             currentPreset = presetReplaced;

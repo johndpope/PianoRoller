@@ -159,13 +159,11 @@ void PianoRoll1AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuf
 {
     ScopedNoDenormals noDenormals;
     jassert (buffer.getNumChannels() == 0); //Set number of audio channels to 0
-    float numOfSamps = buffer.getNumSamples();
-    float refreshCounter = (2048 / numOfSamps); //The frequency our current beat position is sent to the Plugin
+    const float numOfSamps = buffer.getNumSamples();
+    const float refreshCounter = (2048 / numOfSamps); //The frequency our current beat position is sent to the Plugin
                                                 //Editor.
-    
-    //midiMessages.clear();
+    const int midiStart = midiMessages.getFirstEventTime();
     buffer.clear();
-    int midiStart = midiMessages.getFirstEventTime();
     
     if (auto* ph = getPlayHead())
     {
@@ -194,8 +192,8 @@ void PianoRoll1AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuf
         int incomingSamplePosition;
         while(iterator.getNextEvent(incomingMessage, incomingSamplePosition)){ //While there IS another midi event, get it.
             if(incomingMessage.isNoteOn()){
-                int8 pitch = incomingMessage.getNoteNumber();
-                int8 vol = incomingMessage.getVelocity();
+                const int8 pitch = incomingMessage.getNoteNumber();
+                const int8 vol = incomingMessage.getVelocity();
                 midiInstrumentStream.add(std::make_pair(pitch, vol)); //Add to midi instrument stream.
             }
         }
@@ -279,10 +277,11 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 void PianoRoll1AudioProcessor::prepToPlayNote(const int note, const int div){
     int pitch;
     int vol;
-    int beatSwitch;
-    if(div==4){beatSwitch = presets[currentPreset]->tracks[currentTrack]->beatSwitch[note/4];}
-    else if(div==3){beatSwitch = presets[currentPreset]->tracks[currentTrack]->beatSwitch[note/3];}
-    else{beatSwitch=0;}
+    const int beatSwitch = [&]() -> int{
+        if(div==4){return presets[currentPreset]->tracks[currentTrack]->beatSwitch[note/4];}
+        else if(div==3){return presets[currentPreset]->tracks[currentTrack]->beatSwitch[note/3];}
+        else{return 0;}
+    }();
     
     if(presets[currentPreset]->isMono){
         if (div == 4 && beatSwitch==0){
