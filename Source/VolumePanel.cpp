@@ -31,71 +31,53 @@ VolumePanel::~VolumePanel(){
 
 void VolumePanel::paint (Graphics& g)
 {
-    //int numOfBeats = presets[currentPreset]->numOfBeats;
-    int numOfBeats = (*processorPresets)[currentPreset]->numOfBeats;
-    float width = getWidth();
-    float height = getHeight();
-    float noteWidth = (width / ((float)numOfBeats * 4.0f) );
-    float tripNoteWidth = width / ((float)numOfBeats * 3.0f);
-    bool isMono = (*processorPresets)[currentPreset]->isMono;
+    const int numOfBeats = (*processorPresets)[currentPreset]->numOfBeats;
+    const float width = getWidth();
+    const float height = getHeight();
+    const float noteWidth = (width / ((float)numOfBeats * 4.0f) );
+    const float tripNoteWidth = width / ((float)numOfBeats * 3.0f);
+    const bool isMono = (*processorPresets)[currentPreset]->isMono;
     
     g.fillAll (greyOff); //BACKGROUND COLOR
     
     
     for(int beat=0;beat<numOfBeats;beat++){
-        float col, xPosition, rectX, rectY;
-        int vol,lineWidth;
-        int currentBeatSwitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch[beat];
+        const int currentBeatSwitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch[beat];
+        const int div = [currentBeatSwitch]() -> int{
+            if(currentBeatSwitch==0) return 4;
+            else                     return 3;
+        }();
+        const float thisNoteWidth = [&]() -> float{
+            if(currentBeatSwitch==0) return noteWidth;
+            else                     return tripNoteWidth;
+        }();
         
-        if(currentBeatSwitch == 0){
-            for(int subDiv=0;subDiv<4;subDiv++){
-                col = (beat*4) + subDiv;
-                if(isMono){
-                    vol = (*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenthVols[col];
-                }else{ //isPoly
-                    vol = (*processorPresets)[currentPreset]->tracks[currentTrack]->polySixteenthVols[col];
-                }
-                
-                //g.setColour (Colours::yellow);
-                g.setColour (whiteBlue);
-                rectX = ( col * noteWidth );
-                rectY = height - ( height/127.f * (float)vol );
-                g.fillRect(rectX, rectY, noteWidth, height);
-                
-                
-                //DRAW COLUMN LINES
-                if(subDiv==0){lineWidth=3; g.setColour(Colours::black);}
-                         else{lineWidth=1; g.setColour(Colours::black);};
-                g.setColour (Colours::black);
-                xPosition = 0.0f + ( col*noteWidth );
-                g.drawLine(xPosition, 0., xPosition, height, lineWidth);
-            }
-        }else if(currentBeatSwitch == 1){
-            for(int subDiv=0;subDiv<3;subDiv++){
-                col = (beat*3) + subDiv;
-                if(isMono){
-                    vol = (*processorPresets)[currentPreset]->tracks[currentTrack]->tripletVols[col];
-                }else{ //isPoly
-                    vol = (*processorPresets)[currentPreset]->tracks[currentTrack]->polyTripletVols[col];
-                }
-                
-                //g.setColour (Colours::yellow);
-                g.setColour (whiteBlue);
-                rectX = ( col * tripNoteWidth );
-                rectY = height - ( height/127.f * (float)vol );
-                g.fillRect(rectX, rectY, tripNoteWidth, height);
-                
-                //DRAW COLUMN LINES
-                if(subDiv==0){lineWidth=3;}
-                         else{lineWidth=1;};
-                g.setColour(Colours::black);
-                xPosition = 0.0f + ( col*tripNoteWidth );
-                g.drawLine(xPosition, 0., xPosition, height, lineWidth);
-            }
+        for(int subDiv=0;subDiv<div;subDiv++){
+            const int col = (beat*div) + subDiv;
+            const int vol = [&]() -> int{
+                if(currentBeatSwitch==0){
+                    if(isMono) return (*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenthVols[col];
+                    else       return (*processorPresets)[currentPreset]->tracks[currentTrack]->polySixteenthVols[col];
+                }else if(currentBeatSwitch==1){
+                    if(isMono) return (*processorPresets)[currentPreset]->tracks[currentTrack]->tripletVols[col];
+                    else       return (*processorPresets)[currentPreset]->tracks[currentTrack]->polyTripletVols[col];
+                }else return 0;
+            }();
+            const float rectX = ( col * thisNoteWidth );
+            const float rectY = height - ( height/127.f * (float)vol );
+            
+            g.setColour (whiteBlue);
+            g.fillRect(rectX, rectY, thisNoteWidth, height);
+            
+            //DRAW COLUMN LINES
+            const int lineWidth = [subDiv](){
+                if(subDiv==0) return 3;
+                else          return 1;
+            }();
+            const int xPosition = 0.0f + ( col*thisNoteWidth );
+            g.setColour (Colours::black);
+            g.drawLine(xPosition, 0., xPosition, height, lineWidth);
         }
-        
-        
-        
     }
     g.drawLine(width, 0.0f, width, height, 3); //Right side line.
     g.setFont(40);
@@ -114,44 +96,42 @@ void VolumePanel::mouseDrag(const MouseEvent& event){
 }
 
 void VolumePanel::mouseDown(const MouseEvent &event){
-    bool leftClick = event.mods.isLeftButtonDown();
-    bool rightClick = event.mods.isRightButtonDown();
+    const bool leftClick = event.mods.isLeftButtonDown();
+    const bool rightClick = event.mods.isRightButtonDown();
     
-    //int numOfBeats = presets[currentPreset]->numOfBeats;
-    int numOfBeats = (*processorPresets)[currentPreset]->numOfBeats;
-    float x = getMouseXYRelative().getX();
-    float y = getMouseXYRelative().getY();
+    const int numOfBeats = (*processorPresets)[currentPreset]->numOfBeats;
+    const float x = getMouseXYRelative().getX();
+    const float y = getMouseXYRelative().getY();
     int vol = (int) ( 127.f - y/(float)getHeight() * 127.f ); //Final (int) cast rounds it down.
     int col = (int) (x/(float)getWidth() * (float) (numOfBeats*4)); //Final (int) cast rounds it down.
         vol = midiLimit(vol);
         col = midiLimit(col);
-    int tripCol = (int) (x/(float)getWidth() * (float) (numOfBeats*3)); //Final (int) cast rounds it down.
-    int currentBeat = col / 4;
-    int beatSwitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch[currentBeat];
-    int beatDiv;
+    const int tripCol = (int) (x/(float)getWidth() * (float) (numOfBeats*3)); //Final (int) cast rounds it down.
+    const int currentBeat = col / 4;
+    const int beatSwitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch[currentBeat];
+    const int beatDiv = [&]() -> int{
+        if(beatSwitch==0) return 4;
+        else              return 3;
+    }();
     int thisCol;
     if(rightClick){vol = 96;}
     
     if((*processorPresets)[currentPreset]->isMono){
         if(beatSwitch==0){
-            beatDiv=4;
             thisCol=col;
             (*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenthVols.set(col, vol);
         }
         else{
-            beatDiv=3;
             thisCol=tripCol;
             (*processorPresets)[currentPreset]->tracks[currentTrack]->tripletVols.set(tripCol, vol);
         };
         
     }else{ //isPoly
         if(beatSwitch==0){
-            beatDiv=4;
             thisCol=col;
             (*processorPresets)[currentPreset]->tracks[currentTrack]->polySixteenthVols.set(col, vol);
         }
         else{
-            beatDiv=3;
             thisCol=tripCol;
             (*processorPresets)[currentPreset]->tracks[currentTrack]->polyTripletVols.set(tripCol, vol);
         };

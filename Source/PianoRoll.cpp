@@ -274,7 +274,7 @@ void PianoRoll::mouseDown(const MouseEvent& event){
         if(isMono){
             if(pitch != prevPitch && leftClick){
                 updateNote(thisCol, pitch, beatSwitch);
-                String newNoteName = theory.setClassToPitchName[pitch%12];
+                String newNoteName = Theory::setClassToPitchName[pitch%12];
                 noteName->setValue(newNoteName);
 
                 //========Send to BeatCanvasJava.Java=======
@@ -315,7 +315,7 @@ void PianoRoll::mouseDown(const MouseEvent& event){
             }else{ //rightClick
                 updateNote(thisCol, pitch * -1, beatSwitch);
             }
-            String newNoteName = theory.setClassToPitchName[pitch%12];
+            String newNoteName = Theory::setClassToPitchName[pitch%12];
             noteName->setValue(newNoteName);
         }
     }

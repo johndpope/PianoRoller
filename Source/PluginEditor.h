@@ -90,7 +90,6 @@ public:
     ComboBox generatorMenu;
     ComboBox arpDirectionMenu;
     TextButton generateButton;
-    Theory theory;
     Random random;
     bool isChildOfBeatCanvas;
     

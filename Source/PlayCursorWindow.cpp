@@ -21,11 +21,12 @@ PlayCursorWindow::PlayCursorWindow(){
 }
 
  void PlayCursorWindow::paint(Graphics& g){
+     const float height = getHeight();
+     const float width = getWidth();
+     
      g.setColour(Colours::white);
      g.setOpacity(0.0f);
      g.fillAll();
-     float height = getHeight();
-     float width = getWidth();
      g.setColour(Colours::yellow);
      g.setOpacity(1.0f);
      g.drawLine(width * playCursorLine, 0., width * playCursorLine, height, 3);

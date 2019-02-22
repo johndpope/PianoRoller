@@ -11,8 +11,8 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Theory.h"
 #include <map>
+#include "Theory.h"
 
 
 
@@ -142,7 +142,6 @@ public:
     int midiLimit(int midiVal);
     int limitRange(int val, int low, int high);
     
-    Theory theory;
 
     OSCSender sender;
     
