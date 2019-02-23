@@ -111,9 +111,11 @@ PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioP
     for(int i=0;i<12;i++){
         rootMenu.addItem(Theory::setClassToPitchName[i], i+1);
     }
-    std::for_each(Theory::modeMap.begin(), Theory::modeMap.end(), [this](std::pair<String, Array<int>> mode){
+    
+    std::for_each(Theory::modeMap.begin(), Theory::modeMap.end(), [this](std::pair<String, Theory::Mode> mode){
         scaleMenu.addItem(mode.first, scaleMenu.getNumItems()+1);
     });
+    
     monoPolyMenu.addItem("mono", 1);
     monoPolyMenu.addItem("poly", 2);
     generatorMenu.addItem("random", 3);
@@ -700,7 +702,9 @@ void PianoRoll1AudioProcessorEditor::rootMenuChanged(){
 
 void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
     String scaleName = scaleMenu.getText();
-    Array<int> scaleRef = Theory::modeMap[scaleName];
+    //Theory::Mode * myMode = new Theory::Mode(Theory::modeMap[scaleName]);
+    //Array<int> scaleRef = myMode->getMode();
+    Array<int> scaleRef = Theory::modeMap[scaleName].getMode();
     int root = processor.root;
     
     processor.scale.clear();
@@ -750,7 +754,7 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
         }
     }else if(generatorType == "arp16th" || generatorType == "arp8th"){
 
-        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode];
+        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode].getMode();
         //pianoRoll.stuff = (String) currentScale[2];
         int scaleSize = currentScale.size();
         int root = processor.presets[currentPreset]->root;
@@ -770,7 +774,7 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
             }
         }
     }else if(generatorType == "arpTriplet"){
-        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode];
+        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode].getMode();
         pianoRoll.stuff = (String) currentScale[2];
         int root = processor.presets[currentPreset]->root;
         int arpOctave = 4 + currentOctaveShift; //How many extra octaves before arpeggio
@@ -784,7 +788,7 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
         }
         repaint();
     }else if(generatorType == "arp16th Broken"){
-        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode];
+        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode].getMode();
         std::vector<int> shuffledScale = brokenArpeggio(currentScale);
         auto scaleSize = shuffledScale.size();
         
@@ -796,7 +800,7 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
             processor.presets[currentPreset]->tracks[currentTrack]->beatSwitch.set(beat, 0);
         }
     }else if(generatorType == "arp8th Broken"){
-        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode];
+        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode].getMode();
         std::vector<int> shuffledScale = brokenArpeggio(currentScale);
         auto scaleSize = shuffledScale.size();
         
@@ -809,7 +813,7 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
             processor.presets[currentPreset]->tracks[currentTrack]->beatSwitch.set(beat, 0);
         }
     }else if(generatorType == "arpTriplet Broken"){
-        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode];
+        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode].getMode();
         std::vector<int> shuffledScale = brokenArpeggio(currentScale);
         auto scaleSize = shuffledScale.size();
         
@@ -904,7 +908,7 @@ std::vector<int> PianoRoll1AudioProcessorEditor::brokenArpeggio(Array<int> curre
                 while(shuffledScale[i]>shuffledScale[i-1]){
                     shuffledScale[i] -= 12;
                 }
-                int octaveDisplacement = (shuffledScale.size() / 4) + 1;
+                auto octaveDisplacement = (shuffledScale.size() / 4) + 1;
                 
                 for (int i=0;i<shuffledScale.size();i++){
                     shuffledScale[i] += 12*octaveDisplacement;
