@@ -13,12 +13,13 @@
 
 //==============================================================================
 PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p), midiLabel("0"), pianoRoll(&p.presets), volumePanel(&p.presets)
+    : AudioProcessorEditor (&p), processor (p), midiLabel("0"), pianoRoll(&p.presets, &auditionStaff), volumePanel(&p.presets), pianoKeys(&pianoRoll)
 {    
     setVisible(true);
     setResizable(true, true);
     isChildOfBeatCanvas = false;
-    setBufferedToImage(true);
+    setOpaque(true);
+    //setBufferedToImage(true);
     
     currentPreset = 1;
     currentTrack = 1;
@@ -52,6 +53,8 @@ PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioP
     
     //Add and make visibles======================================================
     addAndMakeVisible(&pianoRoll);
+    addAndMakeVisible(&pianoKeys);
+    addAndMakeVisible(&auditionStaff);
     addAndMakeVisible(&volumePanel);
     addAndMakeVisible(&playCursorWindow);
     addAndMakeVisible(&midiLabel);
@@ -196,7 +199,7 @@ void PianoRoll1AudioProcessorEditor::paint (Graphics& g)
     const float width = getWidth();
     const float height = getHeight();
     const float yBorder = getHeight()*0.01;
-    const int numOfBeats = pianoRoll.presets[currentPreset]->numOfBeats;
+    const int numOfBeats = processor.presets[currentPreset]->numOfBeats;
 
     //g.fillAll(Colour(156,168,152));
     g.fillAll(greyOff);
@@ -223,6 +226,7 @@ void PianoRoll1AudioProcessorEditor::paint (Graphics& g)
         }
         
     }
+    
     
     if(tripletToggleHeight){
         const float y = height*topBorder;
@@ -294,15 +298,30 @@ void PianoRoll1AudioProcessorEditor::paint (Graphics& g)
     
     
     g.setColour(Colours::black);
-    g.setFont((height + width) / 80);
     
-    const float noteNameX = 0.91*width; // X Position of displayed note name.
-    const float noteNameY = height*0.004;
-    const float noteNameHeight = height * topBorder * 0.25;
     
     if(isChildOfBeatCanvas == false){
-        g.drawText(noteName.getValue().toString(), noteNameX, noteNameY, width/10, noteNameHeight, Justification::centred);
-        g.drawRoundedRectangle(noteNameX + (0.015*width), noteNameY, width/10 - (0.03*width), noteNameHeight, 10.0f, 1.0f);
+        
+        if(pianoKeyPanel){
+            g.setFont((height + width) / 100);
+            //const float noteNameX = pianoKeyWidth*width*0.5; // X Position of displayed note name.
+            const float noteNameX = 0.0f;
+            const float noteNameY = height*0.82;
+            const float noteNameHeight = height * topBorder * 0.25;
+            
+            g.drawText(noteName.getValue().toString(), noteNameX, noteNameY, pianoKeyWidth*width, noteNameHeight, Justification::centred);
+            g.drawRoundedRectangle(noteNameX + pianoKeyWidth*width*0.04, noteNameY, pianoKeyWidth*width*0.92, noteNameHeight, 10.0f, 1.0f);
+            
+        }else{
+            g.setFont((height + width) / 80);
+            
+            const float noteNameX = 0.91*width; // X Position of displayed note name.
+            const float noteNameY = height*0.004;
+            const float noteNameHeight = height * topBorder * 0.25;
+            
+            g.drawText(noteName.getValue().toString(), noteNameX, noteNameY, width/10, noteNameHeight, Justification::centred);
+            g.drawRoundedRectangle(noteNameX + (0.015*width), noteNameY, width/10 - (0.03*width), noteNameHeight, 10.0f, 1.0f);
+        }
     }
     
     
@@ -312,14 +331,46 @@ void PianoRoll1AudioProcessorEditor::paint (Graphics& g)
 
 //==============================================================================
 
+void PianoRoll1AudioProcessorEditor::paintOverChildren(juce::Graphics &g){
+    /*
+    const float height = getHeight();
+    const float width = getWidth();
+    const float playCursorLine = playCursorWindow.playCursorLine;
+    
+    
+    g.setColour(Colours::white);
+    g.setOpacity(0.0f);
+    g.fillAll();
+    g.setColour(Colours::yellow);
+    g.setOpacity(1.0f);
+    g.drawLine(width * playCursorLine, 0., width * playCursorLine, height, 3);
+    */
+}
+
+void PianoRoll1AudioProcessorEditor::timerCallback(){
+    //paintOverChildren();
+}
+
+
+
+
+//==============================================================================
+//==============================================================================
+//==============================================================================
     
     
 void PianoRoll1AudioProcessorEditor::resized()
 {
-    pianoRoll.setBoundsRelative(textColumnWidth, topBorder+tripletToggleHeight, 1.-textColumnWidth, 0.8-topBorder-tripletToggleHeight);
-    volumePanel.setBoundsRelative(textColumnWidth, 0.8, 1.-textColumnWidth, 0.2);
-    playCursorWindow.setBoundsRelative(0.0f, 0.0f+topBorder, 1., 1.);
+    float xMargin = [this]()->float{return pianoKeyPanel ? pianoKeyWidth : 0.0f;}();
     
+    pianoRoll.setBoundsRelative(xMargin, topBorder+tripletToggleHeight, 1.-pianoKeyWidth, 0.8-topBorder-tripletToggleHeight);
+    volumePanel.setBoundsRelative(xMargin, 0.8, 1.-pianoKeyWidth, 0.2);
+    playCursorWindow.setBoundsRelative(xMargin, 0.0f+topBorder, 1.-pianoKeyWidth, 1.);
+    
+    if(pianoKeyPanel){
+        pianoKeys.setBoundsRelative(0.0f, topBorder+tripletToggleHeight, pianoKeyWidth*0.95, 0.8-topBorder-tripletToggleHeight);
+        auditionStaff.setBoundsRelative(0.0f, 0.86f, pianoKeyWidth, 0.14f);
+    }
     
     if(topBorder){
         const Point<float> panelXY = {0.726f, (float)topBorder * 0.05f};
@@ -553,6 +604,7 @@ void PianoRoll1AudioProcessorEditor::parameterChanged(const juce::String &parame
         
         beatsToBeUpdated = numOfBeats;
         //pianoRoll.changeBeatCanvasBeats(numOfBeats);
+        pianoRoll.stuff = (String) numOfBeats;
     }
     
 }

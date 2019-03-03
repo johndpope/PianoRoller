@@ -27,7 +27,7 @@ public:
     
     
     
-    PianoRoll(OwnedArray<Preset> * processorPresetLocation);
+    PianoRoll(OwnedArray<Preset> * processorPresetLocation, Staff * auditionStaffLocation);
     ~PianoRoll();
     
     void paint (Graphics&) override;
@@ -56,7 +56,7 @@ private:
     void mouseDown(const MouseEvent& event) override;
     void mouseDrag (const MouseEvent& event) override;
     void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) override;
-     void mouseDoubleClick (const MouseEvent&) override;
+    void mouseDoubleClick (const MouseEvent&) override;
     
     
     
@@ -67,4 +67,21 @@ private:
 };
 
 
+class PianoKeys    : public PianoRollComponent
+{
+public:
+    PianoRoll * pianoRoll;
+    
+    PianoKeys(PianoRoll * pianoRollInput){
+        pianoRoll = pianoRollInput;
+    }
+    
+private:
+    void paint (Graphics&) override;
+    
+    void mouseUp(const MouseEvent& event) override;
+    void mouseDown(const MouseEvent& event) override;
+    void mouseDrag (const MouseEvent& event) override;
+    
+};
 

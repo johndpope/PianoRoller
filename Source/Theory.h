@@ -12,6 +12,7 @@
 #ifndef MUSIC_THEORY_HEADER
 #define MUSIC_THEORY_HEADER
 #pragma once
+#include "../JuceLibraryCode/JuceHeader.h"
 #include <map>
 #include <iostream>
 
@@ -287,8 +288,108 @@ namespace Theory{
         {11,{0,0,-1,0,0,0,-1}} //Bb
     };
     
+    inline std::map<int, int> setClassToDiatonic{
+        {0,0},
+        {1,0},
+        {2,1},
+        {3,1},
+        {4,2},
+        {5,3},
+        {6,3},
+        {7,4},
+        {8,4},
+        {9,5},
+        {10,5},
+        {11,6}
+    };
     
 };
+
+
+
+enum Clef{
+    TREBLE,
+    BASS,
+    TREBLE_8VA,
+    TREBLE_15MA
+};
+
+
+enum Accidental{
+    SHARP,
+    FLAT,
+    DOUBLE_SHARP,
+    DOUBLE_FLAT,
+    NO_PREFERENCE
+};
+
+
+struct NoteHead{
+    uint8 notePitch;
+    Accidental noteAccidental;
+    
+    NoteHead(uint8 pitch, Accidental accidental){
+        notePitch = pitch;
+        noteAccidental = accidental;
+    }
+    NoteHead(uint8 pitch){ //Overloaded
+        NoteHead(pitch, Accidental::NO_PREFERENCE);
+    }
+    
+    uint8 getNotePitch(){return notePitch;}
+    Accidental getNoteAccidental(){return noteAccidental;}
+};
+
+
+class Staff : public Component{
+public:
+    Clef clef = TREBLE;
+    std::vector<NoteHead> notes;
+    
+    Staff(){
+        notes.push_back(NoteHead{65});
+    }
+    
+    void paint (Graphics& g) override{
+        const float numOfLines = 10.0f;
+        const float height = getHeight();
+        const float width = getWidth();
+        const float lineSpacing = height/numOfLines;
+        const float noteHeight = height*0.1;
+        const float noteWidth = noteHeight*1.5f;
+        const uint8 bottomNote = [this]()->uint8{
+            uint8 returnVal;
+            if(clef == TREBLE){
+                returnVal = 60;
+            }else{
+                returnVal = 0;
+            }
+            return returnVal;
+        }();
+        
+        
+        g.setColour(Colours::black);
+        for(int line=3; line<9;line++){
+            float yPos = line*lineSpacing;
+            g.drawLine(0.0f, yPos, width, yPos);
+        }
+        for(int note=0; note<notes.size();note++){
+            uint8 myNotePitch = notes[note].getNotePitch();
+            int diatonicPitch = Theory::setClassToDiatonic[myNotePitch%12];
+            float yPos = height - ( (lineSpacing/2) * (diatonicPitch+3) );
+            
+            
+            g.fillEllipse(width/2 - noteWidth/2, yPos, noteWidth, noteHeight);
+        }
+        
+    }
+    
+    
+    
+    
+};
+
+
 
 
 #endif /* MUSIC_THEORY_HEADER */

@@ -8,6 +8,9 @@
               pluginAUMainType="'aumi'">
   <MAINGROUP id="ynztv4" name="PianoRoller">
     <GROUP id="{277EFBB5-C798-67D1-6142-B45D6435B6AD}" name="Source">
+      <GROUP id="{8FE6D2AD-C9A3-F0D7-3E86-B5A35D511E8D}" name="Fonts">
+        <FILE id="NoU6Hj" name="OpusStd.otf" compile="0" resource="1" file="/Library/Fonts/OpusStd.otf"/>
+      </GROUP>
       <FILE id="pLlB52" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="UwPDAg" name="PluginProcessor.h" compile="0" resource="0"

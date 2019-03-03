@@ -13,6 +13,7 @@
 
 VolumePanel::VolumePanel(OwnedArray<Preset> * processorPresetLocation){
     processorPresets = processorPresetLocation;
+    setOpaque(true);
     
     if (! sender.connect ("127.0.0.1", 9001)) // [4]
     {
@@ -74,7 +75,7 @@ void VolumePanel::paint (Graphics& g)
                 if(subDiv==0) return 3;
                 else          return 1;
             }();
-            const int xPosition = 0.0f + ( col*thisNoteWidth );
+            const int xPosition = 0.0f + ( (float)col*thisNoteWidth );
             g.setColour (Colours::black);
             g.drawLine(xPosition, 0., xPosition, height, lineWidth);
         }

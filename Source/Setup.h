@@ -29,6 +29,7 @@ public:
     const static int numOfPresets = 8;
     const static int maxBeats = 16;
     const int numOfRows = 32;
+    const int blackKeys[5] = {1,3,6,8,10};
     
     int currentPreset,
         currentTrack;
@@ -116,6 +117,7 @@ public:
     ////========================////
     
     OwnedArray<Preset> * processorPresets;
+    Staff * auditionStaff;
     
     ////==============CONSTRUCTOR==============//
     PianoRollComponent(){

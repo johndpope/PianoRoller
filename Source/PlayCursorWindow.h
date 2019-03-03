@@ -25,9 +25,9 @@ public:
     
     void paint(Graphics&) override;
     void setPlayCursor(float val);
+    float playCursorLine;
     
 private:
-    float playCursorLine;
     void timerCallback() override;
 };
 

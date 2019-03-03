@@ -17,7 +17,7 @@ PlayCursorWindow::PlayCursorWindow(){
     setInterceptsMouseClicks(false, false);
     playCursorLine = 0.0f;
     setAlwaysOnTop(true);
-    startTimer(100);
+    startTimer(80);
 }
 
  void PlayCursorWindow::paint(Graphics& g){
@@ -35,6 +35,7 @@ PlayCursorWindow::PlayCursorWindow(){
 
 void PlayCursorWindow::setPlayCursor(float val){
     playCursorLine = val;
+    //getParentComponent()->paintOverChildren();
     //repaint();
 }
 

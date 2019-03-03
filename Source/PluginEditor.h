@@ -33,7 +33,8 @@ class PianoRoll1AudioProcessorEditor  : public AudioProcessorEditor,
                                         public KeyListener,
                                         public Button::Listener,
                                         public OSCReceiver,
-                                        public OSCReceiver::ListenerWithOSCAddress<OSCReceiver::MessageLoopCallback>
+                                        public OSCReceiver::ListenerWithOSCAddress<OSCReceiver::MessageLoopCallback>,
+                                        public Timer
 {
 public:
     
@@ -56,6 +57,8 @@ public:
     
     //==============================================================================
     void paint (Graphics&) override;
+    void paintOverChildren(Graphics& g) override;
+    void timerCallback() override;
     void resized() override;
     void setMidiDisplay(int midi);
     void updatePreset(int preset);
@@ -82,6 +85,8 @@ public:
     Label noteLabel;
     
     PianoRoll pianoRoll;
+    PianoKeys pianoKeys;
+    Staff auditionStaff;
     VolumePanel volumePanel;
     PlayCursorWindow playCursorWindow;
     ComboBox rootMenu;
@@ -109,6 +114,7 @@ private:
     float currentBeat;
     float previousVal;
     const bool tripletButtons = true;
+    const bool pianoKeyPanel = true;
     const float sliderSpacing = 0.25f;
     const static int numOfPresets = PianoRollComponent::numOfPresets;
     const static int numOfTracks = PianoRollComponent::numOfTracks;
@@ -116,6 +122,7 @@ private:
     const float textColumnWidth = 0.0;
     const float topBorder = 0.14f;
     const float tripletToggleHeight = 0.0f;
+    const float pianoKeyWidth = 0.05;
     Array<Array<float>> tripletSwitches;
     Array<int> beatsClicked;
     String arpeggioDirection;

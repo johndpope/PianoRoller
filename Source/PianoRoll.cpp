@@ -16,13 +16,15 @@
 
 
 
-PianoRoll::PianoRoll(OwnedArray<Preset> * processorPresetLocation)
+PianoRoll::PianoRoll(OwnedArray<Preset> * processorPresetLocation, Staff * auditionStaffLocation)
 {
     topNote = 84;
     canScroll = true;
     processorPresets = processorPresetLocation;
+    auditionStaff = auditionStaffLocation;
     isChildOfBeatCanvas = false;
     isDoubleClick = false;
+    setOpaque(true);
     
     if (! sender.connect ("127.0.0.1", 9001))
     {
@@ -55,7 +57,6 @@ void PianoRoll::paint (Graphics& g)
     for(int row=0;row<numOfRows;row++){
         float yPosition = 0. + (row * getHeight()/numOfRows);
         //int blackKeys[5] = {2,4,6,9,11};
-        int blackKeys[5] = {1,3,6,8,10};
         int pitch = topNote-row;
         
         if (std::find(std::begin(blackKeys), std::end(blackKeys), pitch%12) != std::end(blackKeys)){
@@ -117,7 +118,7 @@ void PianoRoll::paint (Graphics& g)
                     if(subDiv==0){return 3;}
                     else         {return 1;};
                 }();
-                const float xPosition = 0.0f + ( col*noteWidth );
+                const float xPosition = 0.0f + ( (float)col*noteWidth );
                 
                 g.setColour(Colours::black);
                 g.drawLine(xPosition, 0., xPosition, height, lineWidth);
@@ -174,7 +175,7 @@ void PianoRoll::paint (Graphics& g)
     
     //DRAWS ROW LINES
     for(int i=0;i<=numOfRows;i++){
-        const float yPosition = 0. + (i*getHeight()/numOfRows);
+        const float yPosition = 0. + (i*height/(float)numOfRows);
         g.setColour(Colours::black);
         g.drawLine(0., yPosition, width, yPosition);
         if(i==numOfRows || i==0){ //Reasons to draw a thicker line.
@@ -185,7 +186,8 @@ void PianoRoll::paint (Graphics& g)
     
     //g.setColour(Colours::black);
     g.setFont (30.0f);
-    g.drawText(stuff, 100, 100, 100, 100, Justification::centred);
+    
+    //g.drawText(stuff, 100, 100, 100, 100, Justification::centred);
     
     
     
@@ -319,6 +321,7 @@ void PianoRoll::mouseDown(const MouseEvent& event){
             noteName->setValue(newNoteName);
         }
     }
+    auditionStaff->notes[0].notePitch = pitch;
     
     repaint();
 }
@@ -375,5 +378,83 @@ void PianoRoll::changeBeatCanvasTriplet(const int beat, const int val){
     {
         showConnectionErrorMessage ("Error: could not send OSC message.");
     }
+}
+
+
+
+
+
+
+
+
+
+//=============================================================================================================
+
+
+void PianoKeys::paint(juce::Graphics &g){
+    const int topNote = pianoRoll->topNote;
+    const float width = getWidth();
+    const float height = getHeight();
+    const float noteHeight = ( height / (float)numOfRows );
+    
+    g.fillAll (beatCanvasJungleGreen); //BACKGROUND COLOR
+    
+    for(int row=0; row<numOfRows; row++){
+        int pitch = topNote-row;
+        float yPosition = row * noteHeight;
+        
+        if (std::find(std::begin(blackKeys), std::end(blackKeys), pitch%12) != std::end(blackKeys)){
+            g.setColour (Colours::darkgrey);
+            //g.setColour (Colours::black);
+            
+            g.fillRect(0.0f,yPosition,width*0.666, noteHeight);
+            
+            g.setColour (Colours::black);
+            //g.drawLine(0.0f, yPosition, width*0.66, yPosition);
+            g.setColour (Colours::black);
+            g.drawRect(0.0f,yPosition,width*0.66, noteHeight);
+            
+        }else{ //is a White Key
+            g.setColour (beatCanvasJungleGreen);
+            //g.setColour (Colours::floralwhite);
+            
+            g.fillRect(0.0f,yPosition,width, noteHeight);
+            
+            g.setColour (Colours::black);
+            if(pitch%12==4 || pitch%12==11){ //Note E or B
+                g.drawLine(0.0f, yPosition, width, yPosition);
+            }else{
+                g.drawLine(width*0.66f, yPosition-(noteHeight*0.5f), width-0.66f, yPosition-(noteHeight*0.5f));
+            }
+        }
+        //g.setOpacity(0.5);
+        
+        
+        
+        //g.setColour(greyOff);
+        //g.setOpacity(0.25);
+        //g.fillRect(0.0f,0.0f,width, noteHeight);
+        //g.setOpacity(1.0);
+        
+        
+    }
+    
+    //g.drawRect(0.0f, 0.0f, width, height, 3);
+    g.drawRoundedRectangle(0.0f, 0.0f, width, height, 0.0f, 4.0f);
+    
+    
+}
+
+void PianoKeys::mouseUp(const juce::MouseEvent &event){
+    
+}
+
+void PianoKeys::mouseDown(const juce::MouseEvent &event){
+    
+    
+}
+
+void PianoKeys::mouseDrag(const juce::MouseEvent &event){
+    
 }
 
