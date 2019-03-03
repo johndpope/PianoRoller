@@ -87,6 +87,7 @@ public:
     PianoRoll pianoRoll;
     PianoKeys pianoKeys;
     Staff auditionStaff;
+    Staff scaleDisplayStaff;
     VolumePanel volumePanel;
     PlayCursorWindow playCursorWindow;
     ComboBox rootMenu;

@@ -41,6 +41,9 @@ PianoRoll::PianoRoll(OwnedArray<Preset> * processorPresetLocation, Staff * audit
 
 PianoRoll::~PianoRoll()
 {
+    //delete noteName;
+    //delete auditionStaff;
+    //delete pianoKeys;
 }
 
 void PianoRoll::paint (Graphics& g)
@@ -327,7 +330,8 @@ void PianoRoll::mouseDown(const MouseEvent& event){
             noteName->setValue(newNoteName);
         }
     }
-    auditionStaff->notes[0].notePitch = pitch;
+    auditionStaff->notes.clear();
+    auditionStaff->notes.push_back(pitch);
     
     repaint();
 }

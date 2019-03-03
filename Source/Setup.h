@@ -117,6 +117,7 @@ public:
     OwnedArray<Preset> presets;
     ////========================////
     
+    //OwnedArray<Preset> * processorPresets;
     OwnedArray<Preset> * processorPresets;
     
     ////==============CONSTRUCTOR==============//
@@ -128,6 +129,9 @@ public:
         for(int preset=0;preset<=numOfPresets;preset++){
             presets.add(new Preset);
         }
+    }
+    ~PianoRollComponent(){
+        //delete processorPresets;
     }
     
     void updateNote(int col, int pitch, int beatSwitch);

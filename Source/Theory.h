@@ -280,13 +280,13 @@ namespace Theory{
 
     
     const std::map<int, Array<String>> diatonicNoteNames = {
-        {0,{"C♭♭","C♭","C", "C♯","Cx"}},
-        {1,{"D♭♭","D♭","D","D♯","Dx"}},
-        {2,{"E♭♭","E♭","E", "E♯","Ex"}},
-        {3,{"F♭♭","F♭","F", "F♯","Fx"}},
-        {4,{"G♭♭","G♭","G", "G♯","Gx"}},
-        {5,{"A♭♭","A♭","A", "A♯","Ax"}},
-        {6,{"B♭♭","B♭","B", "B♯","Bx"}}
+        {0,{"Cbb","Cb","C", "C#","Cx"}},
+        {1,{"Dbb","Db","D","D#","Dx"}},
+        {2,{"Ebb","Eb","E", "E#","Ex"}},
+        {3,{"Fbb","Fb","F", "F#","Fx"}},
+        {4,{"Gbb","Gb","G", "G#","Gx"}},
+        {5,{"Abb","Ab","A", "A#","Ax"}},
+        {6,{"Bbb","Bb","B", "B#","Bx"}}
     };
 
         
@@ -326,6 +326,22 @@ namespace Theory{
         {11,6}
     };
     
+    
+    inline int noteNameToDiatonicValue(String noteName){
+        int output;
+        
+        std::for_each(Theory::diatonicNoteNames.begin(),
+                      Theory::diatonicNoteNames.end(), [&](std::pair<int, Array<String>> diatonicNote){
+            Array<String> noteNames = diatonicNote.second;
+            if (noteNames.contains(noteName)){
+                output = diatonicNote.first;
+            }else output = 0;
+        });
+        
+        return output;
+    }
+    
+    
 };
 
 
@@ -352,18 +368,16 @@ enum Accidental{
 
 struct NoteHead{
     uint8 notePitch;
-    Accidental noteAccidental;
+    String noteName;
+    int diatonicNoteValue;
     
-    NoteHead(uint8 pitch, Accidental accidental){
+    NoteHead(uint8 pitch){
         notePitch = pitch;
-        noteAccidental = accidental;
     }
-    NoteHead(uint8 pitch){ //Overloaded
-        NoteHead(pitch, Accidental::NO_PREFERENCE);
-    }
-    
-    uint8 getNotePitch(){return notePitch;}
-    Accidental getNoteAccidental(){return noteAccidental;}
+
+    uint8 getNotePitch()      { return notePitch;         }
+    String getNoteName()      { return noteName;          }
+    int getDiatonicNoteValue(){ return diatonicNoteValue; }
 };
 
 /*
@@ -419,12 +433,15 @@ public:
     std::vector<NoteHead> notes;
     OpusLookAndFeel opusLookAndFeel;
     int * currentPreset;
-     
+    
+    
+   
     Staff(OwnedArray<Preset> * processorPresetLocation, int * currentPresetPointer){
-        notes.push_back(NoteHead{65});
+        //notes.push_back(NoteHead{65});
         processorPresets = processorPresetLocation;
         currentPreset = currentPresetPointer;
     }
+    
     
     void paint (Graphics& g) override{
         const bool isTreble = (clef==TREBLE || clef==TREBLE_8VA || clef==TREBLE_15MA) ? true : false;
@@ -432,9 +449,9 @@ public:
         const float height = getHeight();
         const float width = getWidth();
         const float lineSpacing = height/numOfLines;
-        const float noteSpacing = width / 20.0f;
         const float accidentalSpacing = height*0.15;
         const float clefSpacing = height * 0.45;
+        const float noteSpacing = clefSpacing * 0.5f;
         const float clefHeight = [&]()->float{
             if (isTreble) return height*0.11f;
             else return height * -0.19f;
@@ -454,6 +471,7 @@ public:
         }();
         
         const String modeName = (*processorPresets)[*currentPreset]->currentMode;
+        //const String rootName = (*processorPresets)[*currentPreset]->rootName;
         const int root = (*processorPresets)[*currentPreset]->root;
         Theory::Mode mode = Theory::modeMap[modeName];
         Array<int> modeNotes = mode.getMode();
@@ -461,16 +479,10 @@ public:
         Array<int> intervals = mode.getIntervals();
         
         
-        //**************DEBUG************
-        String stuff = [&](){
-            String output = "";
-            for(int i=0; i<enharmIndex.size();i++){
-                output += (String)enharmIndex[i] + " ";
-            }
-            return output;
-        }();
-        g.setFont(height*0.1);
-        //g.drawText(stuff, 0, 0, width, height*0.1, Justification::centred);
+        
+        
+        
+        
         
         
         /*
@@ -498,16 +510,13 @@ public:
             int diatonicPitch = [&]()->int{ //TODO
                 return Theory::setClassToDiatonic[pitchSetClass];
             }();
-            float xPos = clefSpacing + (noteSpacing*note);
+            float xPos = clefSpacing + (clefSpacing*note*0.5);
             float yPos = height - ( (lineSpacing/2) * (diatonicPitch+3) );
             float ledgerLineX = clefSpacing - noteWidth/2;
             float ledgerLineY = yPos+(lineSpacing/2);
             Accidental accidental = [&]()->Accidental{
                 
                 if(modeNotes.contains(pitchSetClass)){
-                    
-                    //g.drawText((String)enharmIndex[modeNotes.indexOf(pitchSetClass)], 0, 0, width, height*0.1, Justification::centred);
-                    
                     switch (enharmIndex[modeNotes.indexOf(pitchSetClass)]){
                         case 2: return FLAT;
                         case 1: return SHARP;
@@ -528,6 +537,7 @@ public:
                     case DOUBLE_FLAT: return "bb";
                     case NATURAL: return "";
                 }
+                return "";
             }();
             
             g.fillEllipse(xPos, yPos, noteWidth, noteHeight); //Draw note.
@@ -544,7 +554,7 @@ public:
         
     }
     
-    
+
     
 private:
     

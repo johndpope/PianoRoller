@@ -13,7 +13,7 @@
 
 //==============================================================================
 PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p), midiLabel("0"), pianoRoll(&p.presets, &auditionStaff, &pianoKeys), volumePanel(&p.presets), pianoKeys(&pianoRoll), playCursorWindow(&processor.lastPosInfo), auditionStaff(&p.presets, &currentPreset)
+    : AudioProcessorEditor (&p), processor (p), midiLabel("0"), pianoRoll(&p.presets, &auditionStaff, &pianoKeys), volumePanel(&p.presets), pianoKeys(&pianoRoll), playCursorWindow(&processor.lastPosInfo), auditionStaff(&p.presets, &p.currentPreset), scaleDisplayStaff(&p.presets, &p.currentPreset)
 {    
     setVisible(true);
     setResizable(true, true);
@@ -55,6 +55,7 @@ PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioP
     addAndMakeVisible(&pianoRoll);
     addAndMakeVisible(&pianoKeys);
     addAndMakeVisible(&auditionStaff);
+    addAndMakeVisible(&scaleDisplayStaff);
     addAndMakeVisible(&volumePanel);
     addAndMakeVisible(&playCursorWindow);
     addAndMakeVisible(&midiLabel);
@@ -197,6 +198,8 @@ PianoRoll1AudioProcessorEditor::~PianoRoll1AudioProcessorEditor()
     processor.treeState.removeParameterListener(BEATS_ID, this);
     processor.playPosition.removeListener(this);
     juce::OSCReceiver::removeListener(this);
+    
+    //delete presets;
 }
 
 
@@ -378,6 +381,7 @@ void PianoRoll1AudioProcessorEditor::resized()
     if(pianoKeyPanel){
         pianoKeys.setBoundsRelative(0.0f, topBorder+tripletToggleHeight, pianoKeyWidth*0.95, 0.8-topBorder-tripletToggleHeight);
         auditionStaff.setBoundsRelative(0.0f, 0.86f, pianoKeyWidth, 0.14f);
+        scaleDisplayStaff.setBoundsRelative(0.91f, 0.0f, getWidth()*0.1, topBorder*0.5);
     }
     
     if(topBorder){
@@ -777,6 +781,11 @@ void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
     processor.presets[currentPreset]->currentMode = scaleName;
     
     buttonClicked(&generateButton);
+    
+    scaleDisplayStaff.notes.clear();
+    for(auto note : processor.scale){
+        scaleDisplayStaff.notes.push_back(NoteHead(note));
+    }
 }
 
 void PianoRoll1AudioProcessorEditor::monoPolyMenuChanged(){

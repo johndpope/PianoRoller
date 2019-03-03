@@ -79,6 +79,10 @@ public:
     PianoKeys(PianoRoll * pianoRollInput){
         pianoRoll = pianoRollInput;
     }
+    ~PianoKeys(){
+        //delete pianoRoll;
+        //delete auditionStaff;
+    }
     
 private:
     void paint (Graphics&) override;
