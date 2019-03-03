@@ -111,13 +111,21 @@ PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioP
     
     
     //Setup Dropdown Menus======================================================
+    /*
     for(int i=0;i<12;i++){
         rootMenu.addItem(Theory::setClassToPitchName[i], i+1);
+    }
+    */
+    
+    for(int i=0;i<17;i++){
+        rootMenu.addItem(Theory::rootNames[i], i+1);
     }
     
     std::for_each(Theory::modeMap.begin(), Theory::modeMap.end(), [this](std::pair<String, Theory::Mode> mode){
         scaleMenu.addItem(mode.first, scaleMenu.getNumItems()+1);
     });
+    
+    
     
     monoPolyMenu.addItem("mono", 1);
     monoPolyMenu.addItem("poly", 2);
@@ -747,8 +755,11 @@ bool PianoRoll1AudioProcessorEditor::keyPressed(const juce::KeyPress &key, juce:
 }
 
 void PianoRoll1AudioProcessorEditor::rootMenuChanged(){
-    processor.root = rootMenu.getSelectedItemIndex();
-    processor.presets[currentPreset]->root = rootMenu.getSelectedItemIndex();
+    const String rootName = rootMenu.getText();
+    
+    processor.root = Theory::rootNameMap[rootName];
+    processor.presets[currentPreset]->root = processor.root;
+    processor.presets[currentPreset]->rootName = rootName;
     scaleMenuChanged();
 }
 

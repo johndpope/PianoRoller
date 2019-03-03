@@ -91,6 +91,7 @@ public:
         int numOfBeats;
         int root;
         bool isMono;
+        String rootName;
         String currentMode;
         String generatorType;
         String arpType;

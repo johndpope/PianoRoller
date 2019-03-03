@@ -193,7 +193,27 @@ namespace Theory{
     
     const String setClassToPitchName[12] = {"C","C#/Db","D","D#/Eb","E","F","F#/Gb","G","G#/Ab","A","A#/Bb", "B"};
     
+    inline String rootNames[] = {"C","C#", "Db","D","D#","Eb","E","F","F#","Gb","G","G#","Ab","A","A#","Bb", "B"};
     
+    inline std::map<String, int> rootNameMap = {
+        {"C", 0},
+        {"C#", 1},
+        {"Db",1},
+        {"D",2},
+        {"D#", 3},
+        {"Eb", 3},
+        {"E", 4},
+        {"F", 5},
+        {"F#", 6},
+        {"Gb", 6},
+        {"G",7},
+        {"G#",8},
+        {"Ab",8},
+        {"A",9},
+        {"A#",10},
+        {"Bb",10},
+        {"B", 11}
+    };
 
     inline std::map<String, Mode> modeMap = {
         //Scales
@@ -438,12 +458,19 @@ public:
         Theory::Mode mode = Theory::modeMap[modeName];
         Array<int> modeNotes = mode.getMode();
         Array<int> enharmIndex = mode.getEnharmIndex();
+        Array<int> intervals = mode.getIntervals();
         
         
         //**************DEBUG************
-        String stuff = modeName;
+        String stuff = [&](){
+            String output = "";
+            for(int i=0; i<enharmIndex.size();i++){
+                output += (String)enharmIndex[i] + " ";
+            }
+            return output;
+        }();
         g.setFont(height*0.1);
-        g.drawText(stuff, 0, 0, width, height*0.1, Justification::centred);
+        //g.drawText(stuff, 0, 0, width, height*0.1, Justification::centred);
         
         
         /*
@@ -468,7 +495,9 @@ public:
         for(int note=0; note<notes.size();note++){
             uint8 myNotePitch = notes[note].getNotePitch();
             int pitchSetClass = (int)myNotePitch%12;
-            int diatonicPitch = Theory::setClassToDiatonic[pitchSetClass];
+            int diatonicPitch = [&]()->int{ //TODO
+                return Theory::setClassToDiatonic[pitchSetClass];
+            }();
             float xPos = clefSpacing + (noteSpacing*note);
             float yPos = height - ( (lineSpacing/2) * (diatonicPitch+3) );
             float ledgerLineX = clefSpacing - noteWidth/2;
@@ -476,9 +505,12 @@ public:
             Accidental accidental = [&]()->Accidental{
                 
                 if(modeNotes.contains(pitchSetClass)){
-                    switch (enharmIndex[note]){
-                        case 2: return SHARP;
-                        case 1: return FLAT;
+                    
+                    //g.drawText((String)enharmIndex[modeNotes.indexOf(pitchSetClass)], 0, 0, width, height*0.1, Justification::centred);
+                    
+                    switch (enharmIndex[modeNotes.indexOf(pitchSetClass)]){
+                        case 2: return FLAT;
+                        case 1: return SHARP;
                         case 0: return NATURAL;
                     }
                 }
@@ -494,6 +526,7 @@ public:
                     case FLAT: return "b";
                     case DOUBLE_SHARP: return "x";
                     case DOUBLE_FLAT: return "bb";
+                    case NATURAL: return "";
                 }
             }();
             
