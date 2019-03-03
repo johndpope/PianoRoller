@@ -12,15 +12,19 @@
 
 
 
-PlayCursorWindow::PlayCursorWindow(){
-    //setOpaque(true);
+PlayCursorWindow::PlayCursorWindow(AudioPlayHead::CurrentPositionInfo * positionInfoLocation){
+    currentPositionInfo = positionInfoLocation;
     setInterceptsMouseClicks(false, false);
     playCursorLine = 0.0f;
     setAlwaysOnTop(true);
     startTimer(80);
+    
+    currentPositionMarker.setFill(Colours::yellow);
+    addAndMakeVisible(&currentPositionMarker);
 }
 
  void PlayCursorWindow::paint(Graphics& g){
+     /*
      const float height = getHeight();
      const float width = getWidth();
      
@@ -29,16 +33,21 @@ PlayCursorWindow::PlayCursorWindow(){
      g.fillAll();
      g.setColour(Colours::yellow);
      g.setOpacity(1.0f);
-     g.drawLine(width * playCursorLine, 0., width * playCursorLine, height, 3);
- 
+     //g.drawLine(width * playCursorLine, 0., width * playCursorLine, height, 3);
+      */
  }
 
 void PlayCursorWindow::setPlayCursor(float val){
-    playCursorLine = val;
-    //getParentComponent()->paintOverChildren();
-    //repaint();
+    playCursorLine = val; //old version
+
 }
 
 void PlayCursorWindow::timerCallback(){
-    repaint();
+    bool isPlaying = currentPositionInfo->isPlaying;
+    currentPositionMarker.setVisible(isPlaying);
+    
+    currentPositionMarker.setRectangle(Rectangle<float>(getWidth() * playCursorLine,
+                                                        0.0f,
+                                                        2.0f,
+                                                        getHeight()));
 }

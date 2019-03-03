@@ -13,7 +13,7 @@
 
 //==============================================================================
 PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p), midiLabel("0"), pianoRoll(&p.presets, &auditionStaff, &pianoKeys), volumePanel(&p.presets), pianoKeys(&pianoRoll)
+    : AudioProcessorEditor (&p), processor (p), midiLabel("0"), pianoRoll(&p.presets, &auditionStaff, &pianoKeys), volumePanel(&p.presets), pianoKeys(&pianoRoll), playCursorWindow(&processor.lastPosInfo)
 {    
     setVisible(true);
     setResizable(true, true);

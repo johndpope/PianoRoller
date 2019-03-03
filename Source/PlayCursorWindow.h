@@ -21,11 +21,14 @@ class PlayCursorWindow : public Component,
 {
 public:
     
-    PlayCursorWindow();
+    PlayCursorWindow(AudioPlayHead::CurrentPositionInfo * positionInfoLocation);
     
     void paint(Graphics&) override;
     void setPlayCursor(float val);
     float playCursorLine;
+    AudioPlayHead::CurrentPositionInfo * currentPositionInfo;
+    
+    DrawableRectangle currentPositionMarker;
     
 private:
     void timerCallback() override;

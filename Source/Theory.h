@@ -311,7 +311,9 @@ enum Clef{
     TREBLE,
     BASS,
     TREBLE_8VA,
-    TREBLE_15MA
+    TREBLE_15MA,
+    BASS_8VA,
+    BASS_15MA
 };
 
 
@@ -397,21 +399,28 @@ public:
     }
     
     void paint (Graphics& g) override{
+        const bool isTreble = (clef==TREBLE || clef==TREBLE_8VA || clef==TREBLE_15MA) ? true : false;
         const float numOfLines = 10.0f;
         const float height = getHeight();
         const float width = getWidth();
         const float lineSpacing = height/numOfLines;
         const float noteSpacing = width / 20.0f;
         const float clefSpacing = height * 0.45;
+        const float clefHeight = [&]()->float{
+            if (isTreble) return height*0.11f;
+            else return height * -0.19f;
+        }();
         const float noteHeight = height*0.1;
         const float noteWidth = noteHeight*1.5f;
-        const uint8 bottomNote = [this]()->uint8{
+        const String clefText = [&]()->String{
+            if (isTreble) return "&";
+            else return "?";
+        }();
+        const uint8 bottomNote = [&]()->uint8{
             uint8 returnVal;
-            if(clef == TREBLE){
-                returnVal = 60;
-            }else{
-                returnVal = 0;
-            }
+            if(isTreble) returnVal = 60;
+            else         returnVal = 0;
+
             return returnVal;
         }();
         
@@ -436,7 +445,7 @@ public:
 
         g.setFont(opusLookAndFeel.getOpus());
         g.setFont(height*0.76);
-        g.drawText("&", 0, height*0.11, width, height, Justification::left);
+        g.drawText(clefText, 0, clefHeight, width, height, Justification::left);
         
     }
     
