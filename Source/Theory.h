@@ -340,12 +340,58 @@ struct NoteHead{
     Accidental getNoteAccidental(){return noteAccidental;}
 };
 
+/*
+static const Font& getOpus()
+{
+    static Font opus (Font (Typeface::createSystemTypefaceFor (BinaryData::OpusStd_otf,
+                                                               BinaryData::OpusStd_otfSize)));
+    return opus;
+}
+ */
+//inline static Font opus = Typeface::createSystemTypefaceFor (BinaryData::OpusStd_otf,
+                                                           //BinaryData::OpusStd_otfSize);
+
+class OpusLookAndFeel : public LookAndFeel_V4
+{
+public:
+    Typeface::Ptr getTypefaceForFont(const Font& f) override{
+        static Typeface::Ptr myFont = Typeface::createSystemTypefaceFor(BinaryData::OpusStd_otf,
+                                                                        BinaryData::OpusStd_otfSize);
+        return myFont;
+    }
+    
+    static const Font& getOpus()
+    {
+        static Font opus (Font (Typeface::createSystemTypefaceFor (BinaryData::OpusStd_otf,
+                                                                   BinaryData::OpusStd_otfSize)));
+        return opus;
+    }
+    
+    OpusLookAndFeel()
+    {
+        setDefaultSansSerifTypeface(Typeface::createSystemTypefaceFor(BinaryData::OpusStd_otf,
+                                                                      BinaryData::OpusStd_otfSize));
+    }
+    
+    /*
+     Typeface::Ptr getTypefaceForFont(const Font& f) override{
+     static Typeface::Ptr myFont = Typeface::createSystemTypefaceFor(BinaryData::OpusStd_otf,
+     BinaryData::OpusStd_otfSize);
+     return myFont;
+     }
+     */
+    //static Typeface::Ptr opus (Font (Typeface::createSystemTypefaceFor (BinaryData::OpusStd_otf,
+    //BinaryData::OpusStd_otfSize)));
+};
+
+
 
 class Staff : public Component{
 public:
     Clef clef = TREBLE;
     std::vector<NoteHead> notes;
-    
+    OpusLookAndFeel opusLookAndFeel;
+     
     Staff(){
         notes.push_back(NoteHead{65});
     }
@@ -355,6 +401,8 @@ public:
         const float height = getHeight();
         const float width = getWidth();
         const float lineSpacing = height/numOfLines;
+        const float noteSpacing = width / 20.0f;
+        const float clefSpacing = height * 0.45;
         const float noteHeight = height*0.1;
         const float noteWidth = noteHeight*1.5f;
         const uint8 bottomNote = [this]()->uint8{
@@ -377,13 +425,24 @@ public:
             uint8 myNotePitch = notes[note].getNotePitch();
             int diatonicPitch = Theory::setClassToDiatonic[myNotePitch%12];
             float yPos = height - ( (lineSpacing/2) * (diatonicPitch+3) );
+            float ledgerLineX = clefSpacing - noteWidth/2;
+            float ledgerLineY = yPos+(lineSpacing/2);
             
+            g.fillEllipse(clefSpacing, yPos, noteWidth, noteHeight);
             
-            g.fillEllipse(width/2 - noteWidth/2, yPos, noteWidth, noteHeight);
+            if(diatonicPitch==0) g.drawLine(ledgerLineX, ledgerLineY, ledgerLineX + noteWidth*2, ledgerLineY);
         }
+        
+
+        g.setFont(opusLookAndFeel.getOpus());
+        g.setFont(height*0.76);
+        g.drawText("&", 0, height*0.11, width, height, Justification::left);
         
     }
     
+    
+    
+private:
     
     
     

@@ -122,7 +122,7 @@ private:
     const float textColumnWidth = 0.0;
     const float topBorder = 0.14f;
     const float tripletToggleHeight = 0.0f;
-    const float pianoKeyWidth = 0.05;
+    const float pianoKeyWidth = 0.06;
     Array<Array<float>> tripletSwitches;
     Array<int> beatsClicked;
     String arpeggioDirection;

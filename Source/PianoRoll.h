@@ -27,7 +27,7 @@ public:
     
     
     
-    PianoRoll(OwnedArray<Preset> * processorPresetLocation, Staff * auditionStaffLocation);
+    PianoRoll(OwnedArray<Preset> * processorPresetLocation, Staff * auditionStaffLocation, PianoRollComponent * pianoKeyLocation);
     ~PianoRoll();
     
     void paint (Graphics&) override;
@@ -47,6 +47,7 @@ public:
     bool isDoubleClick;
     String stuff = "stuff to say";
     Value * noteName;
+    PianoRollComponent * pianoKeys;
     
 private:
 

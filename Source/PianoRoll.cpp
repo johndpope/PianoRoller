@@ -16,12 +16,13 @@
 
 
 
-PianoRoll::PianoRoll(OwnedArray<Preset> * processorPresetLocation, Staff * auditionStaffLocation)
+PianoRoll::PianoRoll(OwnedArray<Preset> * processorPresetLocation, Staff * auditionStaffLocation, PianoRollComponent * pianoKeyLocation)
 {
     topNote = 84;
     canScroll = true;
     processorPresets = processorPresetLocation;
     auditionStaff = auditionStaffLocation;
+    pianoKeys = pianoKeyLocation;
     isChildOfBeatCanvas = false;
     isDoubleClick = false;
     setOpaque(true);
@@ -212,7 +213,9 @@ void PianoRoll::mouseWheelMove(const juce::MouseEvent &event, const juce::MouseW
     verticalAdjust = verticalAdjust < 0 ? floor(verticalAdjust) : ceil(verticalAdjust);
     
     topNote = limitRange( (topNote + (int)verticalAdjust), 8+numOfRows, 127);
+    
     repaint();
+    pianoKeys->repaint();
 }
 
 void PianoRoll::mouseUp(const MouseEvent& event){
