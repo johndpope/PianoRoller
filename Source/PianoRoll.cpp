@@ -188,6 +188,9 @@ void PianoRoll::paint (Graphics& g)
     //g.setColour(Colours::black);
     g.setFont (30.0f);
     
+    
+    
+    //stuff = (String)(*processorPresets)[currentPreset]->currentMode;
     //g.drawText(stuff, 100, 100, 100, 100, Justification::centred);
     
     

@@ -15,6 +15,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include <map>
 #include <iostream>
+#include "Setup.h"
 
 namespace Theory{
     
@@ -46,6 +47,8 @@ namespace Theory{
         {
         }
     };
+    
+    const int blackKeys[5] = {1,3,6,8,10};
     
     /*
      * Scales are built using Arrays of
@@ -322,7 +325,8 @@ enum Accidental{
     FLAT,
     DOUBLE_SHARP,
     DOUBLE_FLAT,
-    NO_PREFERENCE
+    NO_PREFERENCE,
+    NATURAL
 };
 
 
@@ -388,14 +392,18 @@ public:
 
 
 
-class Staff : public Component{
+class Staff : public PianoRollComponent
+{
 public:
     Clef clef = TREBLE;
     std::vector<NoteHead> notes;
     OpusLookAndFeel opusLookAndFeel;
+    int * currentPreset;
      
-    Staff(){
+    Staff(OwnedArray<Preset> * processorPresetLocation, int * currentPresetPointer){
         notes.push_back(NoteHead{65});
+        processorPresets = processorPresetLocation;
+        currentPreset = currentPresetPointer;
     }
     
     void paint (Graphics& g) override{
@@ -405,6 +413,7 @@ public:
         const float width = getWidth();
         const float lineSpacing = height/numOfLines;
         const float noteSpacing = width / 20.0f;
+        const float accidentalSpacing = height*0.15;
         const float clefSpacing = height * 0.45;
         const float clefHeight = [&]()->float{
             if (isTreble) return height*0.11f;
@@ -424,28 +433,81 @@ public:
             return returnVal;
         }();
         
+        const String modeName = (*processorPresets)[*currentPreset]->currentMode;
+        const int root = (*processorPresets)[*currentPreset]->root;
+        Theory::Mode mode = Theory::modeMap[modeName];
+        Array<int> modeNotes = mode.getMode();
+        Array<int> enharmIndex = mode.getEnharmIndex();
         
+        
+        //**************DEBUG************
+        String stuff = modeName;
+        g.setFont(height*0.1);
+        g.drawText(stuff, 0, 0, width, height*0.1, Justification::centred);
+        
+        
+        /*
+         *====DRAW CLEF====
+         */
+        g.setFont(opusLookAndFeel.getOpus());
+        g.setFont(height*0.76);
+        g.drawText(clefText, 0.0f, clefHeight, width, height, Justification::left);
+        
+        /*
+         *====DRAW LINES====
+         */
         g.setColour(Colours::black);
         for(int line=3; line<9;line++){
             float yPos = line*lineSpacing;
             g.drawLine(0.0f, yPos, width, yPos);
         }
+        
+        /*
+         *====DRAW NOTE====
+         */
         for(int note=0; note<notes.size();note++){
             uint8 myNotePitch = notes[note].getNotePitch();
-            int diatonicPitch = Theory::setClassToDiatonic[myNotePitch%12];
+            int pitchSetClass = (int)myNotePitch%12;
+            int diatonicPitch = Theory::setClassToDiatonic[pitchSetClass];
+            float xPos = clefSpacing + (noteSpacing*note);
             float yPos = height - ( (lineSpacing/2) * (diatonicPitch+3) );
             float ledgerLineX = clefSpacing - noteWidth/2;
             float ledgerLineY = yPos+(lineSpacing/2);
+            Accidental accidental = [&]()->Accidental{
+                
+                if(modeNotes.contains(pitchSetClass)){
+                    switch (enharmIndex[note]){
+                        case 2: return SHARP;
+                        case 1: return FLAT;
+                        case 0: return NATURAL;
+                    }
+                }
+                
+                else if (std::find(std::begin(Theory::blackKeys), std::end(Theory::blackKeys), pitchSetClass) != std::end(Theory::blackKeys)){ //If a black key.
+                    return SHARP;
+                }else return NATURAL;
+                
+            }();
+            String accidentalText = [&](){
+                switch(accidental){
+                    case SHARP: return "#";
+                    case FLAT: return "b";
+                    case DOUBLE_SHARP: return "x";
+                    case DOUBLE_FLAT: return "bb";
+                }
+            }();
             
-            g.fillEllipse(clefSpacing, yPos, noteWidth, noteHeight);
+            g.fillEllipse(xPos, yPos, noteWidth, noteHeight); //Draw note.
+            
+            g.setFont(height*0.6f);
+            g.drawText(accidentalText, xPos-accidentalSpacing,yPos-(lineSpacing*0.6),noteWidth,noteHeight, Justification::right);
+            
             
             if(diatonicPitch==0) g.drawLine(ledgerLineX, ledgerLineY, ledgerLineX + noteWidth*2, ledgerLineY);
         }
         
 
-        g.setFont(opusLookAndFeel.getOpus());
-        g.setFont(height*0.76);
-        g.drawText(clefText, 0, clefHeight, width, height, Justification::left);
+        
         
     }
     

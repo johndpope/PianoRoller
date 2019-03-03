@@ -10,9 +10,9 @@
 
 #pragma once
 
+
 #include "../JuceLibraryCode/JuceHeader.h"
 #include <map>
-#include "Theory.h"
 
 
 
@@ -117,7 +117,6 @@ public:
     ////========================////
     
     OwnedArray<Preset> * processorPresets;
-    Staff * auditionStaff;
     
     ////==============CONSTRUCTOR==============//
     PianoRollComponent(){
@@ -160,7 +159,6 @@ private:
 
     
 };
-
 
 
 

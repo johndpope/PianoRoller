@@ -12,6 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Setup.h"
+#include "Theory.h"
 #include "PluginProcessor.h"
 #include <map>
 
@@ -48,6 +49,7 @@ public:
     String stuff = "stuff to say";
     Value * noteName;
     PianoRollComponent * pianoKeys;
+    Staff * auditionStaff;
     
 private:
 
@@ -72,6 +74,7 @@ class PianoKeys    : public PianoRollComponent
 {
 public:
     PianoRoll * pianoRoll;
+    Staff * auditionStaff;
     
     PianoKeys(PianoRoll * pianoRollInput){
         pianoRoll = pianoRollInput;
