@@ -17,6 +17,25 @@
 #include <iostream>
 #include "Setup.h"
 
+enum Clef{
+    TREBLE,
+    BASS,
+    TREBLE_8VA,
+    TREBLE_15MA,
+    BASS_8VA,
+    BASS_15MA
+};
+
+
+enum Accidental{
+    SHARP,
+    FLAT,
+    DOUBLE_SHARP,
+    DOUBLE_FLAT,
+    NO_PREFERENCE,
+    NATURAL
+};
+
 namespace Theory{
     
     struct Mode{
@@ -326,58 +345,58 @@ namespace Theory{
         {11,6}
     };
     
-    
-    inline int noteNameToDiatonicValue(String noteName){
-        int output;
+    inline std::pair<int,int> noteNameToDiatonicValue(String noteName){
+        int diatonicNoteVal;
+        int diatonicModVal;
         
         std::for_each(Theory::diatonicNoteNames.begin(),
                       Theory::diatonicNoteNames.end(), [&](std::pair<int, Array<String>> diatonicNote){
             Array<String> noteNames = diatonicNote.second;
             if (noteNames.contains(noteName)){
-                output = diatonicNote.first;
-            }else output = 0;
+                diatonicNoteVal = diatonicNote.first;
+                diatonicModVal = noteNames.indexOf(noteName);
+            }else diatonicNoteVal = 0; diatonicModVal;
         });
         
-        return output;
+        return {diatonicNoteVal, diatonicModVal};
     }
     
+    inline Accidental diatonicMatrixToAccidentals(int val){
+        switch(val){
+            case 0: return DOUBLE_FLAT;
+            case 1: return FLAT;
+            case 2: return NATURAL;
+            case 3: return SHARP;
+            case 4: return DOUBLE_SHARP;
+        }
+    }
     
 };
 
-
-
-enum Clef{
-    TREBLE,
-    BASS,
-    TREBLE_8VA,
-    TREBLE_15MA,
-    BASS_8VA,
-    BASS_15MA
-};
-
-
-enum Accidental{
-    SHARP,
-    FLAT,
-    DOUBLE_SHARP,
-    DOUBLE_FLAT,
-    NO_PREFERENCE,
-    NATURAL
-};
 
 
 struct NoteHead{
     uint8 notePitch;
     String noteName;
     int diatonicNoteValue;
+    int diatonicModValue;
+    Accidental accidental;
     
-    NoteHead(uint8 pitch){
+    NoteHead(const uint8 pitch, const int _diatonicNoteValue, const int _diatonicModValue){
         notePitch = pitch;
+        diatonicNoteValue = _diatonicNoteValue;
+        diatonicModValue = _diatonicModValue;
+        accidental = Theory::diatonicMatrixToAccidentals(diatonicModValue);
+    }
+    
+    NoteHead(const uint8 pitch){
+        NoteHead(pitch, -1, -1);
     }
 
     uint8 getNotePitch()      { return notePitch;         }
     String getNoteName()      { return noteName;          }
     int getDiatonicNoteValue(){ return diatonicNoteValue; }
+    Accidental getAccidental(){ return accidental;        }
 };
 
 /*
@@ -478,13 +497,6 @@ public:
         Array<int> enharmIndex = mode.getEnharmIndex();
         Array<int> intervals = mode.getIntervals();
         
-        
-        
-        
-        
-        
-        
-        
         /*
          *====DRAW CLEF====
          */
@@ -507,28 +519,43 @@ public:
         for(int note=0; note<notes.size();note++){
             uint8 myNotePitch = notes[note].getNotePitch();
             int pitchSetClass = (int)myNotePitch%12;
-            int diatonicPitch = [&]()->int{ //TODO
-                return Theory::setClassToDiatonic[pitchSetClass];
+            
+            Accidental accidental = [&]()->Accidental{
+                Accidental savedAccidental = notes[note].getAccidental();
+                
+                if (savedAccidental) return savedAccidental;
+                else{
+                    if(modeNotes.contains(pitchSetClass)){
+                        switch (enharmIndex[modeNotes.indexOf(pitchSetClass)]){
+                            case 2: return FLAT;
+                            case 1: return SHARP;
+                            case 0: return NATURAL;
+                        }
+                    }
+                
+                    else if (std::find(std::begin(Theory::blackKeys), std::end(Theory::blackKeys), pitchSetClass) != std::end(Theory::blackKeys)){ //If a black key.
+                        return SHARP;
+                    }else return NATURAL;
+                }
             }();
+            
+            
+            int diatonicPitch = [&]()->int{
+                int savedDiatonicPitch = notes[note].getDiatonicNoteValue();
+            
+                if (savedDiatonicPitch > -1) return savedDiatonicPitch;
+                else{
+                    Theory::setClassToDiatonic[pitchSetClass];
+                }
+            }();
+            
+            
             float xPos = clefSpacing + (clefSpacing*note*0.5);
             float yPos = height - ( (lineSpacing/2) * (diatonicPitch+3) );
             float ledgerLineX = clefSpacing - noteWidth/2;
             float ledgerLineY = yPos+(lineSpacing/2);
-            Accidental accidental = [&]()->Accidental{
-                
-                if(modeNotes.contains(pitchSetClass)){
-                    switch (enharmIndex[modeNotes.indexOf(pitchSetClass)]){
-                        case 2: return FLAT;
-                        case 1: return SHARP;
-                        case 0: return NATURAL;
-                    }
-                }
-                
-                else if (std::find(std::begin(Theory::blackKeys), std::end(Theory::blackKeys), pitchSetClass) != std::end(Theory::blackKeys)){ //If a black key.
-                    return SHARP;
-                }else return NATURAL;
-                
-            }();
+            
+            
             String accidentalText = [&](){
                 switch(accidental){
                     case SHARP: return "#";

@@ -780,12 +780,40 @@ void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
     }
     processor.presets[currentPreset]->currentMode = scaleName;
     
-    buttonClicked(&generateButton);
+    const Array<int> enharmIndex = Theory::modeMap[scaleName].getEnharmIndex();
+    const Array<int> intervals = Theory::modeMap[scaleName].getIntervals();
+    const String rootName = processor.presets[currentPreset]->rootName;
     
+    //rootDiatonicValues are {diatonicValue, diatonicMod} e.g. {0, 3} would be C#. 2 is considered natural.
+    const std::pair<int, int> rootDiatonicValues = Theory::noteNameToDiatonicValue(rootName);
+    const int rootDiatonicVal = rootDiatonicValues.first;
+    const int rootDiatonicMod = rootDiatonicValues.second;
+    
+    //POPULATE SCALE DISPLAY STAFF WITH NOTES===============//
     scaleDisplayStaff.notes.clear();
-    for(auto note : processor.scale){
-        scaleDisplayStaff.notes.push_back(NoteHead(note));
+    for(int i = 0; i<processor.scale.size(); i++){
+        //const String scaleName = processor.presets[currentPreset]->currentMode;
+        
+        const int note = processor.scale[i]; //Set class value.
+        const int accidental = enharmIndex[i]; //1 is sharp, 2 is flat.
+        const int interval = intervals[i];
+        
+        const int diatonicVal = (rootDiatonicVal + interval)%12;
+        const int diatonicMod = rootDiatonicMod + [&]()->int{
+            switch(accidental){
+                case 0: return 0;
+                case 1: return 1;
+                case 2: return -1;
+            }
+        }();
+        
+        //const int diatonicNoteValue = Theory::noteNameToDiatonicValue("C");
+        
+        
+        scaleDisplayStaff.notes.push_back(NoteHead(note, diatonicVal, diatonicMod));
     }
+    
+    buttonClicked(&generateButton); //Click the generate button when finished.
 }
 
 void PianoRoll1AudioProcessorEditor::monoPolyMenuChanged(){
