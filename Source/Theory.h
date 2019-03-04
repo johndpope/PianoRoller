@@ -506,31 +506,25 @@ public:
             DBG("foo\n");
             String debug = (String)pitchSetClass;
             
-            
-            
             Accidental accidental = [&]()->Accidental{
                 Accidental savedAccidental = notes[note].getAccidental();
                 
-                if (savedAccidental != NO_PREFERENCE) {debug = "whoa"; return savedAccidental;}
+                if (savedAccidental != NO_PREFERENCE) {return savedAccidental;}
                 
                 if(modeNotes.contains(pitchSetClass)){
                     switch (enharmIndex[modeNotes.indexOf(pitchSetClass)]){
-                        case 2: debug = "flat"; return FLAT;
-                        case 1: debug = "sharp 1";return SHARP;
-                        case 0: debug = "natural";return NATURAL;
+                        case 2: return FLAT;
+                        case 1: return SHARP;
+                        case 0: return NATURAL;
                     }
                 }
             
                 if (std::find(std::begin(Theory::blackKeys), std::end(Theory::blackKeys), pitchSetClass) != std::end(Theory::blackKeys)){ //If a black key.
-                    debug = "sharp 2";
                     return SHARP;
                 }
-                debug = "natural";
                 return NATURAL;
                 
             }();
-            
-            
             
             int diatonicPitch = [&]()->int{
                 int savedDiatonicPitch = notes[note].getDiatonicNoteValue();
@@ -541,6 +535,17 @@ public:
                 }
             }();
             
+
+            auto [lowestCinStaffLineOffset, lowestCinStaffOctave] = [&](){
+                switch(clef){
+                    case TREBLE: return std::pair<int, int>(3, 4);
+                    case BASS: return std::pair<int, int>(1, 2);
+                    case TREBLE_8VA: return std::pair<int, int>(3, 5);
+                    case TREBLE_15MA: return std::pair<int, int>(3, 6);
+                    case BASS_8VA: return std::pair<int, int>(1, 1);
+                    case BASS_15MA: return std::pair<int, int>(1, 0);
+                }
+            }();
             
             float xPos = clefSpacing + (clefSpacing*note*0.5);
             float yPos = height - ( (lineSpacing/2) * (diatonicPitch+3) );
