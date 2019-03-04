@@ -14,7 +14,9 @@
 //==============================================================================
 PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p), midiLabel("0"), pianoRoll(&p.presets, &auditionStaff, &pianoKeys), volumePanel(&p.presets), pianoKeys(&pianoRoll), playCursorWindow(&processor.lastPosInfo), auditionStaff(&p.presets, &p.currentPreset), scaleDisplayStaff(&p.presets, &p.currentPreset)
-{    
+{
+    
+    DBG("fosdfsfdso\n");
     setVisible(true);
     setResizable(true, true);
     isChildOfBeatCanvas = false;
@@ -786,8 +788,14 @@ void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
     
     //rootDiatonicValues are {diatonicValue, diatonicMod} e.g. {0, 3} would be C#. 2 is considered natural.
     const std::pair<int, int> rootDiatonicValues = Theory::noteNameToDiatonicValue(rootName);
+    
     const int rootDiatonicVal = rootDiatonicValues.first;
     const int rootDiatonicMod = rootDiatonicValues.second;
+    
+    auto majorScaleIndex = Theory::circleOfFifths[rootName];
+    
+    pianoRoll.stuff = (String)rootDiatonicMod;
+    pianoRoll.repaint();
     
     //POPULATE SCALE DISPLAY STAFF WITH NOTES===============//
     scaleDisplayStaff.notes.clear();
@@ -798,14 +806,16 @@ void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
         const int accidental = enharmIndex[i]; //1 is sharp, 2 is flat.
         const int interval = intervals[i];
         
-        const int diatonicVal = (rootDiatonicVal + interval)%12;
-        const int diatonicMod = rootDiatonicMod + [&]()->int{
-            switch(accidental){
-                case 0: return 0;
-                case 1: return 1;
-                case 2: return -1;
-            }
-        }();
+        const int diatonicVal = (rootDiatonicVal + interval-1)%12;
+        const int diatonicMod = 2 +
+                                majorScaleIndex[diatonicVal] + 
+                                [&]()->int{
+                                    switch(accidental){
+                                        case 0: return 0;
+                                        case 1: return 1;
+                                        case 2: return -1;
+                                    }
+                                }();
         
         //const int diatonicNoteValue = Theory::noteNameToDiatonicValue("C");
         

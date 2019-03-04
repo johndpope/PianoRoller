@@ -194,7 +194,7 @@ void PianoRoll::paint (Graphics& g)
     
     
     //stuff = (String)(*processorPresets)[currentPreset]->currentMode;
-    //g.drawText(stuff, 100, 100, 100, 100, Justification::centred);
+    g.drawText(stuff, 100, 100, width* 0.6, 100, Justification::centred);
     
     
     
@@ -331,9 +331,10 @@ void PianoRoll::mouseDown(const MouseEvent& event){
         }
     }
     auditionStaff->notes.clear();
-    auditionStaff->notes.push_back(pitch);
+    auditionStaff->notes.push_back(NoteHead(pitch, -1, -1));
     
     repaint();
+    auditionStaff->repaint();
 }
 /*
 bool PianoRoll::keyPressed(const juce::KeyPress &key, juce::Component *originatingComponent){

@@ -309,25 +309,25 @@ namespace Theory{
     };
 
         
-    const std::map<int, Array<int>> circleOfFifths = {
-    
-        {0,{0,0,0,0,0,0,0}}, //C
-        {1,{1,1,1,1,1,1,1}}, //C#
-        {2,{1,0,0,1,0,0,0}}, //D
-        {3,{2,1,1,2,1,1,1}}, //D#
-        {4,{1,1,0,1,1,0,0}}, //E
-        {5,{0,0,0,0,0,0,-1}}, //F
-        {6,{1,1,1,1,1,1,0}}, //F#
-        {7,{0,0,0,1,0,0,0}}, //G
-        {8,{1,1,1,2,1,1,1}}, //G#
-        {9,{1,0,0,1,1,0,0}}, //A
-        {10,{2,1,1,2,2,1,1}}, //A#
-        {11,{1,1,0,1,1,1,0}}, //B
-        {11,{0,-1,-1,0,0,-1,-1}}, //Db
-        {11,{0,0,-1,0,0,-1,-1}}, //Eb
-        {11,{-1,-1,-1,0,-1,-1,-1}}, //Gb
-        {11,{0,-1,-1,0,0,-1,-1}}, //Ab
-        {11,{0,0,-1,0,0,0,-1}} //Bb
+    inline std::map<String, Array<int>> circleOfFifths = {
+        //0 is natural, numbers show how many semitone sharp or flat.
+        {"C",{0,0,0,0,0,0,0}},
+        {"C#",{1,1,1,1,1,1,1}},
+        {"D",{1,0,0,1,0,0,0}},
+        {"D#",{1,1,0,1,0,0,0}},
+        {"E",{1,0,0,1,1,0,0}},
+        {"F",{0,0,0,0,0,0,-1}},
+        {"F#",{1,1,1,1,1,1,0}},
+        {"G",{0,0,0,1,0,0,0}},
+        {"G#",{1,1,1,2,1,1,1}},
+        {"A",{1,1,0,1,1,0,0}},
+        {"A#",{2,2,1,2,2,1,1}},
+        {"B",{1,1,0,1,1,1,0}},
+        {"Db",{0,-1,-1,0,-1,-1,-1}},
+        {"Eb",{0,0,-1,0,0,-1,-1}},
+        {"Gb",{-1,-1,-1,0,0,-1,-1}},
+        {"Ab",{0,-1,-1,0,0,-1,-1}},
+        {"Bb",{0,0,-1,0,0,0,-1}},
     };
     
     inline std::map<int, int> setClassToDiatonic{
@@ -355,7 +355,7 @@ namespace Theory{
             if (noteNames.contains(noteName)){
                 diatonicNoteVal = diatonicNote.first;
                 diatonicModVal = noteNames.indexOf(noteName);
-            }else diatonicNoteVal = 0; diatonicModVal;
+            }
         });
         
         return {diatonicNoteVal, diatonicModVal};
@@ -363,11 +363,12 @@ namespace Theory{
     
     inline Accidental diatonicMatrixToAccidentals(int val){
         switch(val){
-            case 0: return DOUBLE_FLAT;
-            case 1: return FLAT;
-            case 2: return NATURAL;
-            case 3: return SHARP;
-            case 4: return DOUBLE_SHARP;
+            case -1: return NO_PREFERENCE;
+            case 0 : return DOUBLE_FLAT;
+            case 1 : return FLAT;
+            case 2 : return NATURAL;
+            case 3 : return SHARP;
+            case 4 : return DOUBLE_SHARP;
         }
     }
     
@@ -391,6 +392,7 @@ struct NoteHead{
     
     NoteHead(const uint8 pitch){
         NoteHead(pitch, -1, -1);
+        accidental = NO_PREFERENCE;
     }
 
     uint8 getNotePitch()      { return notePitch;         }
@@ -399,16 +401,6 @@ struct NoteHead{
     Accidental getAccidental(){ return accidental;        }
 };
 
-/*
-static const Font& getOpus()
-{
-    static Font opus (Font (Typeface::createSystemTypefaceFor (BinaryData::OpusStd_otf,
-                                                               BinaryData::OpusStd_otfSize)));
-    return opus;
-}
- */
-//inline static Font opus = Typeface::createSystemTypefaceFor (BinaryData::OpusStd_otf,
-                                                           //BinaryData::OpusStd_otfSize);
 
 class OpusLookAndFeel : public LookAndFeel_V4
 {
@@ -432,15 +424,6 @@ public:
                                                                       BinaryData::OpusStd_otfSize));
     }
     
-    /*
-     Typeface::Ptr getTypefaceForFont(const Font& f) override{
-     static Typeface::Ptr myFont = Typeface::createSystemTypefaceFor(BinaryData::OpusStd_otf,
-     BinaryData::OpusStd_otfSize);
-     return myFont;
-     }
-     */
-    //static Typeface::Ptr opus (Font (Typeface::createSystemTypefaceFor (BinaryData::OpusStd_otf,
-    //BinaryData::OpusStd_otfSize)));
 };
 
 
@@ -497,55 +480,64 @@ public:
         Array<int> enharmIndex = mode.getEnharmIndex();
         Array<int> intervals = mode.getIntervals();
         
-        /*
-         *====DRAW CLEF====
-         */
+        //=================
+        //====DRAW CLEF====
+        //=================
         g.setFont(opusLookAndFeel.getOpus());
         g.setFont(height*0.76);
         g.drawText(clefText, 0.0f, clefHeight, width, height, Justification::left);
         
-        /*
-         *====DRAW LINES====
-         */
+        //=================
+        //====DRAW LINES====
+        //=================
         g.setColour(Colours::black);
-        for(int line=3; line<9;line++){
+        for(int line=4; line<9;line++){
             float yPos = line*lineSpacing;
             g.drawLine(0.0f, yPos, width, yPos);
         }
         
-        /*
-         *====DRAW NOTE====
-         */
+        //=================
+        //====DRAW NOTE====
+        //=================
         for(int note=0; note<notes.size();note++){
             uint8 myNotePitch = notes[note].getNotePitch();
-            int pitchSetClass = (int)myNotePitch%12;
+            int pitchSetClass = ((int)myNotePitch) % 12;
+            //DBG("fooo");
+            DBG("foo\n");
+            String debug = (String)pitchSetClass;
+            
+            
             
             Accidental accidental = [&]()->Accidental{
                 Accidental savedAccidental = notes[note].getAccidental();
                 
-                if (savedAccidental) return savedAccidental;
-                else{
-                    if(modeNotes.contains(pitchSetClass)){
-                        switch (enharmIndex[modeNotes.indexOf(pitchSetClass)]){
-                            case 2: return FLAT;
-                            case 1: return SHARP;
-                            case 0: return NATURAL;
-                        }
-                    }
+                if (savedAccidental != NO_PREFERENCE) {debug = "whoa"; return savedAccidental;}
                 
-                    else if (std::find(std::begin(Theory::blackKeys), std::end(Theory::blackKeys), pitchSetClass) != std::end(Theory::blackKeys)){ //If a black key.
-                        return SHARP;
-                    }else return NATURAL;
+                if(modeNotes.contains(pitchSetClass)){
+                    switch (enharmIndex[modeNotes.indexOf(pitchSetClass)]){
+                        case 2: debug = "flat"; return FLAT;
+                        case 1: debug = "sharp 1";return SHARP;
+                        case 0: debug = "natural";return NATURAL;
+                    }
                 }
+            
+                if (std::find(std::begin(Theory::blackKeys), std::end(Theory::blackKeys), pitchSetClass) != std::end(Theory::blackKeys)){ //If a black key.
+                    debug = "sharp 2";
+                    return SHARP;
+                }
+                debug = "natural";
+                return NATURAL;
+                
             }();
+            
             
             
             int diatonicPitch = [&]()->int{
                 int savedDiatonicPitch = notes[note].getDiatonicNoteValue();
-            
+                
                 if (savedDiatonicPitch > -1) return savedDiatonicPitch;
                 else{
-                    Theory::setClassToDiatonic[pitchSetClass];
+                    return Theory::setClassToDiatonic[pitchSetClass];
                 }
             }();
             
