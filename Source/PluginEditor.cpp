@@ -791,6 +791,7 @@ void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
     
     const int rootDiatonicVal = rootDiatonicValues.first;
     const int rootDiatonicMod = rootDiatonicValues.second;
+    int previousDiatonicVal = rootDiatonicMod-7;
     
     auto majorScaleIndex = Theory::circleOfFifths[rootName];
     
@@ -806,7 +807,10 @@ void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
         const int accidental = enharmIndex[i]; //1 is sharp, 2 is flat.
         const int interval = intervals[i];
         
-        const int diatonicVal = (rootDiatonicVal + interval-1)%12;
+        const int diatonicVal = [&](){
+            const int initVal = (rootDiatonicVal + interval-1)%12; //Get value derived from interval from root.
+            return initVal + ( (initVal > previousDiatonicVal) ? 0 : 7); //Componsate octave, ensure higher than previous note.
+        }();
         const int diatonicMod = 2 +
                                 majorScaleIndex[diatonicVal] + 
                                 [&]()->int{
@@ -817,10 +821,9 @@ void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
                                     }
                                 }();
         
-        //const int diatonicNoteValue = Theory::noteNameToDiatonicValue("C");
-        
         
         scaleDisplayStaff.notes.push_back(NoteHead(note, diatonicVal, diatonicMod));
+        previousDiatonicVal = diatonicVal;
     }
     
     buttonClicked(&generateButton); //Click the generate button when finished.

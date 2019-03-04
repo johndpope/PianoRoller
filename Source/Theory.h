@@ -544,7 +544,7 @@ public:
             
             float xPos = clefSpacing + (clefSpacing*note*0.5);
             float yPos = height - ( (lineSpacing/2) * (diatonicPitch+3) );
-            float ledgerLineX = clefSpacing - noteWidth/2;
+            float ledgerLineX = xPos - noteWidth/2;
             float ledgerLineY = yPos+(lineSpacing/2);
             
             
@@ -564,8 +564,9 @@ public:
             g.setFont(height*0.6f);
             g.drawText(accidentalText, xPos-accidentalSpacing,yPos-(lineSpacing*0.6),noteWidth,noteHeight, Justification::right);
             
-            
-            if(diatonicPitch==0) g.drawLine(ledgerLineX, ledgerLineY, ledgerLineX + noteWidth*2, ledgerLineY);
+            //One ledger line below or above.
+            if(diatonicPitch==0 || diatonicPitch==12) g.drawLine(ledgerLineX, ledgerLineY, ledgerLineX + noteWidth*2, ledgerLineY);
+            //TODO: Two ledger lines below or above.
         }
         
 
