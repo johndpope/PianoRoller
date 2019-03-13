@@ -804,7 +804,7 @@ void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
         //const String scaleName = processor.presets[currentPreset]->currentMode;
         
         const int note = processor.scale[i]; //Set class value.
-        const int accidental = enharmIndex[i]; //1 is sharp, 2 is flat.
+        const int accidental = enharmIndex[i];
         const int interval = intervals[i];
         
         const int diatonicVal = [&](){
@@ -813,14 +813,7 @@ void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
         }();
         const int diatonicMod = 2 +
                                 majorScaleIndex[diatonicVal] + 
-                                [&]()->int{
-                                    switch(accidental){
-                                        case 0: return 0;
-                                        case 1: return 1;
-                                        case 2: return -1;
-                                    }
-                                }();
-        
+                                accidental;
         
         scaleDisplayStaff.notes.push_back(NoteHead(note, diatonicVal, diatonicMod));
         previousDiatonicVal = diatonicVal;
