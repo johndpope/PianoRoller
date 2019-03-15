@@ -45,6 +45,9 @@ PianoRoll1AudioProcessor::PianoRoll1AudioProcessor()
     //OSC MESSAGES===============================================================
     if (! connect(6449)){}; //Connect to OSC messages from Max.
     juce::OSCReceiver::addListener(this, "/juce");
+    
+    midiStream.ensureStorageAllocated(24);
+    midiInstrumentStream.ensureStorageAllocated(88);
 
 }
 
@@ -341,9 +344,6 @@ void PianoRoll1AudioProcessor::sequencerCheck(juce::Value &value){
         beatIndex = (beatIndex+1) % presets[currentPreset]->numOfBeats;
     }
     
-    //
-    
-    
     if (isPlaying == false){
         beatIndex = 0;
         valDecimals = 0.0f;
@@ -437,8 +437,6 @@ void PianoRoll1AudioProcessor::sequencerCheck(juce::Value &value){
         
         
     }
-    
-    //playPosition = std::to_string(beatIndex) + "  " + std::to_string(currentBeat);
     
     int currentNumOfBeats = presets[currentPreset]->numOfBeats;
     

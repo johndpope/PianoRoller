@@ -28,6 +28,7 @@
       <FILE id="btSZ0t" name="VolumePanel.h" compile="0" resource="0" file="Source/VolumePanel.h"/>
       <FILE id="qDMBuC" name="Setup.cpp" compile="1" resource="0" file="Source/Setup.cpp"/>
       <FILE id="gltkkR" name="Setup.h" compile="0" resource="0" file="Source/Setup.h"/>
+      <FILE id="Y96X3m" name="OSC_Messages.h" compile="0" resource="0" file="Source/OSC_Messages.h"/>
       <FILE id="wJhAgm" name="Theory.h" compile="0" resource="0" file="Source/Theory.h"/>
     </GROUP>
   </MAINGROUP>

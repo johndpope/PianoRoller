@@ -35,7 +35,6 @@ public:
     void resized() override;
     void (*setParentMidiDisplay)(int);
     MidiMessage midiMessage;
-    //bool keyPressed (const KeyPress& key, Component* originatingComponent) override;
     void changeBeatCanvasPreset(const int preset);
     void changeBeatCanvasTrack(const int track);
     void changeBeatCanvasBeats(const int beats);
@@ -80,8 +79,7 @@ public:
         pianoRoll = pianoRollInput;
     }
     ~PianoKeys(){
-        //delete pianoRoll;
-        //delete auditionStaff;
+        
     }
     
 private:

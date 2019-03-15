@@ -194,7 +194,7 @@ void PianoRoll::paint (Graphics& g)
     
     
     //stuff = (String)(*processorPresets)[currentPreset]->currentMode;
-    g.drawText(stuff, 100, 100, width* 0.6, 100, Justification::centred);
+    //g.drawText(stuff, 100, 100, width* 0.6, 100, Justification::centred);
     
     
     
@@ -438,19 +438,9 @@ void PianoKeys::paint(juce::Graphics &g){
                 g.drawLine(width*0.66f, yPosition-(noteHeight*0.5f), width-0.66f, yPosition-(noteHeight*0.5f));
             }
         }
-        //g.setOpacity(0.5);
-        
-        
-        
-        //g.setColour(greyOff);
-        //g.setOpacity(0.25);
-        //g.fillRect(0.0f,0.0f,width, noteHeight);
-        //g.setOpacity(1.0);
-        
         
     }
     
-    //g.drawRect(0.0f, 0.0f, width, height, 3);
     g.drawRoundedRectangle(0.0f, 0.0f, width, height, 0.0f, 4.0f);
     
     

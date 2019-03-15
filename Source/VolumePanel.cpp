@@ -27,7 +27,7 @@ VolumePanel::VolumePanel(OwnedArray<Preset> * processorPresetLocation){
 }
 
 VolumePanel::~VolumePanel(){
-    //delete processorPresets;
+
 }
 
 void VolumePanel::paint (Graphics& g)

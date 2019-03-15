@@ -17,6 +17,7 @@
 #include "Setup.h"
 #include "PlayCursorWindow.h"
 #include "Theory.h"
+#include "OSC_Messages.h"
 #include <algorithm>
 #include <random>
 
@@ -120,9 +121,7 @@ private:
     const static int numOfPresets = PianoRollComponent::numOfPresets;
     const static int numOfTracks = PianoRollComponent::numOfTracks;
     const static int maxBeats = PianoRollComponent::maxBeats;
-    const float textColumnWidth = 0.0;
     const float topBorder = 0.14f;
-    const float tripletToggleHeight = 0.0f;
     const float pianoKeyWidth = 0.06;
     Array<Array<float>> tripletSwitches;
     Array<int> beatsClicked;
