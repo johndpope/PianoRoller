@@ -51,9 +51,9 @@ namespace Theory{
         }
         Mode(){}
         
-        Array<int> getMode(){ return mode; }
-        Array<int> getEnharmIndex(){ return enharmIndex; }
-        Array<int> getIntervals(){ return intervals; }
+        Array<int> getMode()        { return mode;        }
+        Array<int> getEnharmIndex() { return enharmIndex; }
+        Array<int> getIntervals()   { return intervals;   }
     };
     
     
@@ -74,41 +74,14 @@ namespace Theory{
     /*
      * Scales are built using Arrays of
      *      1. Their pitch classes.
-     *      2. Their "enharmonic index" (i.e. which note deviates from the major scale)
+     *      2. Their "enharmonic index" (i.e. which note deviates from the major scale, -1 would be flat for instance)
      *      3. Their intervals (which degrees of the diatonic scale do they draw from)
      *
      */
     namespace Scales{
-        /*
-        inline Array<int>   major =      {0,2,4,5,7,9,11},
-                            natMinor =   {0,2,3,5,7,8,10},
-                            harmMinor =  {0,2,3,5,7,8,11},
-                            melMinor =   {0,2,3,5,7,9,11},
-                            locrian =    {0,1,3,5,6,8,1},
-                            dorian =     {0,2,3,5,7,8,10},
-                            phrygian =   {0,1,3,5,7,8,10},
-                            lydian =     {0,2,4,6,7,9,11},
-                            mixolydian = {0,2,4,5,7,9,10},
-                            wholeTone =  {0,2,4,6,8,10},
-                            pentaMaj =   {0,2,4,7,9},
-                            pentaMin =   {0,3,5,7,10},
-                            pentaMajB =  {0,2,3,4,7,9},
-                            pentaMinB =  {0,3,5,6,7,10},
-                            dimWholeHalf={0,2,3,5,6,8,9,11},
-                            dimHalfWhole={0,1,3,4,6,7,9,10},
-                            hungarMinor= {0,2,3,6,7,8,11},
-                            phrygDom =   {0,1,4,5,7,8,10},
-                            lydDom =     {0,2,4,6,7,9,10},
-                            yo =         {0,2,5,7,9},
-                            insen =      {0,1,5,7,10},
-                            bebopDom =   {0,2,4,5,7,9,10,11},
-                            bebopMaj =   {0,2,4,5,7,8,9,11};
-        */
-        
-        //TODO
         
                                        //---mode-----------------enharmIndex-------intervals-------//
-        inline Scale        major =      { {0,2,4,5,7,9,11},    {0,0,0,0,0,0,0},        {1,2,3,4,5,6,7} },
+        inline const Scale  major =      { {0,2,4,5,7,9,11},    {0,0,0,0,0,0,0},        {1,2,3,4,5,6,7} },
                             natMinor =   { {0,2,3,5,7,8,10},    {0,0,-1,0,0,-1,-1},     {1,2,3,4,5,6,7} },
                             harmMinor =  { {0,2,3,5,7,8,11},    {0,0,-1,0,0,-1,0},      {1,2,3,4,5,6,7} },
                             melMinor =   { {0,2,3,5,7,9,11},    {0,0,-1,0,0,0,0},       {1,2,3,4,5,6,7} },
@@ -138,83 +111,48 @@ namespace Theory{
     
     
     namespace Chords{
-        /*
-        inline Array<int>   majChord =       {0,4,7},
-                            minChord =       {0,3,7},
-                            augChord =       {0,4,8},
-                            dimChord =       {0,3,6},
-                            seventhChord =   {0,4,7,10},
-                            min7Chord =      {0,3,7,10},
-                            min7b5Chord =    {0,3,6,10},
-                            dim7Chord =      {0,3,6,9},
-                            maj7Chord =      {0,4,7,11},
-                            minMaj7Chord =   {0,3,7,11},
-                            ninthChord =     {0,2,4,7,10},
-                            min9Chord =      {0,2,3,7,10},
-                            min7b9Chord =    {0,1,3,7,10},
-                            maj9Chord =      {0,2,4,7,11},
-                            add9Chord =      {0,2,4,7},
-                            minAdd9Chord =   {0,2,3,7},
-                            sevenSharp9Chord={0,3,4,7,10},
-                            sus2Chord =      {0,2,7},
-                            sus4Chord =      {0,5,7},
-                            powerChord =     {0,7},
-                            sixthChord =     {0,4,7,9},
-                            minSixthChord =  {0,3,7,8},
-                            sixNineChord =   {0,2,4,7,9},
-                            thirteenthChord= {0,4,7,9,10},
-                            min13thChord =   {0,3,7,8,10},
-                            maj13thChord =   {0,4,7,9,11},
-                            eleventhChord =  {0,4,5,7,10},
-                            sharp11Chord =   {0,4,6,7,10},
-                            minSharp11Chord= {0,3,6,7,10},
-                            min7Flat5Flat9Chord={0,1,3,10},
-                            aug7thChord =    {0,4,8,10},
-                            petrushka =      {0,1,4,6,7,10},
-                            farben =         {0,4,8,9,11};
-         */
         
-        inline Chord    majChord =          { {0,4,7},      {0,0,0},        {1,3,5} },
-                        minChord =          { {0,3,7},      {0,1,0},        {1,3,5} },
-                        augChord =          { {0,4,8},      {0,0,-1},       {1,3,5} },
-                        dimChord =          { {0,3,6},      {0,1,1},        {1,3,5} },
-                        seventhChord =      { {0,4,7,10},   {0,0,0,-1},     {1,3,5,7} },
-                        min7Chord =         { {0,3,7,10},   {0,-1,0,-1},    {1,3,5,7} },
-                        min7b5Chord =       { {0,3,6,10},   {0,-1,-1,-1},   {1,3,5,7} },
-                        dim7Chord =         { {0,3,6,9},    {0,-1,-1,-1},   {1,3,5,7} },
-                        maj7Chord =         { {0,4,7,11},   {0,0,0},        {1,3,5,7} },
-                        minMaj7Chord =      { {0,3,7,11},   {0,-1,0,0},     {1,3,5,7} },
-                        ninthChord =        { {0,2,4,7,10}, {0,0,0,-1,0},   {1,3,5,7,2} },
-                        min9Chord =         { {0,2,3,7,10}, {0,-1,0,-1,0},  {1,3,5,7,2} },
-                        min7b9Chord=        { {0,1,3,7,10}, {0,-1,0,-1,-1}, {1,3,5,7,2} },
-                        maj9Chord =         { {0,2,4,7,11}, {0,0,0,0,0},    {1,3,5,7,2} },
-                        add9Chord =         { {0,2,4,7},    {0,0,0,0},      {1,3,5,} },
-                        minAdd9Chord =      { {0,2,3,7},    {0,-1,0,0},     {1,3,5,} },
-                        sevenSharp9Chord=   { {0,3,4,7,10}, {0,0,0,-1,1},   {1,3,5,7,} },
-                        min7Flat5Flat9Chord={ {0,1,3,6,10}, {0,-1,-1,-1,-1},{1,3,5,7,} },
-                        sus2Chord =         { {0,2,7},      {0,0,0},        {1,2,} },
-                        sus4Chord =         { {0,5,7},      {0,0,0},        {1,4,} },
-                        powerChord =        { {0,7},        {0,0},          {1,5} },
-                        sixthChord =        { {0,4,7,9},    {0,0,0,0},      {1,3,5,6} },
-                        minSixthChord =     { {0,3,7,8},    {0,0,0,-1},     {1,3,5,6} },
-                        sixNineChord =      { {0,2,4,7,9},  {0,0,0,0,0},    {1,3,5,6,2} },
-                        eleventhChord =     { {0,4,5,7,10}, {0,0,0,-1,0},   {1,3,5,7,4} },
-                        sharp11Chord =      { {0,4,6,7,10}, {0,0,0,-1,1},   {1,3,5,7,4} },
-                        minSharp11Chord =   { {0,3,6,7,10}, {0,-1,0,-1,1},  {1,3,5,7,4} },
-                        thirteenthChord =   { {0,4,7,9,10}, {0,0,0,-1,0},   {1,3,5,7,6} },
-                        min13thChord =      { {0,3,7,8,10}, {0,-1,0,-1,-1}, {1,3,5,7,6} },
-                        maj13thChord =      { {0,4,7,9,11}, {0,0,0,0,0},    {1,3,5,7,6} },
-                        aug7thChord =       { {0,4,8,10},   {0,0,1,0},      {1,3,5,7} },
-                        petrushka=          {{0,1,4,6,7,10},{0,0,0,1,1,1},  {1,3,5,4,6,} },
-                        farben =            { {0,4,8,9,11}, {0,1,0,0,0},    {1,5,7,3,6} };
+        inline const Chord  majChord =          { {0,4,7},      {0,0,0},        {1,3,5} },
+                            minChord =          { {0,3,7},      {0,1,0},        {1,3,5} },
+                            augChord =          { {0,4,8},      {0,0,-1},       {1,3,5} },
+                            dimChord =          { {0,3,6},      {0,1,1},        {1,3,5} },
+                            seventhChord =      { {0,4,7,10},   {0,0,0,-1},     {1,3,5,7} },
+                            min7Chord =         { {0,3,7,10},   {0,-1,0,-1},    {1,3,5,7} },
+                            min7b5Chord =       { {0,3,6,10},   {0,-1,-1,-1},   {1,3,5,7} },
+                            dim7Chord =         { {0,3,6,9},    {0,-1,-1,-1},   {1,3,5,7} },
+                            maj7Chord =         { {0,4,7,11},   {0,0,0},        {1,3,5,7} },
+                            minMaj7Chord =      { {0,3,7,11},   {0,-1,0,0},     {1,3,5,7} },
+                            ninthChord =        { {0,2,4,7,10}, {0,0,0,-1,0},   {1,3,5,7,2} },
+                            min9Chord =         { {0,2,3,7,10}, {0,-1,0,-1,0},  {1,3,5,7,2} },
+                            min7b9Chord=        { {0,1,3,7,10}, {0,-1,0,-1,-1}, {1,3,5,7,2} },
+                            maj9Chord =         { {0,2,4,7,11}, {0,0,0,0,0},    {1,3,5,7,2} },
+                            add9Chord =         { {0,2,4,7},    {0,0,0,0},      {1,3,5,} },
+                            minAdd9Chord =      { {0,2,3,7},    {0,-1,0,0},     {1,3,5,} },
+                            sevenSharp9Chord=   { {0,3,4,7,10}, {0,0,0,-1,1},   {1,3,5,7,} },
+                            min7Flat5Flat9Chord={ {0,1,3,6,10}, {0,-1,-1,-1,-1},{1,3,5,7,} },
+                            sus2Chord =         { {0,2,7},      {0,0,0},        {1,2,} },
+                            sus4Chord =         { {0,5,7},      {0,0,0},        {1,4,} },
+                            powerChord =        { {0,7},        {0,0},          {1,5} },
+                            sixthChord =        { {0,4,7,9},    {0,0,0,0},      {1,3,5,6} },
+                            minSixthChord =     { {0,3,7,8},    {0,0,0,-1},     {1,3,5,6} },
+                            sixNineChord =      { {0,2,4,7,9},  {0,0,0,0,0},    {1,3,5,6,2} },
+                            eleventhChord =     { {0,4,5,7,10}, {0,0,0,-1,0},   {1,3,5,7,4} },
+                            sharp11Chord =      { {0,4,6,7,10}, {0,0,0,-1,1},   {1,3,5,7,4} },
+                            minSharp11Chord =   { {0,3,6,7,10}, {0,-1,0,-1,1},  {1,3,5,7,4} },
+                            thirteenthChord =   { {0,4,7,9,10}, {0,0,0,-1,0},   {1,3,5,7,6} },
+                            min13thChord =      { {0,3,7,8,10}, {0,-1,0,-1,-1}, {1,3,5,7,6} },
+                            maj13thChord =      { {0,4,7,9,11}, {0,0,0,0,0},    {1,3,5,7,6} },
+                            aug7thChord =       { {0,4,8,10},   {0,0,1,0},      {1,3,5,7} },
+                            petrushka=          {{0,1,4,6,7,10},{0,0,0,1,1,1},  {1,3,5,4,6,} },
+                            farben =            { {0,4,8,9,11}, {0,1,0,0,0},    {1,5,7,3,6} };
          
     };
     
     
     
-    const String setClassToPitchName[12] = {"C","C#/Db","D","D#/Eb","E","F","F#/Gb","G","G#/Ab","A","A#/Bb", "B"};
+    inline const String setClassToPitchName[12] = {"C","C#/Db","D","D#/Eb","E","F","F#/Gb","G","G#/Ab","A","A#/Bb", "B"};
     
-    inline String rootNames[] = {"C","C#", "Db","D","D#","Eb","E","F","F#","Gb","G","G#","Ab","A","A#","Bb", "B"};
+    inline const String rootNames[] = {"C","C#", "Db","D","D#","Eb","E","F","F#","Gb","G","G#","Ab","A","A#","Bb", "B"};
     
     inline std::map<String, int> rootNameMap = {
         {"C", 0},
@@ -501,7 +439,6 @@ public:
         for_indexed(auto note : notes){
             uint8 myNotePitch = note.getNotePitch();
             int pitchSetClass = ((int)myNotePitch) % 12;
-            String debug = (String)pitchSetClass;
             Array<int> fooo = enharmIndex;
             
             Accidental accidental = [&, enharmIndex=enharmIndex, modeNotes=modeNotes, intervals=intervals]()->Accidental{
