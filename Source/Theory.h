@@ -16,6 +16,8 @@
 #include <map>
 #include <iostream>
 #include "Setup.h"
+#define for_indexed(...) for_indexed_v(i, __VA_ARGS__)
+#define for_indexed_v(v, ...) for(bool _i_ = true, _break_ = false; _i_;) for(size_t v = 0; _i_; _i_ = false) for(__VA_ARGS__) if(_break_) break; else for(bool _j_ = true; _j_;) for(_break_ = true; _j_; _j_ = false) for(bool _k_ = true; _k_; v++, _k_ = false, _break_ = false)
 
 enum Clef{
     TREBLE,
@@ -473,12 +475,9 @@ public:
         }();
         
         const String modeName = (*processorPresets)[*currentPreset]->currentMode;
-        //const String rootName = (*processorPresets)[*currentPreset]->rootName;
         const int root = (*processorPresets)[*currentPreset]->root;
         Theory::Mode mode = Theory::modeMap[modeName];
-        Array<int> modeNotes = mode.getMode();
-        Array<int> enharmIndex = mode.getEnharmIndex();
-        Array<int> intervals = mode.getIntervals();
+        auto [modeNotes, enharmIndex, intervals] = mode;
         
         //=================
         //====DRAW CLEF====
@@ -499,15 +498,14 @@ public:
         //=================
         //====DRAW NOTE====
         //=================
-        for(int note=0; note<notes.size();note++){
-            uint8 myNotePitch = notes[note].getNotePitch();
+        for_indexed(auto note : notes){
+            uint8 myNotePitch = note.getNotePitch();
             int pitchSetClass = ((int)myNotePitch) % 12;
-            //DBG("fooo");
-            DBG("foo\n");
             String debug = (String)pitchSetClass;
+            Array<int> fooo = enharmIndex;
             
-            Accidental accidental = [&]()->Accidental{
-                Accidental savedAccidental = notes[note].getAccidental();
+            Accidental accidental = [&, enharmIndex=enharmIndex, modeNotes=modeNotes, intervals=intervals]()->Accidental{
+                Accidental savedAccidental = note.getAccidental();
                 
                 if (savedAccidental != NO_PREFERENCE) {return savedAccidental;}
                 
@@ -529,7 +527,7 @@ public:
             }();
             
             int diatonicPitch = [&]()->int{
-                int savedDiatonicPitch = notes[note].getDiatonicNoteValue();
+                int savedDiatonicPitch = note.getDiatonicNoteValue();
                 
                 if (savedDiatonicPitch > -1) return savedDiatonicPitch;
                 else{
@@ -549,7 +547,7 @@ public:
                 }
             }();
             
-            float xPos = clefSpacing + (clefSpacing*note*0.5);
+            float xPos = clefSpacing + (clefSpacing * i * 0.5);
             float yPos = height - ( (lineSpacing/2) * (diatonicPitch+3) );
             float ledgerLineX = xPos - noteWidth/2;
             float ledgerLineY = yPos+(lineSpacing/2);

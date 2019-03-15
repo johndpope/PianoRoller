@@ -49,6 +49,8 @@ public:
     //==============================================================================
     AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
+    bool isStandalone = JUCEApplication::isStandaloneApp();
+    bool isPlugin = !JUCEApplication::isStandaloneApp();
 
     //==============================================================================
     const String getName() const override;

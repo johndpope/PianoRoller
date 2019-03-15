@@ -782,8 +782,7 @@ void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
     }
     processor.presets[currentPreset]->currentMode = scaleName;
     
-    const Array<int> enharmIndex = Theory::modeMap[scaleName].getEnharmIndex();
-    const Array<int> intervals = Theory::modeMap[scaleName].getIntervals();
+    auto [modeNotes, enharmIndex, intervals] = Theory::modeMap[scaleName];
     const String rootName = processor.presets[currentPreset]->rootName;
     
     //rootDiatonicValues are {diatonicValue, diatonicMod} e.g. {0, 3} would be C#. 2 is considered natural.
@@ -797,12 +796,16 @@ void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
     
     pianoRoll.stuff = (String)rootDiatonicMod;
     pianoRoll.repaint();
+    DBG("\n\n");
+    DBG("rootName: " + rootName + "\n");
+    DBG("scaleName: " + scaleName + "\n");
+    DBG("majorScaleIndex: " + [majorScaleIndex](){String msi; for(auto val:majorScaleIndex) msi+=val; return msi;}() + "\n");
+    DBG("previousDiatonicVal: " + (String)previousDiatonicVal + "\n");
+    DBG("rootDiatonicMod: " + (String)rootDiatonicMod + "\n");
     
     //POPULATE SCALE DISPLAY STAFF WITH NOTES===============//
     scaleDisplayStaff.notes.clear();
     for(int i = 0; i<processor.scale.size(); i++){
-        //const String scaleName = processor.presets[currentPreset]->currentMode;
-        
         const int note = processor.scale[i]; //Set class value.
         const int accidental = enharmIndex[i];
         const int interval = intervals[i];

@@ -158,7 +158,9 @@ bool PianoRoll1AudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
 void PianoRoll1AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     ScopedNoDenormals noDenormals;
-    jassert (buffer.getNumChannels() == 0); //Set number of audio channels to 0
+    if(isPlugin)
+        jassert (buffer.getNumChannels() == 0); //Set number of audio channels to 0
+    
     const float numOfSamps = buffer.getNumSamples();
     const float refreshCounter = (2048 / numOfSamps); //The frequency our current beat position is sent to the Plugin
                                                 //Editor.
