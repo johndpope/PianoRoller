@@ -1,1 +1,0 @@
-/Users/adamshieldcomposer/Library/Developer/Xcode/DerivedData/PianoRoller-ftncuyhjwovhfuanhsoyxzydiuut/Build/Intermediates.noindex/ArchiveIntermediates/PianoRoller - All/InstallationBuildProductsLocation/Applications/PianoRoller.app
