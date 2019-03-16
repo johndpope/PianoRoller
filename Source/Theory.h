@@ -51,9 +51,9 @@ namespace Theory{
         }
         Mode(){}
         
-        Array<int> getMode()        { return mode;        }
-        Array<int> getEnharmIndex() { return enharmIndex; }
-        Array<int> getIntervals()   { return intervals;   }
+        const Array<int> getMode()        { return mode;        }
+        const Array<int> getEnharmIndex() { return enharmIndex; }
+        const Array<int> getIntervals()   { return intervals;   }
     };
     
     
@@ -154,7 +154,7 @@ namespace Theory{
     
     inline const String rootNames[] = {"C","C#", "Db","D","D#","Eb","E","F","F#","Gb","G","G#","Ab","A","A#","Bb", "B"};
     
-    inline std::map<String, int> rootNameMap = {
+    inline const std::map<String, int> rootNameMap = {
         {"C", 0},
         {"C#", 1},
         {"Db",1},
@@ -174,7 +174,7 @@ namespace Theory{
         {"B", 11}
     };
 
-    inline std::map<String, Mode> modeMap = {
+    inline const std::map<String, Mode> modeMap = {
         //Scales
         {"Major", Scales::major},
         {"Natural Minor", Scales::natMinor},
@@ -414,7 +414,7 @@ public:
         
         const String modeName = (*processorPresets)[*currentPreset]->currentMode;
         const int root = (*processorPresets)[*currentPreset]->root;
-        Theory::Mode mode = Theory::modeMap[modeName];
+        Theory::Mode mode = Theory::modeMap.at(modeName);
         auto [modeNotes, enharmIndex, intervals] = mode;
         
         //=================
@@ -437,9 +437,9 @@ public:
         //====DRAW NOTE====
         //=================
         for_indexed(auto note : notes){
-            uint8 myNotePitch = note.getNotePitch();
-            int pitchSetClass = ((int)myNotePitch) % 12;
-            Array<int> fooo = enharmIndex;
+            const uint8 myNotePitch = note.getNotePitch();
+            const int pitchSetClass = ((int)myNotePitch) % 12;
+            const Array<int> fooo = enharmIndex;
             
             Accidental accidental = [&, enharmIndex=enharmIndex, modeNotes=modeNotes, intervals=intervals]()->Accidental{
                 Accidental savedAccidental = note.getAccidental();

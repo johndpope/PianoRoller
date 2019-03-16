@@ -16,9 +16,7 @@ VolumePanel::VolumePanel(OwnedArray<Preset> * processorPresetLocation){
     setOpaque(true);
     
     if (! sender.connect ("127.0.0.1", 9001)) // [4]
-    {
         showConnectionErrorMessage ("Error: could not connect to UDP port 9001.");
-    }
     
     stuff = "foo";
     
@@ -138,14 +136,9 @@ void VolumePanel::mouseDown(const MouseEvent &event){
         };
     }
     
-    
     //========Send to BeatCanvasJava.Java=======
     //public void setVol(int track, int div, int note, int vol)
-    if (! sender.send ("/BeatCanvas/setVol",currentTrack, beatDiv, thisCol, vol)) // [5]
-    {
-        showConnectionErrorMessage ("Error: could not send OSC message.");
-        stuff = "failed to send note message.";
-    }
+    BeatCanvasOSC_MessageOut("/BeatCanvas/setVol",currentTrack, beatDiv, thisCol, vol);
     
     stuff = (String) vol;
     

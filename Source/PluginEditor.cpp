@@ -709,7 +709,7 @@ bool PianoRoll1AudioProcessorEditor::keyPressed(const juce::KeyPress &key, juce:
 void PianoRoll1AudioProcessorEditor::rootMenuChanged(){
     const String rootName = rootMenu.getText();
     
-    processor.root = Theory::rootNameMap[rootName];
+    processor.root = Theory::rootNameMap.at(rootName);
     processor.presets[currentPreset]->root = processor.root;
     processor.presets[currentPreset]->rootName = rootName;
     scaleMenuChanged();
@@ -719,14 +719,16 @@ void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
     String scaleName = scaleMenu.getText();
     //Theory::Mode * myMode = new Theory::Mode(Theory::modeMap[scaleName]);
     //Array<int> scaleRef = myMode->getMode();
-    Array<int> scaleRef = Theory::modeMap[scaleName].getMode();
+    Theory::Mode thisMode = Theory::modeMap.at(scaleName);
+    Array<int> scaleRef = thisMode.getMode();
+    //.getMode();
     int root = processor.root;
     
     processor.scale.clear();
     for(auto note : scaleRef) processor.scale.add((note + root) % 12);
     processor.presets[currentPreset]->currentMode = scaleName;
     
-    auto [modeNotes, enharmIndex, intervals] = Theory::modeMap[scaleName];
+    auto [modeNotes, enharmIndex, intervals] = Theory::modeMap.at(scaleName);
     const String rootName = processor.presets[currentPreset]->rootName;
     
     //rootDiatonicValues are {diatonicValue, diatonicMod} e.g. {0, 3} would be C#. 2 is considered natural.
@@ -796,6 +798,8 @@ void PianoRoll1AudioProcessorEditor::arpDirectionMenuChanged(){
 
 void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
     currentPreset = processor.currentPreset;
+    Theory::Mode thisMode = Theory::modeMap.at(processor.presets[currentPreset]->currentMode);
+    Array<int> currentScale = thisMode.getMode();
     String generatorType = generatorMenu.getText();
     int currentOctaveShift = processor.presets[currentPreset]->tracks[currentTrack]->octaveShift;
     if(generatorType == "random"){
@@ -809,8 +813,7 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
             }
         }
     }else if(generatorType == "arp16th" || generatorType == "arp8th"){
-
-        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode].getMode();
+        Array<int> currentScale = thisMode.getMode();
         //pianoRoll.stuff = (String) currentScale[2];
         int scaleSize = currentScale.size();
         int root = processor.presets[currentPreset]->root;
@@ -830,7 +833,6 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
             }
         }
     }else if(generatorType == "arpTriplet"){
-        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode].getMode();
         pianoRoll.stuff = (String) currentScale[2];
         int root = processor.presets[currentPreset]->root;
         int arpOctave = 4 + currentOctaveShift; //How many extra octaves before arpeggio
@@ -844,7 +846,6 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
         }
         repaint();
     }else if(generatorType == "arp16th Broken"){
-        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode].getMode();
         std::vector<int> shuffledScale = brokenArpeggio(currentScale);
         auto scaleSize = shuffledScale.size();
         
@@ -856,7 +857,6 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
             processor.presets[currentPreset]->tracks[currentTrack]->beatSwitch.set(beat, 0);
         }
     }else if(generatorType == "arp8th Broken"){
-        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode].getMode();
         std::vector<int> shuffledScale = brokenArpeggio(currentScale);
         auto scaleSize = shuffledScale.size();
         
@@ -869,7 +869,6 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
             processor.presets[currentPreset]->tracks[currentTrack]->beatSwitch.set(beat, 0);
         }
     }else if(generatorType == "arpTriplet Broken"){
-        Array<int> currentScale = Theory::modeMap[processor.presets[currentPreset]->currentMode].getMode();
         std::vector<int> shuffledScale = brokenArpeggio(currentScale);
         auto scaleSize = shuffledScale.size();
         

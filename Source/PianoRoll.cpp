@@ -28,9 +28,7 @@ PianoRoll::PianoRoll(OwnedArray<Preset> * processorPresetLocation, Staff * audit
     setOpaque(true);
     
     if (! sender.connect ("127.0.0.1", 9001))
-    {
         showConnectionErrorMessage ("Error: could not connect to UDP port 9001.");
-    }
     
     //stuff = "eegergerg";
     stuff = "";
@@ -41,9 +39,6 @@ PianoRoll::PianoRoll(OwnedArray<Preset> * processorPresetLocation, Staff * audit
 
 PianoRoll::~PianoRoll()
 {
-    //delete noteName;
-    //delete auditionStaff;
-    //delete pianoKeys;
 }
 
 void PianoRoll::paint (Graphics& g)
@@ -196,8 +191,6 @@ void PianoRoll::paint (Graphics& g)
     //stuff = (String)(*processorPresets)[currentPreset]->currentMode;
     //g.drawText(stuff, 100, 100, width* 0.6, 100, Justification::centred);
     
-    
-    
 }
 
 void PianoRoll::resized()
@@ -225,10 +218,7 @@ void PianoRoll::mouseWheelMove(const juce::MouseEvent &event, const juce::MouseW
 }
 
 void PianoRoll::mouseUp(const MouseEvent& event){
-    if (! sender.send ("/BeatCanvas/reloadTrack",currentTrack)){
-        showConnectionErrorMessage ("Error: could not send OSC message.");
-        stuff = "failed to send note message.";
-    }
+    BeatCanvasOSC_MessageOut("/BeatCanvas/reloadTrack",currentTrack);
 }
 
 void PianoRoll::mouseDrag(const MouseEvent& event){
@@ -291,14 +281,8 @@ void PianoRoll::mouseDown(const MouseEvent& event){
                 //========Send to BeatCanvasJava.Java=======
                 //public void setPitch(int track, int div, int note, int pitch)
                 //int content[] = {currentTrack, beatDiv, col, pitch};
-                if (! sender.send ("/BeatCanvas/setPitch",currentTrack, beatDiv, thisCol, pitch)){
-                    showConnectionErrorMessage ("Error: could not send OSC message.");
-                    stuff = "failed to send note message.";
-                }
-                if (! sender.send ("/BeatCanvas/noteOnOff",currentTrack, beatDiv, thisCol, 1)){
-                    showConnectionErrorMessage ("Error: could not send OSC message.");
-                    stuff = "failed to send note message.";
-                }
+                BeatCanvasOSC_MessageOut("/BeatCanvas/setPitch",currentTrack, beatDiv, thisCol, pitch);
+                BeatCanvasOSC_MessageOut("/BeatCanvas/noteOnOff",currentTrack, beatDiv, thisCol, 1);
             }
             else if(( (pitch == prevPitch) || (pitch == prevPitch+1) || (pitch == prevPitch-1) ||
                       (pitch == prevPitch+2) || (pitch == prevPitch-2) )
@@ -308,11 +292,7 @@ void PianoRoll::mouseDown(const MouseEvent& event){
                 
                 //========Send to BeatCanvasJava.Java=======
                 //public void noteOnOff(int track, int div, int note, int onOff)
-                if (! sender.send ("/BeatCanvas/noteOnOff",currentTrack, beatDiv, thisCol, 0))
-                {
-                    showConnectionErrorMessage ("Error: could not send OSC message.");
-                    stuff = "failed to send note message.";
-                }
+                BeatCanvasOSC_MessageOut("/BeatCanvas/noteOnOff",currentTrack, beatDiv, thisCol, 0);
             }
         }else{ //isPoly
             if(leftClick && !rightClick){
@@ -336,59 +316,27 @@ void PianoRoll::mouseDown(const MouseEvent& event){
     repaint();
     auditionStaff->repaint();
 }
-/*
-bool PianoRoll::keyPressed(const juce::KeyPress &key, juce::Component *originatingComponent){
-    
-    //SPACEBAR
-    if(key.getKeyCode() == 32){
-        if (! sender.send ("/BeatCanvas/spacebar"))
-        {
-            showConnectionErrorMessage ("Error: could not send OSC message.");
-        }
-    }
-    
-    return true;
-}
- 
-*/
+
 void PianoRoll::spacebar(){
-    if (! sender.send ("/BeatCanvas/spacebar"))
-    {
-        showConnectionErrorMessage ("Error: could not send OSC message.");
-    }
+    BeatCanvasOSC_MessageOut("/BeatCanvas/spacebar");
 }
-
-
 
 void PianoRoll::changeBeatCanvasPreset(const int preset){
-    if (! sender.send ("/BeatCanvas/updatePreset", preset))
-    {
-        showConnectionErrorMessage ("Error: could not send OSC message.");
-    }
+    BeatCanvasOSC_MessageOut("/BeatCanvas/updatePreset", preset);
 }
 
 void PianoRoll::changeBeatCanvasTrack(const int track){
-    if (! sender.send ("/BeatCanvas/updateTrack", track))
-    {
-        showConnectionErrorMessage ("Error: could not send OSC message.");
-    }
+    BeatCanvasOSC_MessageOut("/BeatCanvas/updateTrack", track);
 }
 
 void PianoRoll::changeBeatCanvasBeats(const int beats){
-    if (! sender.send ("/BeatCanvas/updateBeat", beats))
-    {
-        showConnectionErrorMessage ("Error: could not send OSC message.");
-    }
+    BeatCanvasOSC_MessageOut("/BeatCanvas/updateBeat", beats);
 }
 
 void PianoRoll::changeBeatCanvasTriplet(const int beat, const int val){
     //Java code:
     //changeRhythmDiv(int track, int beatMinusOne, int divSwitch)
-    int divSwitch;
-    if (! sender.send ("/BeatCanvas/changeRhythmDiv", currentTrack, beat, val))
-    {
-        showConnectionErrorMessage ("Error: could not send OSC message.");
-    }
+    BeatCanvasOSC_MessageOut("/BeatCanvas/changeRhythmDiv", currentTrack, beat, val);
 }
 
 

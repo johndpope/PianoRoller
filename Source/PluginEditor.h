@@ -61,6 +61,7 @@ public:
     void paintOverChildren(Graphics& g) override;
     void timerCallback() override;
     void resized() override;
+    
     void setMidiDisplay(int midi);
     void updatePreset(int preset);
     void updateNoteName(const String newNoteName);
@@ -80,11 +81,8 @@ public:
     void arpDirectionMenuChanged();
     
     String playPosition;
-    var foo;
-    
     TextButton midiLabel;
     Label noteLabel;
-    
     PianoRoll pianoRoll;
     PianoKeys pianoKeys;
     Staff auditionStaff;

@@ -25,10 +25,10 @@ public:
     const Colour whiteBlue = Colour(195,223,226);
     const Colour beatCanvasJungleGreen = Colour(152,152,115);
     const Colour calmGreen = Colour(156,168,152);
-    const static int numOfTracks = 8;
-    const static int numOfPresets = 8;
-    const static int maxBeats = 16;
-    const int numOfRows = 32;
+    static constexpr int numOfTracks = 8;
+    static constexpr int numOfPresets = 8;
+    static constexpr int maxBeats = 16;
+    static constexpr int numOfRows = 32;
     const int blackKeys[5] = {1,3,6,8,10};
     
     int currentPreset,
@@ -149,7 +149,19 @@ public:
     int midiLimit(int midiVal);
     int limitRange(int val, int low, int high);
     
-
+    //template <class T>
+    //void BeatCanvasOSC_MessageOut(String initMessage, std::initializer_list<T> data);
+    template<typename T, typename... Args>
+    void BeatCanvasOSC_MessageOut(String initMessage, T t, Args... data){
+        if (! sender.send (initMessage, data...))
+            showConnectionErrorMessage ("Error: could not send OSC message.");
+    }
+    
+    void BeatCanvasOSC_MessageOut(String message){
+        if (! sender.send (message))
+            showConnectionErrorMessage ("Error: could not send OSC message.");
+    }
+    
     OSCSender sender;
     
     void showConnectionErrorMessage (const String& messageText)

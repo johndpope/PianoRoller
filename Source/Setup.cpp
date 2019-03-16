@@ -13,7 +13,7 @@
 void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch){
     bool userSelected;
     bool isMono = (*processorPresets)[currentPreset]->isMono;
-    pitch > 0 ? userSelected == true : userSelected == false; //TODO
+    userSelected = (pitch>0); //TODO
     
     if (isMono){
         if (beatSwitch == 0){
@@ -135,8 +135,6 @@ void PianoRollComponent::setPitch(const int track, const int div, const int note
         (*processorPresets)[preset]->tracks[track]->triplets.set(note,pitch);
     }
 }
-
-
 
 
 
