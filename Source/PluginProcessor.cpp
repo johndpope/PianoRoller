@@ -46,8 +46,9 @@ PianoRoll1AudioProcessor::PianoRoll1AudioProcessor()
     if (! connect(6449)){}; //Connect to OSC messages from Max.
     juce::OSCReceiver::addListener(this, "/juce");
     
-    midiStream.ensureStorageAllocated(24);
+    midiStream.ensureStorageAllocated(36);
     midiInstrumentStream.ensureStorageAllocated(88);
+    notesToIgnore.ensureStorageAllocated(36);
 
 }
 
@@ -125,7 +126,7 @@ void PianoRoll1AudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     // initialisation that you need..
     playPosition.setValue(0.0f);
     updateCounter = 0;
-    midiStream.clear();
+    midiStream.clearQuick();
 }
 
 void PianoRoll1AudioProcessor::releaseResources()
@@ -223,10 +224,10 @@ void PianoRoll1AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuf
                 midiMessages.addEvent(MidiMessage::noteOn(1, pitch, (uint8) velocity), midiStart);
             }
         }
-        midiStream.clear();
+        midiStream.clearQuick();
         
     }else{ //Not playing
-        notesToIgnore.clear();
+        notesToIgnore.clearQuick();
     }
 }
 
