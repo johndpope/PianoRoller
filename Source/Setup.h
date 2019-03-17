@@ -133,9 +133,6 @@ public:
             presets.add(new Preset);
         }
     }
-    ~PianoRollComponent(){
-        //delete processorPresets;
-    }
     
     void updateNote(int col, int pitch, int beatSwitch);
     void setPitch(int track, int div, int note, int pitch, int preset);
@@ -150,6 +147,7 @@ public:
     void copyPreset(const int presetSource, const int presetReplaced);
     int midiLimit(int midiVal);
     int limitRange(int val, int low, int high);
+    bool checkIfBlackKey(const int pitch);
     
     //template <class T>
     //void BeatCanvasOSC_MessageOut(String initMessage, std::initializer_list<T> data);

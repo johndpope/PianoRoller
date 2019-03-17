@@ -181,7 +181,7 @@ void PianoRoll::drawRows(Graphics& g, const float height, const float width, con
         float yPosition = 0. + (row * height/numOfRows);
         int pitch = topNote-row;
         
-        if (std::find(std::begin(PianoRollComponent::blackKeys), std::end(PianoRollComponent::blackKeys), pitch%12) != std::end(PianoRollComponent::blackKeys)){
+        if (checkIfBlackKey(pitch)){
             g.setColour (PianoRollerColours::greyOff);
             g.fillRect(0.0f,yPosition,width, noteHeight);
         }
@@ -370,7 +370,7 @@ void PianoKeys::paint(juce::Graphics &g){
         int pitch = topNote-row;
         float yPosition = row * noteHeight;
         
-        if (std::find(std::begin(blackKeys), std::end(blackKeys), pitch%12) != std::end(blackKeys)){
+        if (checkIfBlackKey(pitch)){
             g.setColour (Colours::darkgrey);
             //g.setColour (Colours::black);
             

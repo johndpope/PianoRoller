@@ -95,6 +95,14 @@ int PianoRollComponent::limitRange(int val, int low, int high){
     return val;
 }
 
+bool PianoRollComponent::checkIfBlackKey(const int pitch){
+    bool result = false;
+    for(auto key : PianoRollComponent::blackKeys){
+        if(pitch%12 == key) result = true;
+    }
+    return result;
+}
+
 void PianoRollComponent::updateTrack(const int track){
     currentTrack = track;
     repaint();
