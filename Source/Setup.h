@@ -14,6 +14,12 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include <map>
 
+namespace PianoRollerColours {
+    inline Colour greyOff = Colour(110,110,110);
+    inline Colour whiteBlue = Colour(195,223,226);
+    inline Colour beatCanvasJungleGreen = Colour(152,152,115);
+    inline Colour calmGreen = Colour(156,168,152);
+}
 
 
 
@@ -21,15 +27,11 @@ class PianoRollComponent : public Component
 {
 public:
     //const Colour greyOff = Colour(128,128,128);
-    const Colour greyOff = Colour(110,110,110);
-    const Colour whiteBlue = Colour(195,223,226);
-    const Colour beatCanvasJungleGreen = Colour(152,152,115);
-    const Colour calmGreen = Colour(156,168,152);
     static constexpr int numOfTracks = 8;
     static constexpr int numOfPresets = 8;
     static constexpr int maxBeats = 16;
     static constexpr int numOfRows = 32;
-    const int blackKeys[5] = {1,3,6,8,10};
+    static constexpr int blackKeys[5] = {1,3,6,8,10};
     
     int currentPreset,
         currentTrack;

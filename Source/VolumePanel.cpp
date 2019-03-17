@@ -37,7 +37,7 @@ void VolumePanel::paint (Graphics& g)
     const float tripNoteWidth = width / ((float)numOfBeats * 3.0f);
     const bool isMono = (*processorPresets)[currentPreset]->isMono;
     
-    g.fillAll (greyOff); //BACKGROUND COLOR
+    g.fillAll (PianoRollerColours::greyOff); //BACKGROUND COLOR
     
     
     for(int beat=0;beat<numOfBeats;beat++){
@@ -65,7 +65,7 @@ void VolumePanel::paint (Graphics& g)
             const float rectX = ( col * thisNoteWidth );
             const float rectY = height - ( height/127.f * (float)vol );
             
-            g.setColour (whiteBlue);
+            g.setColour (PianoRollerColours::whiteBlue);
             g.fillRect(rectX, rectY, thisNoteWidth, height);
             
             //DRAW COLUMN LINES

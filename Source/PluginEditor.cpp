@@ -49,7 +49,7 @@ PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioP
     getLookAndFeel().setColour(Slider::textBoxTextColourId, Colours::black);
     getLookAndFeel().setColour(Slider::trackColourId, whiteBlue);
     getLookAndFeel().setColour(Slider::backgroundColourId, Colours::black);
-    getLookAndFeel().setColour(TextButton::buttonColourId, pianoRoll.greyOff);
+    getLookAndFeel().setColour(TextButton::buttonColourId, PianoRollerColours::greyOff);
     getLookAndFeel().setColour(TextButton::textColourOffId, Colours::black);
     
     
@@ -150,7 +150,7 @@ PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioP
     arpDirectionMenu.addItem("seq5", 9);
     
     //Dropdown look&feel and onChange============================================
-    getLookAndFeel().setColour(ComboBox::backgroundColourId, pianoRoll.greyOff);
+    getLookAndFeel().setColour(ComboBox::backgroundColourId, PianoRollerColours::greyOff);
     getLookAndFeel().setColour(ComboBox::outlineColourId, Colours::black);
     getLookAndFeel().setColour(ComboBox::textColourId, Colours::black);
     getLookAndFeel().setColour(ComboBox::arrowColourId, Colours::black);
@@ -189,7 +189,7 @@ PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioP
     beatsToBeUpdated = 0;
     setSize (monitorWidth*0.85, monitorHeight*0.85);
     noteLabel.setText("foo", dontSendNotification);
-    noteLabel.setColour(Label::backgroundColourId, pianoRoll.greyOff);
+    noteLabel.setColour(Label::backgroundColourId, PianoRollerColours::greyOff);
     
 }
 

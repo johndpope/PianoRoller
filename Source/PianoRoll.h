@@ -31,7 +31,6 @@ public:
     PianoRoll(OwnedArray<Preset> * processorPresetLocation, Staff * auditionStaffLocation, PianoRollComponent * pianoKeyLocation);
     ~PianoRoll();
     
-    void paint (Graphics&) override;
     void resized() override;
     void (*setParentMidiDisplay)(int);
     MidiMessage midiMessage;
@@ -51,6 +50,9 @@ public:
     Staff * auditionStaff;
     
 private:
+    void paint (Graphics&) override;
+    void drawRows(Graphics& g, const float height, const float width, const float noteHeight,
+                  const float numOfRows, const float rootRow, const float topNote);
 
     void mouseEnter(const MouseEvent& event) override;
     void mouseExit(const MouseEvent& event) override;
@@ -77,9 +79,6 @@ public:
     
     PianoKeys(PianoRoll * pianoRollInput){
         pianoRoll = pianoRollInput;
-    }
-    ~PianoKeys(){
-        
     }
     
 private:

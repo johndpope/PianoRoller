@@ -51,28 +51,9 @@ void PianoRoll::paint (Graphics& g)
     const float noteHeight = ( height / (float)numOfRows );
     const float tripNoteWidth = width / ((float)numOfBeats * 3.0f);
     
-    g.fillAll (beatCanvasJungleGreen); //BACKGROUND COLOR
+    g.fillAll (PianoRollerColours::beatCanvasJungleGreen); //BACKGROUND COLOR
     
-    for(int row=0;row<numOfRows;row++){
-        float yPosition = 0. + (row * getHeight()/numOfRows);
-        //int blackKeys[5] = {2,4,6,9,11};
-        int pitch = topNote-row;
-        
-        if (std::find(std::begin(blackKeys), std::end(blackKeys), pitch%12) != std::end(blackKeys)){
-            g.setColour (greyOff);
-            g.fillRect(0.0f,yPosition,width, noteHeight);
-        }
-        if(pitch%12 == 0){
-            //g.setColour(Colours::black);
-        }
-        
-        if(row == rootRow && isChildOfBeatCanvas){
-            g.setColour (Colours::white);
-            g.setOpacity(0.5);
-            g.fillRect(0.0f,yPosition,width, noteHeight);
-            g.setOpacity(1.);
-        }
-    }
+    drawRows(g, height, width, noteHeight, numOfRows, rootRow, topNote);
     
     //FILL IN NOTES
     
@@ -86,7 +67,7 @@ void PianoRoll::paint (Graphics& g)
                 if(isMono){
                     int pitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenths[col];
                     if(pitch > 0){ //If note is active.
-                        g.setColour (whiteBlue);
+                        g.setColour (PianoRollerColours::whiteBlue);
                         float x = ( col * noteWidth );
                         float y = ( ((float)topNote-(float)pitch)/(float)numOfRows * height );
                         g.fillRect(x, y, noteWidth, noteHeight);
@@ -102,7 +83,7 @@ void PianoRoll::paint (Graphics& g)
                         //int pitch = polyArray[polyNote];
                         int pitch = (*polyArrays)[col][polyNote];
                         if(pitch > 0){ //If note is active.
-                            g.setColour (whiteBlue);
+                            g.setColour (PianoRollerColours::whiteBlue);
                             float x = ( col * noteWidth );
                             float y = ( ((float)topNote-(float)pitch)/(float)numOfRows * height );
                             g.fillRect(x, y, noteWidth, noteHeight);
@@ -129,7 +110,7 @@ void PianoRoll::paint (Graphics& g)
                 if(isMono){
                     int pitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->triplets[tripCol];
                     if(pitch > 0){ //If note is active.
-                        g.setColour (whiteBlue);
+                        g.setColour (PianoRollerColours::whiteBlue);
                         const Point<float> pos = {
                             tripCol * tripNoteWidth,                                //X
                             ((float)topNote-(float)pitch)/(float)numOfRows * height //Y
@@ -143,7 +124,7 @@ void PianoRoll::paint (Graphics& g)
                     for(int polyNote=0; polyNote<polyArray.size(); polyNote++){ //For each note in the polyphony.
                         int pitch = polyArray[polyNote];
                         if(pitch > 0){ //If note is active.
-                            g.setColour (whiteBlue);
+                            g.setColour (PianoRollerColours::whiteBlue);
                             const Point<float> pos = {
                                 tripCol * tripNoteWidth,                                //X
                                 ((float)topNote-(float)pitch)/(float)numOfRows * height //Y
@@ -192,6 +173,33 @@ void PianoRoll::paint (Graphics& g)
     //g.drawText(stuff, 100, 100, width* 0.6, 100, Justification::centred);
     
 }
+
+void PianoRoll::drawRows(Graphics& g, const float height, const float width, const float noteHeight,
+                         const float numOfRows, const float rootRow, const float topNote){
+    
+    for(int row=0;row<numOfRows;row++){
+        float yPosition = 0. + (row * height/numOfRows);
+        int pitch = topNote-row;
+        
+        if (std::find(std::begin(PianoRollComponent::blackKeys), std::end(PianoRollComponent::blackKeys), pitch%12) != std::end(PianoRollComponent::blackKeys)){
+            g.setColour (PianoRollerColours::greyOff);
+            g.fillRect(0.0f,yPosition,width, noteHeight);
+        }
+        
+        if(row == rootRow && isChildOfBeatCanvas){
+            g.setColour (Colours::white);
+            g.setOpacity(0.5);
+            g.fillRect(0.0f,yPosition,width, noteHeight);
+            g.setOpacity(1.);
+        }
+    }
+
+}
+
+
+
+
+
 
 void PianoRoll::resized()
 {
@@ -356,7 +364,7 @@ void PianoKeys::paint(juce::Graphics &g){
     const float height = getHeight();
     const float noteHeight = ( height / (float)numOfRows );
     
-    g.fillAll (beatCanvasJungleGreen); //BACKGROUND COLOR
+    g.fillAll (PianoRollerColours::beatCanvasJungleGreen); //BACKGROUND COLOR
     
     for(int row=0; row<numOfRows; row++){
         int pitch = topNote-row;
@@ -374,7 +382,7 @@ void PianoKeys::paint(juce::Graphics &g){
             g.drawRect(0.0f,yPosition,width*0.66, noteHeight);
             
         }else{ //is a White Key
-            g.setColour (beatCanvasJungleGreen);
+            g.setColour (PianoRollerColours::beatCanvasJungleGreen);
             //g.setColour (Colours::floralwhite);
             
             g.fillRect(0.0f,yPosition,width, noteHeight);
