@@ -1,4 +1,4 @@
-## Getting started
+## PianoRoller
 
 Piano roll sequencer plugin for DAWs.
 Generates patterns and sequences from a variety of scales and keys.
