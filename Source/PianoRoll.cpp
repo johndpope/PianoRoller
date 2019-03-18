@@ -59,24 +59,14 @@ void PianoRoll::paint (Graphics& g)
     
     drawNotes(paintData);
     
-    //DRAWS ROW LINES
-    g.setColour (Colours::black);
-    for(int i=0;i<=numOfRows;i++){
-        const float yPosition = 0. + (i*height/(float)numOfRows);
-        g.setColour(Colours::black);
-        g.drawLine(0., yPosition, width, yPosition);
-        if(i==numOfRows || i==0){ //Reasons to draw a thicker line.
-            g.drawLine(0., yPosition, width, yPosition, 4);
-        }
-    }
-    g.drawLine(width, 0.0f, width, height, 3); //Right side line.   
+    drawRowLines(paintData);
 }
 
 void PianoRoll::drawRows(PaintData p){
     
     for(int row=0;row<numOfRows;row++){
-        float yPosition = 0. + (row * p.height/p.numOfRows);
-        int pitch = p.topNote-row;
+        const float yPosition = 0. + (row * p.height/p.numOfRows);
+        const int pitch = p.topNote-row;
         
         if (checkIfBlackKey(pitch)){
             p.g->setColour (PianoRollerColours::greyOff);
@@ -94,10 +84,7 @@ void PianoRoll::drawRows(PaintData p){
 }
 
 void PianoRoll::drawColumnLine(PaintData p, const int subDiv, const int col, const float noteWidth){
-    const int lineWidth = [subDiv]() -> int {
-        if(subDiv==0){return 3;}
-        else         {return 1;};
-    }();
+    const int lineWidth = (subDiv==0) ? 3 : 1;
     const float xPosition = 0.0f + ( (float)col*noteWidth );
     
     p.g->setColour(Colours::black);
@@ -105,7 +92,16 @@ void PianoRoll::drawColumnLine(PaintData p, const int subDiv, const int col, con
 }
 
 void PianoRoll::drawRowLines(PaintData p){
-    
+    p.g->setColour (Colours::black);
+    for(int i=0;i<=numOfRows;i++){
+        const float yPosition = 0. + (i*p.height/(float)numOfRows);
+        p.g->setColour(Colours::black);
+        p.g->drawLine(0., yPosition, p.width, yPosition);
+        if(i==numOfRows || i==0){ //Reasons to draw a thicker line.
+            p.g->drawLine(0., yPosition, p.width, yPosition, 4);
+        }
+    }
+    p.g->drawLine(p.width, 0.0f, p.width, p.height, 3); //Right side line.
 }
 
 void PianoRoll::drawNotes(PaintData p){
