@@ -109,8 +109,9 @@ void PianoRoll::drawRowLines(PaintData p){
 }
 
 void PianoRoll::drawNotes(PaintData p){
+    auto track = (*processorPresets)[currentPreset]->tracks[currentTrack];
     for(int beat=0;beat<p.numOfBeats;beat++){
-        const int beatSwitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch[beat];
+        const int beatSwitch = track->beatSwitch[beat];
         const bool isMono = (*processorPresets)[currentPreset]->isMono;
         auto [subDivisions, thisNoteWidth] = [&](){
             switch(beatSwitch){
@@ -121,20 +122,15 @@ void PianoRoll::drawNotes(PaintData p){
         
         auto [noteArray, polyNoteArray] = [&](){
             switch (beatSwitch){
-                case 0:  return std::make_pair( &(*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenths     ,
-                                               &(*processorPresets)[currentPreset]->tracks[currentTrack]->polySixteenths );
-                case 1:  return std::make_pair( &(*processorPresets)[currentPreset]->tracks[currentTrack]->triplets       ,
-                                               &(*processorPresets)[currentPreset]->tracks[currentTrack]->polyTriplets   );
+                case 0:  return std::make_pair( &track->sixteenths     ,
+                                                &track->polySixteenths );
+                case 1:  return std::make_pair( &track->triplets       ,
+                                                &track->polyTriplets   );
             }
         }();
         
         for(int subDiv=0;subDiv<subDivisions;subDiv++){
-            float col = [&](){
-                switch(beatSwitch){
-                    case 0: return (beat*4) + subDiv;
-                    case 1: return (beat*3) + subDiv;
-                }
-            }();
+            float col = beat * subDivisions + subDiv;
             
             (isMono) ? monoNoteFill(p, noteArray, col, thisNoteWidth) : polyNoteFill(p, polyNoteArray, col, thisNoteWidth);
             drawColumnLine(p, subDiv, col, thisNoteWidth);
