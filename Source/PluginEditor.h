@@ -57,7 +57,6 @@ public:
     
     
     //==============================================================================
-    void paint (Graphics&) override;
     void paintOverChildren(Graphics& g) override;
     void timerCallback() override;
     void resized() override;
@@ -113,7 +112,6 @@ private:
     Value noteName;
     float currentBeat;
     float previousVal;
-    const bool tripletButtons = true;
     const bool pianoKeyPanel = true;
     const float sliderSpacing = 0.25f;
     const static int numOfPresets = PianoRollComponent::numOfPresets;
@@ -131,6 +129,9 @@ private:
     void mouseDown(const juce::MouseEvent &event) override;
     void mouseDrag(const juce::MouseEvent &event) override;
     void buttonClicked (Button*) override;
+    
+    void paint (Graphics&) override;
+    void drawTripletSwitches(Graphics * g, int numOfBeats, float height, float width);
     
     std::vector<int> brokenArpeggio(Array<int> currentScale);
     std::vector<int> previousOrder;

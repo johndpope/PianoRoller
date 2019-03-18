@@ -219,23 +219,21 @@ void PianoRoll1AudioProcessorEditor::paint (Graphics& g)
     tripletSwitches.clear();
     
     //=========DRAW TRIPLET SWITCHES==============//
-    if(tripletButtons){
-        const float beatWidth = (pianoRoll.getWidth() / ((float)numOfBeats) );
-        const float ellipseWidth = beatWidth*0.333;
-        const float ellipseHeight = height * topBorder * 0.225;
-        const float y = height * topBorder * 0.66;
-    
-        for(int beat=0; beat<numOfBeats;beat++){
-            const float x = (beat * beatWidth) + beatWidth*0.333 + pianoKeyWidth*width;
-            
-            if(processor.presets[currentPreset]->tracks[currentTrack]->beatSwitch[beat] == 0){
-                g.setColour(Colour(156,168,152)); //If not a triplet
-            }else{g.setColour(Colours::limegreen);} //If a triplet.
-            g.fillEllipse(x, y, ellipseWidth, ellipseHeight);
-            g.setColour(Colours::black);
-            g.drawEllipse(x, y, ellipseWidth, ellipseHeight, 1.);
-            tripletSwitches.add(Array<float>{x+(ellipseWidth/2), y + (ellipseHeight/2)});
-        }
+    const float beatWidth = (pianoRoll.getWidth() / ((float)numOfBeats) );
+    const float ellipseWidth = beatWidth*0.333;
+    const float ellipseHeight = height * topBorder * 0.225;
+    const float y = height * topBorder * 0.66;
+
+    for(int beat=0; beat<numOfBeats;beat++){
+        const float x = (beat * beatWidth) + beatWidth*0.333 + pianoKeyWidth*width;
+        
+        if(processor.presets[currentPreset]->tracks[currentTrack]->beatSwitch[beat] == 0){
+            g.setColour(Colour(156,168,152)); //If not a triplet
+        }else{g.setColour(Colours::limegreen);} //If a triplet.
+        g.fillEllipse(x, y, ellipseWidth, ellipseHeight);
+        g.setColour(Colours::black);
+        g.drawEllipse(x, y, ellipseWidth, ellipseHeight, 1.);
+        tripletSwitches.add(Array<float>{x+(ellipseWidth/2), y + (ellipseHeight/2)});
     }
     
 
@@ -295,24 +293,35 @@ void PianoRoll1AudioProcessorEditor::paint (Graphics& g)
     
 }
 
+//==============================================================================
+
+void PianoRoll1AudioProcessorEditor::drawTripletSwitches(Graphics * g, int numOfBeats, float height, float width){
+    const float beatWidth = (pianoRoll.getWidth() / ((float)numOfBeats) );
+    const float ellipseWidth = beatWidth*0.333;
+    const float ellipseHeight = height * topBorder * 0.225;
+    const float y = height * topBorder * 0.66;
+    
+    for(int beat=0; beat<numOfBeats;beat++){
+        const float x = (beat * beatWidth) + beatWidth*0.333 + pianoKeyWidth*width;
+        
+        if(processor.presets[currentPreset]->tracks[currentTrack]->beatSwitch[beat] == 0){
+            g->setColour(Colour(156,168,152)); //If not a triplet
+        }else{g->setColour(Colours::limegreen);} //If a triplet.
+        g->fillEllipse(x, y, ellipseWidth, ellipseHeight);
+        g->setColour(Colours::black);
+        g->drawEllipse(x, y, ellipseWidth, ellipseHeight, 1.);
+        tripletSwitches.add(Array<float>{x+(ellipseWidth/2), y + (ellipseHeight/2)});
+    }
+    
+    
+}
+
+
 
 
 //==============================================================================
 
 void PianoRoll1AudioProcessorEditor::paintOverChildren(juce::Graphics &g){
-    /*
-    const float height = getHeight();
-    const float width = getWidth();
-    const float playCursorLine = playCursorWindow.playCursorLine;
-    
-    
-    g.setColour(Colours::white);
-    g.setOpacity(0.0f);
-    g.fillAll();
-    g.setColour(Colours::yellow);
-    g.setOpacity(1.0f);
-    g.drawLine(width * playCursorLine, 0., width * playCursorLine, height, 3);
-    */
 }
 
 void PianoRoll1AudioProcessorEditor::timerCallback(){
@@ -567,7 +576,6 @@ void PianoRoll1AudioProcessorEditor::parameterChanged(const juce::String &parame
         
         beatsToBeUpdated = numOfBeats;
         //pianoRoll.changeBeatCanvasBeats(numOfBeats);
-        pianoRoll.stuff = (String) numOfBeats;
     }
     
 }
@@ -689,7 +697,6 @@ void PianoRoll1AudioProcessorEditor::prepToPlayNote(const int note, const int di
 
 bool PianoRoll1AudioProcessorEditor::keyPressed(const juce::KeyPress &key, juce::Component *originatingComponent){
     const int keyCode = key.getKeyCode();
-    pianoRoll.stuff = (String) keyCode;
     
     if(keyCode >= 49 && keyCode < 58){
         const int newPreset = keyCode - 48;
@@ -740,7 +747,6 @@ void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
     
     auto majorScaleIndex = Theory::circleOfFifths[rootName];
     
-    pianoRoll.stuff = (String)rootDiatonicMod;
     pianoRoll.repaint();
     DBG("\n\n");
     DBG("rootName: " + rootName + "\n");
@@ -833,7 +839,6 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
             }
         }
     }else if(generatorType == "arpTriplet"){
-        pianoRoll.stuff = (String) currentScale[2];
         int root = processor.presets[currentPreset]->root;
         int arpOctave = 4 + currentOctaveShift; //How many extra octaves before arpeggio
         

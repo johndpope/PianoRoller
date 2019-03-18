@@ -29,16 +29,12 @@ PianoRoll::PianoRoll(OwnedArray<Preset> * processorPresetLocation, Staff * audit
     
     if (! sender.connect ("127.0.0.1", 9001))
         showConnectionErrorMessage ("Error: could not connect to UDP port 9001.");
-    
-    //stuff = "eegergerg";
-    stuff = "";
 
     setSize(getWidth(), getHeight());
     //setOpaque(true);
 }
 
-PianoRoll::~PianoRoll()
-{
+PianoRoll::~PianoRoll(){
 }
 
 void PianoRoll::paint (Graphics& g)
@@ -170,11 +166,11 @@ void PianoRoll::resized()
 
 
 void PianoRoll::mouseEnter(const MouseEvent& event){
-    //repaint();
+
 }
 
 void PianoRoll::mouseExit(const MouseEvent& event){
-    //repaint();
+
 }
 
 void PianoRoll::mouseWheelMove(const juce::MouseEvent &event, const juce::MouseWheelDetails &wheel){
@@ -328,40 +324,37 @@ void PianoKeys::paint(juce::Graphics &g){
     
     g.fillAll (PianoRollerColours::beatCanvasJungleGreen); //BACKGROUND COLOR
     
-    for(int row=0; row<numOfRows; row++){
-        int pitch = topNote-row;
-        float yPosition = row * noteHeight;
-        
-        if (checkIfBlackKey(pitch)){
-            g.setColour (Colours::darkgrey);
-            //g.setColour (Colours::black);
-            
-            g.fillRect(0.0f,yPosition,width*0.666, noteHeight);
-            
-            g.setColour (Colours::black);
-            //g.drawLine(0.0f, yPosition, width*0.66, yPosition);
-            g.setColour (Colours::black);
-            g.drawRect(0.0f,yPosition,width*0.66, noteHeight);
-            
-        }else{ //is a White Key
-            g.setColour (PianoRollerColours::beatCanvasJungleGreen);
-            //g.setColour (Colours::floralwhite);
-            
-            g.fillRect(0.0f,yPosition,width, noteHeight);
-            
-            g.setColour (Colours::black);
-            if(pitch%12==4 || pitch%12==11){ //Note E or B
-                g.drawLine(0.0f, yPosition, width, yPosition);
-            }else{
-                g.drawLine(width*0.66f, yPosition-(noteHeight*0.5f), width-0.66f, yPosition-(noteHeight*0.5f));
-            }
-        }
-        
-    }
-    
+    PaintData paintData(&g, width, height, noteHeight, 0.0f, 0.0f, numOfRows, 0, 0, topNote);
+    drawRows(paintData);
+
     g.drawRoundedRectangle(0.0f, 0.0f, width, height, 0.0f, 4.0f);
     
-    
+}
+
+void PianoKeys::drawRows(PaintData p){
+    for(int row=0; row<p.numOfRows; row++){
+        const int pitch = p.topNote-row;
+        const float yPosition = row * p.noteHeight;
+        
+        if (checkIfBlackKey(pitch)){
+            p.g->setColour (Colours::darkgrey);
+            p.g->fillRect(0.0f,yPosition,p.width*0.666, p.noteHeight);
+            
+            p.g->setColour (Colours::black);
+            p.g->drawRect(0.0f,yPosition,p.width*0.66, p.noteHeight);
+            
+        }else{ //is a White Key
+            p.g->setColour (PianoRollerColours::beatCanvasJungleGreen);
+            p.g->fillRect(0.0f,yPosition,p.width, p.noteHeight);
+            
+            p.g->setColour (Colours::black);
+            if(pitch%12==4 || pitch%12==11){ //Note E or B
+                p.g->drawLine(0.0f, yPosition, p.width, yPosition);
+            }else{
+                p.g->drawLine(p.width*0.66f, yPosition-(p.noteHeight*0.5f), p.width-0.66f, yPosition-(p.noteHeight*0.5f));
+            }
+        }
+    }
 }
 
 void PianoKeys::mouseUp(const juce::MouseEvent &event){

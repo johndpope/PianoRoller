@@ -44,7 +44,6 @@ public:
     bool isChildOfBeatCanvas;
     void spacebar();
     bool isDoubleClick;
-    String stuff = "stuff to say";
     Value * noteName;
     PianoRollComponent * pianoKeys;
     Staff * auditionStaff;
@@ -88,10 +87,12 @@ public:
     
 private:
     void paint (Graphics&) override;
-    
+    void drawRows(PaintData p);
     void mouseUp(const MouseEvent& event) override;
     void mouseDown(const MouseEvent& event) override;
     void mouseDrag (const MouseEvent& event) override;
+    
+    int currentSelectedKey;
     
 };
 
