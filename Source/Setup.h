@@ -177,17 +177,23 @@ public:
         float width;
         float height;
         float noteHeight;
+        float noteWidth;
+        float tripNoteWidth;
         float numOfRows;
+        float numOfBeats;
         float rootRow;
         float topNote;
         
-        PaintData(Graphics * _g, float _width, float _height, float _noteHeight, float _numOfRows, float _rootRow, float _topNote)
+        PaintData(Graphics * _g, float _width, float _height, float _noteHeight, float _noteWidth, float _tripNoteWidth, float _numOfRows, float _numOfBeats, float _rootRow, float _topNote)
         {
             g = _g;
             width = _width;
             height = _height;
             noteHeight = _noteHeight;
+            noteWidth = _noteWidth;
+            tripNoteWidth = _tripNoteWidth;
             numOfRows = _numOfRows;
+            numOfBeats = _numOfBeats;
             rootRow = _rootRow;
             topNote = _topNote;
         };
