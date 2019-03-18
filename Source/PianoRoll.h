@@ -52,8 +52,10 @@ public:
 private:
     void paint (Graphics&) override;
     void drawRows(PaintData p);
-    void drawColumnLines(PaintData p, const int subDiv, const int col, const float noteWidth);
+    void drawColumnLine(PaintData p, const int subDiv, const int col, const float noteWidth);
     void drawRowLines(PaintData p);
+    void monoNoteFill(PaintData p, const Array<int> * noteArray, const int col, const float noteWidth);
+    void polyNoteFill(PaintData p, const Array<Array<int>> * polyNoteArray, const int col, const float noteWidth);
 
     void mouseEnter(const MouseEvent& event) override;
     void mouseExit(const MouseEvent& event) override;

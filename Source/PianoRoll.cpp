@@ -62,77 +62,34 @@ void PianoRoll::paint (Graphics& g)
     for(int beat=0;beat<numOfBeats;beat++){
         const int beatSwitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch[beat];
         const bool isMono = (*processorPresets)[currentPreset]->isMono;
+        
+        auto [noteArray, polyNoteArray] = [&](){
+            switch (beatSwitch){
+                case 0:  return std::make_pair( &(*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenths     ,
+                                                &(*processorPresets)[currentPreset]->tracks[currentTrack]->polySixteenths );
+                case 1:  return std::make_pair( &(*processorPresets)[currentPreset]->tracks[currentTrack]->triplets       ,
+                                               &(*processorPresets)[currentPreset]->tracks[currentTrack]->polyTriplets   );
+                default: DBG("BEATSWITCH INVALID\n");
+            }
+        }();
+        
+        
         if (beatSwitch == 0){
             for(int subDiv=0;subDiv<4;subDiv++){
                 float col = (beat*4) + subDiv;
                 
-                if(isMono){
-                    int pitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenths[col];
-                    if(pitch > 0){ //If note is active.
-                        g.setColour (PianoRollerColours::whiteBlue);
-                        float x = ( col * noteWidth );
-                        float y = ( ((float)topNote-(float)pitch)/(float)numOfRows * height );
-                        g.fillRect(x, y, noteWidth, noteHeight);
-                    }
-                }else{ //isPoly
-                    
-                    //TODO******
-                    //Array<int> polyArray = (*processorPresets)[currentPreset]->tracks[currentTrack]->polySixteenths[col];
-                    Array<Array<int>> * polyArrays = &((*processorPresets)[currentPreset]->tracks[currentTrack]->polySixteenths);
-                    
-                    //for(int polyNote=0; polyNote<polyArray.size(); polyNote++){ //For each note in the polyphony.
-                    for(int polyNote=0; polyNote<(*polyArrays)[col].size(); polyNote++){
-                        //int pitch = polyArray[polyNote];
-                        int pitch = (*polyArrays)[col][polyNote];
-                        if(pitch > 0){ //If note is active.
-                            g.setColour (PianoRollerColours::whiteBlue);
-                            float x = ( col * noteWidth );
-                            float y = ( ((float)topNote-(float)pitch)/(float)numOfRows * height );
-                            g.fillRect(x, y, noteWidth, noteHeight);
-                            
-                        }
-                    }
-                    
-                }
-                
-                drawColumnLines(paintData, subDiv, col, noteWidth);
+                (isMono) ? monoNoteFill(paintData, noteArray, col, noteWidth) : polyNoteFill(paintData, polyNoteArray, col, noteWidth);
+                drawColumnLine(paintData, subDiv, col, noteWidth);
             }
+        
         }else if(beatSwitch == 1){
-            for(int subDiv=0;subDiv<4;subDiv++){
+            for(int subDiv=0;subDiv<3;subDiv++){
                 float tripCol = (beat*3) + subDiv;
                 
-                if(isMono){
-                    int pitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->triplets[tripCol];
-                    if(pitch > 0){ //If note is active.
-                        g.setColour (PianoRollerColours::whiteBlue);
-                        const Point<float> pos = {
-                            tripCol * tripNoteWidth,                                //X
-                            ((float)topNote-(float)pitch)/(float)numOfRows * height //Y
-                        };
-                        g.fillRect(pos.getX(), pos.getY(), tripNoteWidth, noteHeight);
-                    }
-                }else{ //isPoly
-                    
-                    //TODO******
-                    Array<int> polyArray = (*processorPresets)[currentPreset]->tracks[currentTrack]->polyTriplets[tripCol];
-                    for(int polyNote=0; polyNote<polyArray.size(); polyNote++){ //For each note in the polyphony.
-                        int pitch = polyArray[polyNote];
-                        if(pitch > 0){ //If note is active.
-                            g.setColour (PianoRollerColours::whiteBlue);
-                            const Point<float> pos = {
-                                tripCol * tripNoteWidth,                                //X
-                                ((float)topNote-(float)pitch)/(float)numOfRows * height //Y
-                            };
-                            g.fillRect(pos.getX(), pos.getY(), tripNoteWidth, noteHeight);
-                        }
-                    }
-                    
-                }
-                
-                drawColumnLines(paintData, subDiv, tripCol, tripNoteWidth);
+                (isMono) ? monoNoteFill(paintData, noteArray, tripCol, tripNoteWidth) : polyNoteFill(paintData, polyNoteArray, tripCol, tripNoteWidth);
+                drawColumnLine(paintData, subDiv, tripCol, tripNoteWidth);
             }
         }
-        
         
     }
     
@@ -149,11 +106,7 @@ void PianoRoll::paint (Graphics& g)
         }
     }
     g.drawLine(width, 0.0f, width, height, 3); //Right side line.
-    
-    //g.setColour(Colours::black);
     g.setFont (30.0f);
-    
-    
     
     //stuff = (String)(*processorPresets)[currentPreset]->currentMode;
     //g.drawText(stuff, 100, 100, width* 0.6, 100, Justification::centred);
@@ -181,7 +134,7 @@ void PianoRoll::drawRows(PaintData p){
 
 }
 
-void PianoRoll::drawColumnLines(PaintData p, const int subDiv, const int col, const float noteWidth){
+void PianoRoll::drawColumnLine(PaintData p, const int subDiv, const int col, const float noteWidth){
     const int lineWidth = [subDiv]() -> int {
         if(subDiv==0){return 3;}
         else         {return 1;};
@@ -196,6 +149,32 @@ void PianoRoll::drawRowLines(PaintData p){
     
 }
 
+void PianoRoll::monoNoteFill(PaintData p, const Array<int> * noteArray, const int col, const float noteWidth){
+    int pitch = (*noteArray)[col];
+    if(pitch > 0){ //If note is active.
+        p.g->setColour (PianoRollerColours::whiteBlue);
+        float x = ( col * noteWidth );
+        float y = ( ((float)topNote-(float)pitch)/(float)numOfRows * p.height );
+        p.g->fillRect(x, y, noteWidth, p.noteHeight);
+    }
+}
+
+void PianoRoll::polyNoteFill(PaintData p, const Array<Array<int>> * polyNoteArray, const int col, const float noteWidth){
+    //TODO******
+
+    //for(int polyNote=0; polyNote<polyArray.size(); polyNote++){ //For each note in the polyphony.
+    for(int polyNote=0; polyNote<(*polyNoteArray)[col].size(); polyNote++){
+        //int pitch = polyArray[polyNote];
+        int pitch = (*polyNoteArray)[col][polyNote];
+        if(pitch > 0){ //If note is active.
+            p.g->setColour (PianoRollerColours::whiteBlue);
+            float x = ( col * noteWidth );
+            float y = ( ((float)topNote-(float)pitch)/(float)numOfRows * p.height );
+            p.g->fillRect(x, y, noteWidth, p.noteHeight);
+
+        }
+    }
+}
 
 
 
