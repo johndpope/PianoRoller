@@ -52,7 +52,7 @@ public:
 private:
     void paint (Graphics&) override;
     void drawRows(PaintData p);
-    void drawColumnLines(PaintData p);
+    void drawColumnLines(PaintData p, const int subDiv, const int col, const float noteWidth);
     void drawRowLines(PaintData p);
 
     void mouseEnter(const MouseEvent& event) override;

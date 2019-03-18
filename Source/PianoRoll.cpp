@@ -95,15 +95,7 @@ void PianoRoll::paint (Graphics& g)
                     
                 }
                 
-                //DRAW COLUMN LINES
-                const int lineWidth = [subDiv]() -> int {
-                    if(subDiv==0){return 3;}
-                    else         {return 1;};
-                }();
-                const float xPosition = 0.0f + ( (float)col*noteWidth );
-                
-                g.setColour(Colours::black);
-                g.drawLine(xPosition, 0., xPosition, height, lineWidth);
+                drawColumnLines(paintData, subDiv, col, noteWidth);
             }
         }else if(beatSwitch == 1){
             for(int subDiv=0;subDiv<4;subDiv++){
@@ -137,15 +129,7 @@ void PianoRoll::paint (Graphics& g)
                     
                 }
                 
-                //DRAW COLUMN LINES
-                const int lineWidth = [subDiv]() -> int {
-                    if(subDiv==0){return 3;}
-                    else         {return 1;};
-                }();
-                const int xPosition = 0.0f + ( tripCol*tripNoteWidth );
-                
-                g.setColour(Colours::black);
-                g.drawLine(xPosition, 0., xPosition, height, lineWidth);
+                drawColumnLines(paintData, subDiv, tripCol, tripNoteWidth);
             }
         }
         
@@ -197,8 +181,15 @@ void PianoRoll::drawRows(PaintData p){
 
 }
 
-void PianoRoll::drawColumnLines(PaintData p){
+void PianoRoll::drawColumnLines(PaintData p, const int subDiv, const int col, const float noteWidth){
+    const int lineWidth = [subDiv]() -> int {
+        if(subDiv==0){return 3;}
+        else         {return 1;};
+    }();
+    const float xPosition = 0.0f + ( (float)col*noteWidth );
     
+    p.g->setColour(Colours::black);
+    p.g->drawLine(xPosition, 0., xPosition, p.height, lineWidth);
 }
 
 void PianoRoll::drawRowLines(PaintData p){
