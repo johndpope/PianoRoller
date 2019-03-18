@@ -144,5 +144,3 @@ void PianoRollComponent::setPitch(const int track, const int div, const int note
     }
 }
 
-
-

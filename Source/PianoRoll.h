@@ -51,8 +51,9 @@ public:
     
 private:
     void paint (Graphics&) override;
-    void drawRows(Graphics& g, const float height, const float width, const float noteHeight,
-                  const float numOfRows, const float rootRow, const float topNote);
+    void drawRows(PaintData p);
+    void drawColumnLines(PaintData p);
+    void drawRowLines(PaintData p);
 
     void mouseEnter(const MouseEvent& event) override;
     void mouseExit(const MouseEvent& event) override;
@@ -70,6 +71,7 @@ private:
     
 };
 
+//===================Piano Keys===================//
 
 class PianoKeys    : public PianoRollComponent
 {

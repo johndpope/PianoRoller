@@ -172,6 +172,28 @@ public:
                                           "OK");
     }
     
+    struct PaintData{
+        Graphics * g;
+        float width;
+        float height;
+        float noteHeight;
+        float numOfRows;
+        float rootRow;
+        float topNote;
+        
+        PaintData(Graphics * _g, float _width, float _height, float _noteHeight, float _numOfRows, float _rootRow, float _topNote)
+        {
+            g = _g;
+            width = _width;
+            height = _height;
+            noteHeight = _noteHeight;
+            numOfRows = _numOfRows;
+            rootRow = _rootRow;
+            topNote = _topNote;
+        };
+    };
+    
+
     
 private:
 

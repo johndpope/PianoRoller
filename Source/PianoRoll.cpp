@@ -51,9 +51,11 @@ void PianoRoll::paint (Graphics& g)
     const float noteHeight = ( height / (float)numOfRows );
     const float tripNoteWidth = width / ((float)numOfBeats * 3.0f);
     
+    PaintData paintData(&g, width, height, noteHeight, numOfRows, rootRow, topNote);
+    
     g.fillAll (PianoRollerColours::beatCanvasJungleGreen); //BACKGROUND COLOR
     
-    drawRows(g, height, width, noteHeight, numOfRows, rootRow, topNote);
+    drawRows(paintData);
     
     //FILL IN NOTES
     
@@ -174,29 +176,34 @@ void PianoRoll::paint (Graphics& g)
     
 }
 
-void PianoRoll::drawRows(Graphics& g, const float height, const float width, const float noteHeight,
-                         const float numOfRows, const float rootRow, const float topNote){
+void PianoRoll::drawRows(PaintData p){
     
     for(int row=0;row<numOfRows;row++){
-        float yPosition = 0. + (row * height/numOfRows);
-        int pitch = topNote-row;
+        float yPosition = 0. + (row * p.height/p.numOfRows);
+        int pitch = p.topNote-row;
         
         if (checkIfBlackKey(pitch)){
-            g.setColour (PianoRollerColours::greyOff);
-            g.fillRect(0.0f,yPosition,width, noteHeight);
+            p.g->setColour (PianoRollerColours::greyOff);
+            p.g->fillRect(0.0f,yPosition,p.width, p.noteHeight);
         }
         
-        if(row == rootRow && isChildOfBeatCanvas){
-            g.setColour (Colours::white);
-            g.setOpacity(0.5);
-            g.fillRect(0.0f,yPosition,width, noteHeight);
-            g.setOpacity(1.);
+        if(row == p.rootRow && isChildOfBeatCanvas){
+            p.g->setColour (Colours::white);
+            p.g->setOpacity(0.5);
+            p.g->fillRect(0.0f,yPosition, p.width, p.noteHeight);
+            p.g->setOpacity(1.);
         }
     }
 
 }
 
+void PianoRoll::drawColumnLines(PaintData p){
+    
+}
 
+void PianoRoll::drawRowLines(PaintData p){
+    
+}
 
 
 
