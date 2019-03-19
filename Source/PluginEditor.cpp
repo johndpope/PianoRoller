@@ -304,9 +304,11 @@ void PianoRoll1AudioProcessorEditor::drawTripletSwitches(Graphics * g, int numOf
     for(int beat=0; beat<numOfBeats;beat++){
         const float x = (beat * beatWidth) + beatWidth*0.333 + pianoKeyWidth*width;
         
+        
         if(processor.presets[currentPreset]->tracks[currentTrack]->beatSwitch[beat] == 0){
             g->setColour(Colour(156,168,152)); //If not a triplet
         }else{g->setColour(Colours::limegreen);} //If a triplet.
+        
         g->fillEllipse(x, y, ellipseWidth, ellipseHeight);
         g->setColour(Colours::black);
         g->drawEllipse(x, y, ellipseWidth, ellipseHeight, 1.);
@@ -350,47 +352,33 @@ void PianoRoll1AudioProcessorEditor::resized()
         scaleDisplayStaff.setBoundsRelative(0.91f, 0.0f, getWidth()*0.1, topBorder*0.5);
     }
     
-    if(topBorder){
-        const Point<float> panelXY = {0.726f, (float)topBorder * 0.05f};
-        const float halfTopBorder = topBorder/2;
-        const float smallInput = 0.06f;
-        const float largeInput = 0.09;
-        const float inputHeight = topBorder * 0.225;
-        const float inputRow = inputHeight*1.1f;
-        const float rowTwo = panelXY.getY() + inputRow;
-        const float rowThree = rowTwo + inputRow;
-        const float spacing = 0.001;
-        
-        presetSlider.setBoundsRelative(0.01f, topBorder/8, 0.2f, halfTopBorder);
-        trackSlider.setBoundsRelative(0.01f+sliderSpacing, topBorder/8, 0.2f, halfTopBorder);
-        beatSlider.setBoundsRelative(0.01f+(sliderSpacing*2), topBorder/8, 0.2f, halfTopBorder);
-        
-        if (isChildOfBeatCanvas == false){
-            //Row 1
-            rootMenu.setBoundsRelative(panelXY.getX(), panelXY.getY(), smallInput-spacing, inputHeight);
-            monoPolyMenu.setBoundsRelative(panelXY.getX()+smallInput, panelXY.getY(), smallInput-spacing, inputHeight);
-            generateButton.setBoundsRelative(panelXY.getX() + (smallInput*2), panelXY.getY(), smallInput-spacing, inputHeight);
-            //Row 2
-            scaleMenu.setBoundsRelative(panelXY.getX(), rowTwo, largeInput-spacing, inputHeight);
-            generatorMenu.setBoundsRelative(panelXY.getX()+largeInput, rowTwo, largeInput-spacing, inputHeight);
-            arpDirectionMenu.setBoundsRelative(panelXY.getX() + (largeInput*2), rowTwo, largeInput-spacing, inputHeight);
-            //Row3
-            //arpSlider.setBoundsRelative(panelX, rowThree, largeInput*2, topBorder/5);
-        }
-        
+
+    const Point<float> panelXY = {0.726f, (float)topBorder * 0.05f};
+    const float halfTopBorder = topBorder/2;
+    const float smallInput = 0.06f;
+    const float largeInput = 0.09;
+    const float inputHeight = topBorder * 0.225;
+    const float inputRow = inputHeight*1.1f;
+    const float rowTwo = panelXY.getY() + inputRow;
+    const float rowThree = rowTwo + inputRow;
+    const float spacing = 0.001;
+    
+    presetSlider.setBoundsRelative(0.01f, topBorder/8, 0.2f, halfTopBorder);
+    trackSlider.setBoundsRelative(0.01f+sliderSpacing, topBorder/8, 0.2f, halfTopBorder);
+    beatSlider.setBoundsRelative(0.01f+(sliderSpacing*2), topBorder/8, 0.2f, halfTopBorder);
+    
+    if (isChildOfBeatCanvas == false){
+        //Row 1
+        rootMenu.setBoundsRelative(panelXY.getX(), panelXY.getY(), smallInput-spacing, inputHeight);
+        monoPolyMenu.setBoundsRelative(panelXY.getX()+smallInput, panelXY.getY(), smallInput-spacing, inputHeight);
+        generateButton.setBoundsRelative(panelXY.getX() + (smallInput*2), panelXY.getY(), smallInput-spacing, inputHeight);
+        //Row 2
+        scaleMenu.setBoundsRelative(panelXY.getX(), rowTwo, largeInput-spacing, inputHeight);
+        generatorMenu.setBoundsRelative(panelXY.getX()+largeInput, rowTwo, largeInput-spacing, inputHeight);
+        arpDirectionMenu.setBoundsRelative(panelXY.getX() + (largeInput*2), rowTwo, largeInput-spacing, inputHeight);
+        //Row3
+        //arpSlider.setBoundsRelative(panelX, rowThree, largeInput*2, topBorder/5);
     }
-   /*
-    if(topBorder){
-        auto r = getLocalBounds();
-        
-        auto topWindowHeight = getHeight()*topBorder;
-        
-        auto topWindow = r.removeFromTop(topWindowHeight);
-        
-        presetSlider.setBounds(topWindow.removeFromLeft(200));
-        
-    }
-     */
 }
     
 

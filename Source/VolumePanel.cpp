@@ -18,8 +18,6 @@ VolumePanel::VolumePanel(OwnedArray<Preset> * processorPresetLocation){
     if (! sender.connect ("127.0.0.1", 9001)) // [4]
         showConnectionErrorMessage ("Error: could not connect to UDP port 9001.");
     
-    stuff = "foo";
-    
     setVisible(true);
     setSize(getWidth(), getHeight());
 }
@@ -41,51 +39,43 @@ void VolumePanel::paint (Graphics& g)
     
     g.fillAll (PianoRollerColours::greyOff); //BACKGROUND COLOR
     
+    drawVolumes(paintData, isMono);
     
-    for(int beat=0;beat<numOfBeats;beat++){
-        const int currentBeatSwitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch[beat];
-        const int div = [currentBeatSwitch]() -> int{
-            if(currentBeatSwitch==0) return 4;
-            else                     return 3;
-        }();
-        const float thisNoteWidth = [&]() -> float{
-            if(currentBeatSwitch==0) return noteWidth;
-            else                     return tripNoteWidth;
+    g.drawLine(width, 0.0f, width, height, 3); //Right side line.
+    
+}
+
+void VolumePanel::drawVolumes(PaintData p, bool isMono){
+    auto thisTrack = (*processorPresets)[currentPreset]->tracks[currentTrack];
+    
+    for(int beat=0;beat<p.numOfBeats;beat++){
+        const int currentBeatSwitch = thisTrack->beatSwitch[beat];
+        auto [div, thisNoteWidth] = [currentBeatSwitch, p](){
+            if(currentBeatSwitch==0) return std::make_pair(4, p.noteWidth);
+            else                     return std::make_pair(3, p.tripNoteWidth);
         }();
         
         for(int subDiv=0;subDiv<div;subDiv++){
             const int col = (beat*div) + subDiv;
             const int vol = [&]() -> int{
                 if(currentBeatSwitch==0){
-                    if(isMono) return (*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenthVols[col];
-                    else       return (*processorPresets)[currentPreset]->tracks[currentTrack]->polySixteenthVols[col];
+                    if(isMono) return thisTrack->sixteenthVols[col];
+                    else       return thisTrack->polySixteenthVols[col];
                 }else if(currentBeatSwitch==1){
-                    if(isMono) return (*processorPresets)[currentPreset]->tracks[currentTrack]->tripletVols[col];
-                    else       return (*processorPresets)[currentPreset]->tracks[currentTrack]->polyTripletVols[col];
+                    if(isMono) return thisTrack->tripletVols[col];
+                    else       return thisTrack->polyTripletVols[col];
                 }else return 0;
             }();
-            const float rectX = ( col * thisNoteWidth );
-            const float rectY = height - ( height/127.f * (float)vol );
             
-            g.setColour (PianoRollerColours::whiteBlue);
-            g.fillRect(rectX, rectY, thisNoteWidth, height);
+            Point<float> volSlider{col * thisNoteWidth,
+                                   p.height - ( p.height/127.f * (float)vol ) };
             
-            //DRAW COLUMN LINES
-            const int lineWidth = [subDiv](){
-                if(subDiv==0) return 3;
-                else          return 1;
-            }();
-            const int xPosition = 0.0f + ( (float)col*thisNoteWidth );
-            g.setColour (Colours::black);
-            g.drawLine(xPosition, 0., xPosition, height, lineWidth);
+            p.g->setColour (PianoRollerColours::whiteBlue);
+            p.g->fillRect(volSlider.getX(), volSlider.getY(), thisNoteWidth, p.height);
+            
+            drawColumnLine(p, subDiv, col, thisNoteWidth);
         }
     }
-    g.drawLine(width, 0.0f, width, height, 3); //Right side line.
-    g.setFont(40);
-    
-    
-    //g.drawText(stuff, 80, 50, 200, 200, Justification::centred);
-    
 }
 
 void VolumePanel::resized(){
@@ -103,37 +93,30 @@ void VolumePanel::mouseDown(const MouseEvent &event){
     const int numOfBeats = (*processorPresets)[currentPreset]->numOfBeats;
     const float x = getMouseXYRelative().getX();
     const float y = getMouseXYRelative().getY();
-    int vol = (int) ( 127.f - y/(float)getHeight() * 127.f ); //Final (int) cast rounds it down.
-    int col = (int) (x/(float)getWidth() * (float) (numOfBeats*4)); //Final (int) cast rounds it down.
-        vol = midiLimit(vol);
-        col = midiLimit(col);
+    int vol = midiLimit( (int)( 127.f - y/(float)getHeight() * 127.f ) ); //Final (int) cast rounds it down.
+    int col = midiLimit( (int)(x/(float)getWidth() * (float) (numOfBeats*4)) ); //Final (int) cast rounds it down.
     const int tripCol = (int) (x/(float)getWidth() * (float) (numOfBeats*3)); //Final (int) cast rounds it down.
     const int currentBeat = col / 4;
     const int beatSwitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch[currentBeat];
-    const int beatDiv = [&]() -> int{
-        if(beatSwitch==0) return 4;
-        else              return 3;
+    auto [beatDiv, thisCol] = [&](){
+        if(beatSwitch==0) return std::make_pair(4, col);
+        else              return std::make_pair(3, tripCol);
     }();
-    int thisCol;
-    if(rightClick){vol = 96;}
+    if(rightClick) vol = 96;
     
     if((*processorPresets)[currentPreset]->isMono){
         if(beatSwitch==0){
-            thisCol=col;
             (*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenthVols.set(col, vol);
         }
         else{
-            thisCol=tripCol;
             (*processorPresets)[currentPreset]->tracks[currentTrack]->tripletVols.set(tripCol, vol);
         };
         
     }else{ //isPoly
         if(beatSwitch==0){
-            thisCol=col;
             (*processorPresets)[currentPreset]->tracks[currentTrack]->polySixteenthVols.set(col, vol);
         }
         else{
-            thisCol=tripCol;
             (*processorPresets)[currentPreset]->tracks[currentTrack]->polyTripletVols.set(tripCol, vol);
         };
     }
@@ -141,8 +124,6 @@ void VolumePanel::mouseDown(const MouseEvent &event){
     //========Send to BeatCanvasJava.Java=======
     //public void setVol(int track, int div, int note, int vol)
     BeatCanvasOSC_MessageOut("/BeatCanvas/setVol",currentTrack, beatDiv, thisCol, vol);
-    
-    stuff = (String) vol;
     
     repaint();
 }

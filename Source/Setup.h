@@ -151,7 +151,7 @@ public:
     int limitRange(int val, int low, int high);
     bool checkIfBlackKey(const int pitch);
     
-    //================PAINTING FUNCTIONS================
+    //==================PAINTING FUNCTIONS==================
     void drawColumnLine(PaintData p, const int subDiv, const int col, const float noteWidth);
     
     
