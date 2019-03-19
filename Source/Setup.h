@@ -15,29 +15,28 @@
 #include <map>
 
 namespace PianoRollerColours {
-    inline Colour greyOff = Colour(110,110,110);
-    inline Colour whiteBlue = Colour(195,223,226);
+    inline Colour greyOff               = Colour(110,110,110);
+    inline Colour whiteBlue             = Colour(195,223,226);
     inline Colour beatCanvasJungleGreen = Colour(152,152,115);
-    inline Colour calmGreen = Colour(156,168,152);
+    inline Colour calmGreen             = Colour(156,168,152);
 }
 
-
-
-class PianoRollComponent : public Component
+class PianoRollComponent
 {
 public:
-    //const Colour greyOff = Colour(128,128,128);
     static constexpr int numOfTracks = 8;
     static constexpr int numOfPresets = 8;
     static constexpr int maxBeats = 16;
     static constexpr int numOfRows = 32;
     static constexpr int blackKeys[5] = {1,3,6,8,10};
     
-    int currentPreset,
-        currentTrack;
+    static inline int currentPreset = 1,
+                      currentTrack  = 1;
+    
+    
+    static std::shared_ptr<int> currentPresetPtr;
     
     struct PaintData;
-    
     
     class Track{
     public:

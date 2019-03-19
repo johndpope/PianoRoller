@@ -23,6 +23,8 @@
 //==============================================================================
 /**
 */
+
+
 class PianoRoll1AudioProcessor  : public AudioProcessor,
                                   public PianoRollComponent,
                                   public AudioProcessorValueTreeState::Listener,
@@ -80,8 +82,6 @@ public:
     //==============================================================================
     int preset, numerator, denominator;
     AudioProcessorValueTreeState treeState;
-    
-    std::shared_ptr<int> currentPresetPointer = std::make_shared<int>(1);
     
     // this keeps a copy of the last set of time info that was acquired during an audio
     // callback - the UI component will read this and display it.

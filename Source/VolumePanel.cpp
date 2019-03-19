@@ -20,6 +20,7 @@ VolumePanel::VolumePanel(OwnedArray<Preset> * processorPresetLocation){
     
     setVisible(true);
     setSize(getWidth(), getHeight());
+    
 }
 
 VolumePanel::~VolumePanel(){
@@ -42,7 +43,7 @@ void VolumePanel::paint (Graphics& g)
     drawVolumes(paintData, isMono);
     
     g.drawLine(width, 0.0f, width, height, 3); //Right side line.
-    
+    DBG((String) currentPreset);
 }
 
 void VolumePanel::drawVolumes(PaintData p, bool isMono){

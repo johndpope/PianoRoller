@@ -368,7 +368,8 @@ public:
 
 
 
-class Staff : public PianoRollComponent
+class Staff : public Component,
+              public PianoRollComponent
 {
 public:
     Clef clef = TREBLE;

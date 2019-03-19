@@ -15,16 +15,11 @@
 PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p), midiLabel("0"), pianoRoll(&p.presets, &auditionStaff, &pianoKeys), volumePanel(&p.presets), pianoKeys(&pianoRoll), playCursorWindow(&processor.lastPosInfo), auditionStaff(&p.presets, &p.currentPreset), scaleDisplayStaff(&p.presets, &p.currentPreset)
 {
-    
-    DBG("fosdfsfdso\n");
     setVisible(true);
     setResizable(true, true);
     isChildOfBeatCanvas = false;
     setOpaque(true);
-    //setBufferedToImage(true);
     
-    currentPreset = 1;
-    currentTrack = 1;
     currentBeat = 0.0f;
     currentNumOfBeats = 4;
     previousVal = -1.0f;
@@ -74,8 +69,6 @@ PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioP
     arpDirectionMenu.setVisible(false);
     
     //addAndMakeVisible(&noteLabel);
-    
-    getTopLevelComponent()->setName("foo");
     
     //Setup Sliders===============================================================
     presetSliderAttach = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(processor.treeState,PRESET_ID,presetSlider);
@@ -190,7 +183,6 @@ PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioP
     setSize (monitorWidth*0.85, monitorHeight*0.85);
     noteLabel.setText("foo", dontSendNotification);
     noteLabel.setColour(Label::backgroundColourId, PianoRollerColours::greyOff);
-    
 }
 
 PianoRoll1AudioProcessorEditor::~PianoRoll1AudioProcessorEditor()

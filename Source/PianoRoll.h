@@ -21,8 +21,8 @@
 
 
 
-class PianoRoll    : public PianoRollComponent//,
-                    // public KeyListener
+class PianoRoll    : public Component,
+                     public PianoRollComponent
 {
 public:
     
@@ -74,7 +74,8 @@ private:
 
 //===================Piano Keys===================//
 
-class PianoKeys    : public PianoRollComponent
+class PianoKeys    : public Component,
+                     public PianoRollComponent
 {
 public:
     PianoRoll * pianoRoll;

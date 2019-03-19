@@ -10,6 +10,9 @@
 
 #include "Setup.h"
 
+std::shared_ptr<int> PianoRollComponent::currentPresetPtr = std::make_shared<int>(1);
+
+
 void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch){
     bool userSelected;
     bool isMono = (*processorPresets)[currentPreset]->isMono;
@@ -45,7 +48,7 @@ void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch){
         polyNotes->set(col, newPitchArray);
     }
     
-    repaint();
+    //repaint();
 }
 
 void PianoRollComponent::updateVolume(int col, int vol, int beatSwitch){
@@ -55,17 +58,17 @@ void PianoRollComponent::updateVolume(int col, int vol, int beatSwitch){
     if (beatSwitch == 1){
         (*processorPresets)[currentPreset]->tracks[currentTrack]->tripletVols.set(col,vol);
     }
-    repaint();
+    //repaint();
 }
 
 void PianoRollComponent::updateBeatSwitch(int beat, int switchVal){
     (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch.set(beat,switchVal);
-    repaint();
+    //repaint();
 }
 
 void PianoRollComponent::updateNumOfBeats(int beats){
     updateNumOfBeats(beats, currentPreset);
-    repaint();
+    //repaint();
 }
 
 void PianoRollComponent::updateNumOfBeats(int beats, const int preset){
@@ -75,12 +78,12 @@ void PianoRollComponent::updateNumOfBeats(int beats, const int preset){
 
 void PianoRollComponent::changeRhythmDiv(int track, int beat, int beatSwitch){
     (*processorPresets)[currentPreset]->tracks[track]->beatSwitch.set(beat, beatSwitch);
-    repaint();
+    //repaint();
 }
 
 void PianoRollComponent::updatePreset(const int preset){
     currentPreset = preset;
-    repaint();
+    //repaint();
 }
 
 int PianoRollComponent::midiLimit(int midiVal){
@@ -105,7 +108,7 @@ bool PianoRollComponent::checkIfBlackKey(const int pitch){
 
 void PianoRollComponent::updateTrack(const int track){
     currentTrack = track;
-    repaint();
+    //repaint();
 }
 
 void PianoRollComponent::noteOnOff(const int track, const int div, const int note, const int onOff){
@@ -121,7 +124,7 @@ void PianoRollComponent::noteOnOff(const int track, const int div, const int not
     else if(div==3){
         (*processorPresets)[currentPreset]->tracks[track]->triplets.set(note,newPitch);
     }
-    repaint();
+    //repaint();
 }
 
 void PianoRollComponent::copyPreset(const int presetSource,const  int presetReplaced){
@@ -130,7 +133,7 @@ void PianoRollComponent::copyPreset(const int presetSource,const  int presetRepl
     (*processorPresets)[presetReplaced]->tracks.deleteAllObjects();
     (*processorPresets)[presetReplaced]->tracks.addCopiesOf(presets[presetSource]->tracks);
     
-    repaint();
+    //repaint();
 }
 
 //From Java

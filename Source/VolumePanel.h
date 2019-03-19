@@ -15,7 +15,8 @@
 
 
 
-class VolumePanel : public PianoRollComponent
+class VolumePanel : public Component,
+                    public PianoRollComponent
 {
 public:
 

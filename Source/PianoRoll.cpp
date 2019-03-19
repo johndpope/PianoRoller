@@ -31,7 +31,7 @@ PianoRoll::PianoRoll(OwnedArray<Preset> * processorPresetLocation, Staff * audit
         showConnectionErrorMessage ("Error: could not connect to UDP port 9001.");
 
     setSize(getWidth(), getHeight());
-    //setOpaque(true);
+
 }
 
 PianoRoll::~PianoRoll(){
@@ -172,7 +172,6 @@ void PianoRoll::mouseWheelMove(const juce::MouseEvent &event, const juce::MouseW
     topNote = limitRange( (topNote + (int)verticalAdjust), 8+numOfRows, 127);
     
     repaint();
-    pianoKeys->repaint();
 }
 
 void PianoRoll::mouseUp(const MouseEvent& event){

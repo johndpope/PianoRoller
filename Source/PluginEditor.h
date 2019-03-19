@@ -35,7 +35,8 @@ class PianoRoll1AudioProcessorEditor  : public AudioProcessorEditor,
                                         public Button::Listener,
                                         public OSCReceiver,
                                         public OSCReceiver::ListenerWithOSCAddress<OSCReceiver::MessageLoopCallback>,
-                                        public Timer
+                                        public Timer,
+                                        public PianoRollComponent
 {
 public:
     
@@ -98,10 +99,8 @@ public:
     bool isChildOfBeatCanvas;
     
     OwnedArray<PianoRoll::Preset> * presets;
-
+    
 private:
-    int currentPreset;
-    int currentTrack;
     int currentNumOfBeats;
     int internalBeat;
     int beatIndex;

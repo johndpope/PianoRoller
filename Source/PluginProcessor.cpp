@@ -440,7 +440,7 @@ void PianoRoll1AudioProcessor::sequencerCheck(juce::Value &value){
     }
     
     int currentNumOfBeats = presets[currentPreset]->numOfBeats;
-    
+
     playPosition.setValue(std::fmod(currentBeat, (float)currentNumOfBeats) / (float)currentNumOfBeats);
     previousVal = floatVal;
 }
