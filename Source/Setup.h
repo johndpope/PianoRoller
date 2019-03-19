@@ -36,6 +36,8 @@ public:
     int currentPreset,
         currentTrack;
     
+    struct PaintData;
+    
     
     class Track{
     public:
@@ -149,8 +151,11 @@ public:
     int limitRange(int val, int low, int high);
     bool checkIfBlackKey(const int pitch);
     
-    //template <class T>
-    //void BeatCanvasOSC_MessageOut(String initMessage, std::initializer_list<T> data);
+    //================PAINTING FUNCTIONS================
+    void drawColumnLine(PaintData p, const int subDiv, const int col, const float noteWidth);
+    
+    
+    //================BEAT CANVAS OSC MESSAGES================
     template<typename T, typename... Args>
     void BeatCanvasOSC_MessageOut(String initMessage, T t, Args... data){
         if (! sender.send (initMessage, data...))
@@ -179,12 +184,11 @@ public:
         float noteHeight;
         float noteWidth;
         float tripNoteWidth;
-        float numOfRows;
         float numOfBeats;
         float rootRow;
         float topNote;
         
-        PaintData(Graphics * _g, float _width, float _height, float _noteHeight, float _noteWidth, float _tripNoteWidth, float _numOfRows, float _numOfBeats, float _rootRow, float _topNote)
+        PaintData(Graphics * _g, float _width, float _height, float _noteHeight, float _noteWidth, float _tripNoteWidth, float _numOfBeats, float _rootRow, float _topNote)
         {
             g = _g;
             width = _width;
@@ -192,7 +196,6 @@ public:
             noteHeight = _noteHeight;
             noteWidth = _noteWidth;
             tripNoteWidth = _tripNoteWidth;
-            numOfRows = _numOfRows;
             numOfBeats = _numOfBeats;
             rootRow = _rootRow;
             topNote = _topNote;
@@ -202,7 +205,7 @@ public:
 
     
 private:
-
+    
     
 };
 

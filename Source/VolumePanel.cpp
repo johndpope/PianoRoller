@@ -37,6 +37,8 @@ void VolumePanel::paint (Graphics& g)
     const float tripNoteWidth = width / ((float)numOfBeats * 3.0f);
     const bool isMono = (*processorPresets)[currentPreset]->isMono;
     
+    PaintData paintData(&g, width, height, NAN, noteWidth, tripNoteWidth, numOfBeats, NAN, NAN);
+    
     g.fillAll (PianoRollerColours::greyOff); //BACKGROUND COLOR
     
     

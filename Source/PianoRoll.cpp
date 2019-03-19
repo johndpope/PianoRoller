@@ -47,7 +47,7 @@ void PianoRoll::paint (Graphics& g)
     const float noteHeight = ( height / (float)numOfRows );
     const float tripNoteWidth = width / ((float)numOfBeats * 3.0f);
     
-    PaintData paintData(&g, width, height, noteHeight, noteWidth, tripNoteWidth, numOfRows, numOfBeats, rootRow, topNote);
+    PaintData paintData(&g, width, height, noteHeight, noteWidth, tripNoteWidth, numOfBeats, rootRow, topNote);
     
     g.fillAll (PianoRollerColours::beatCanvasJungleGreen); //BACKGROUND COLOR
     
@@ -61,7 +61,7 @@ void PianoRoll::paint (Graphics& g)
 void PianoRoll::drawRows(PaintData p){
     
     for(int row=0;row<numOfRows;row++){
-        const float yPosition = 0. + (row * p.height/p.numOfRows);
+        const float yPosition = 0. + (row * p.height/numOfRows);
         const int pitch = p.topNote-row;
         
         if (checkIfBlackKey(pitch)){
@@ -77,14 +77,6 @@ void PianoRoll::drawRows(PaintData p){
         }
     }
 
-}
-
-void PianoRoll::drawColumnLine(PaintData p, const int subDiv, const int col, const float noteWidth){
-    const int lineWidth = (subDiv==0) ? 3 : 1;
-    const float xPosition = 0.0f + ( (float)col*noteWidth );
-    
-    p.g->setColour(Colours::black);
-    p.g->drawLine(xPosition, 0., xPosition, p.height, lineWidth);
 }
 
 void PianoRoll::drawRowLines(PaintData p){
@@ -324,7 +316,7 @@ void PianoKeys::paint(juce::Graphics &g){
     
     g.fillAll (PianoRollerColours::beatCanvasJungleGreen); //BACKGROUND COLOR
     
-    PaintData paintData(&g, width, height, noteHeight, 0.0f, 0.0f, numOfRows, 0, 0, topNote);
+    PaintData paintData(&g, width, height, noteHeight, 0.0f, 0.0f, 0, 0, topNote);
     drawRows(paintData);
 
     g.drawRoundedRectangle(0.0f, 0.0f, width, height, 0.0f, 4.0f);
@@ -332,7 +324,7 @@ void PianoKeys::paint(juce::Graphics &g){
 }
 
 void PianoKeys::drawRows(PaintData p){
-    for(int row=0; row<p.numOfRows; row++){
+    for(int row=0; row<numOfRows; row++){
         const int pitch = p.topNote-row;
         const float yPosition = row * p.noteHeight;
         
