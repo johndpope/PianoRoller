@@ -11,7 +11,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Setup.h"
+#include "PianoRollComponent.h"
 #define PRESET_ID "current_preset"
 #define PRESET_NAME "Current_Preset"
 #define TRACK_ID "current_track"

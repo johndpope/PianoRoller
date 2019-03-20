@@ -14,7 +14,7 @@
 #include "PluginProcessor.h"
 #include "PianoRoll.h"
 #include "VolumePanel.h"
-#include "Setup.h"
+#include "PianoRollComponent.h"
 #include "PlayCursorWindow.h"
 #include "Theory.h"
 #include "OSC_Messages.h"

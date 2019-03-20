@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT name="PianoRoller" projectType="audioplug" buildStandalone="1"
-              jucerVersion="5.4.1" pluginFormats="buildAU,buildStandalone,buildVST,buildVST3"
+              jucerVersion="5.4.3" pluginFormats="buildAU,buildStandalone,buildVST,buildVST3"
               buildVST="1" buildVST3="1" buildAU="1" buildAUv3="0" buildRTAS="0"
               buildAAX="0" enableIAA="0" cppLanguageStandard="17" pluginCharacteristicsValue="pluginProducesMidiOut,pluginWantsMidiIn"
               id="BgPZPy" pluginVST3Category="Fx" pluginVSTCategory="kPlugCategSynth"
@@ -9,7 +9,7 @@
   <MAINGROUP id="ynztv4" name="PianoRoller">
     <GROUP id="{277EFBB5-C798-67D1-6142-B45D6435B6AD}" name="Source">
       <GROUP id="{8FE6D2AD-C9A3-F0D7-3E86-B5A35D511E8D}" name="Fonts">
-        <FILE id="NoU6Hj" name="OpusStd.otf" compile="0" resource="1" file="/Library/Fonts/OpusStd.otf"/>
+        <FILE id="Z8epRL" name="OpusStd.otf" compile="0" resource="1" file="Fonts/OpusStd.otf"/>
       </GROUP>
       <FILE id="pLlB52" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
@@ -26,8 +26,10 @@
             file="Source/PlayCursorWindow.h"/>
       <FILE id="MRSOjh" name="VolumePanel.cpp" compile="1" resource="0" file="Source/VolumePanel.cpp"/>
       <FILE id="btSZ0t" name="VolumePanel.h" compile="0" resource="0" file="Source/VolumePanel.h"/>
-      <FILE id="qDMBuC" name="Setup.cpp" compile="1" resource="0" file="Source/Setup.cpp"/>
-      <FILE id="gltkkR" name="Setup.h" compile="0" resource="0" file="Source/Setup.h"/>
+      <FILE id="qDMBuC" name="PianoRollComponent.cpp" compile="1" resource="0"
+            file="Source/PianoRollComponent.cpp"/>
+      <FILE id="gltkkR" name="PianoRollComponent.h" compile="0" resource="0"
+            file="Source/PianoRollComponent.h"/>
       <FILE id="Y96X3m" name="OSC_Messages.h" compile="0" resource="0" file="Source/OSC_Messages.h"/>
       <FILE id="wJhAgm" name="Theory.h" compile="0" resource="0" file="Source/Theory.h"/>
     </GROUP>

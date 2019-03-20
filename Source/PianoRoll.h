@@ -11,7 +11,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Setup.h"
+#include "PianoRollComponent.h"
 #include "Theory.h"
 #include "PluginProcessor.h"
 #include <map>

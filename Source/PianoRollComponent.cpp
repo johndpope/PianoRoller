@@ -8,7 +8,7 @@
   ==============================================================================
 */
 
-#include "Setup.h"
+#include "PianoRollComponent.h"
 
 std::shared_ptr<int> PianoRollComponent::currentPresetPtr = std::make_shared<int>(1);
 
