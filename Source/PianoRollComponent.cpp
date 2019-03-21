@@ -130,9 +130,9 @@ void PianoRollComponent::noteOnOff(const int track, const int div, const int not
 void PianoRollComponent::copyPreset(const int presetSource,const  int presetReplaced){
     int copyBeats = presets[presetSource]->numOfBeats;
     (*processorPresets)[presetReplaced]->numOfBeats = copyBeats;
-    (*processorPresets)[presetReplaced]->tracks.deleteAllObjects();
+    (*processorPresets)[presetReplaced]->tracks.clearQuick(true);
     (*processorPresets)[presetReplaced]->tracks.addCopiesOf(presets[presetSource]->tracks);
-    
+
     //repaint();
 }
 

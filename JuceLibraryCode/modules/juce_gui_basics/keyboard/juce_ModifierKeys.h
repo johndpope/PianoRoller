@@ -80,7 +80,6 @@ public:
 
     /** Checks whether the flag is set for the left mouse-button. */
     inline bool isLeftButtonDown() const noexcept       { return testFlags (leftButtonModifier); }
-    
 
     /** Checks whether the flag is set for the right mouse-button.
 

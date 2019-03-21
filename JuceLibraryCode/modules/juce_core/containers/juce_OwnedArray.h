@@ -785,18 +785,18 @@ public:
     // and renamed "swapWith" to be more consistent with the names used in other classes.
     JUCE_DEPRECATED_WITH_BODY (void swapWithArray (OwnedArray& other) noexcept, { swapWith (other); })
    #endif
-    
-    void deleteAllObjects()
-    {
-        for (auto& e : values)
-            ContainerDeletePolicy<ObjectClass>::destroy (e);
-        
-        values.clear();
-    }
 
 private:
     //==============================================================================
     ArrayBase <ObjectClass*, TypeOfCriticalSectionToUse> values;
+
+    void deleteAllObjects()
+    {
+        for (auto& e : values)
+            ContainerDeletePolicy<ObjectClass>::destroy (e);
+
+        values.clear();
+    }
 
     template <class OtherObjectClass, class OtherCriticalSection>
     friend class OwnedArray;
