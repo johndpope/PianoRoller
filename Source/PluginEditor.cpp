@@ -13,7 +13,7 @@
 
 //==============================================================================
 PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p), midiLabel("0"), pianoRoll(&p.presets, &auditionStaff, &pianoKeys), volumePanel(&p.presets), pianoKeys(&pianoRoll), playCursorWindow(&processor.lastPosInfo), auditionStaff(&p.presets, &p.currentPreset), scaleDisplayStaff(&p.presets, &p.currentPreset)
+    : AudioProcessorEditor (&p), processor (p), midiLabel("0"), pianoRoll(&p.presets, &auditionStaff, &pianoKeys), pianoKeys(&pianoRoll), auditionStaff(&p.presets, &p.currentPreset), scaleDisplayStaff(&p.presets, &p.currentPreset), volumePanel(&p.presets), playCursorWindow(&processor.lastPosInfo)
 {
     setVisible(true);
     setResizable(true, true);
@@ -159,9 +159,6 @@ PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioP
     generatorMenu.onChange = [this]{ generatorMenuChanged(); };
     arpDirectionMenu.onChange = [this]{ arpDirectionMenuChanged(); };
     
-    //OSC MESSAGES=================================================================
-    if (! connect(6448)){}; //Connect to OSC messages from Max.
-    addListener(this, "/juce");
     
     Rectangle<int> r = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
     int monitorWidth = r.getWidth();
@@ -191,7 +188,6 @@ PianoRoll1AudioProcessorEditor::~PianoRoll1AudioProcessorEditor()
     processor.treeState.removeParameterListener(TRACK_ID, this);
     processor.treeState.removeParameterListener(BEATS_ID, this);
     processor.playPosition.removeListener(this);
-    juce::OSCReceiver::removeListener(this);
 
 }
 
@@ -202,7 +198,6 @@ void PianoRoll1AudioProcessorEditor::paint (Graphics& g)
 {
     const float width = getWidth();
     const float height = getHeight();
-    const float yBorder = getHeight()*0.01;
     const int numOfBeats = processor.presets[currentPreset]->numOfBeats;
 
     //g.fillAll(Colour(156,168,152));
@@ -352,7 +347,7 @@ void PianoRoll1AudioProcessorEditor::resized()
     const float inputHeight = topBorder * 0.225;
     const float inputRow = inputHeight*1.1f;
     const float rowTwo = panelXY.getY() + inputRow;
-    const float rowThree = rowTwo + inputRow;
+    //const float rowThree = rowTwo + inputRow;
     const float spacing = 0.001;
     
     presetSlider.setBoundsRelative(0.01f, topBorder/8, 0.2f, halfTopBorder);
@@ -378,118 +373,6 @@ void PianoRoll1AudioProcessorEditor::resized()
 //==============================================================================
     
 
-
-void PianoRoll1AudioProcessorEditor::oscMessageReceived(const juce::OSCMessage &Message){
-    //First value is an integer.
-    if (Message.size() > 0 && Message[0].isInt32()){
-        
-        OwnedArray<int> theArray;
-        repaint();
-        
-    }
-    
-    //"Function" calls.
-    if (Message.size() > 0 && Message[0].isString()){
-        
-        //setPreset(int preset)
-        if(Message[0].getString() == "setPreset"){
-            const int preset = Message[1].getInt32();
-            currentPreset = preset;
-            pianoRoll.currentPreset = preset;
-            volumePanel.currentPreset = preset;
-            repaint();
-        }
-        
-        //updateNote(int col, int pitch, int beatSwitch)
-        else if(Message[0].getString() == "updateNote"){
-            const int col = Message[1].getInt32();
-            const int pitch = Message[2].getInt32();
-            const int beatSwitch = Message[3].getInt32();
-            pianoRoll.updateNote(col, pitch, beatSwitch);
-            volumePanel.updateNote(col, pitch, beatSwitch);
-        }
-        
-        //void PianoRoll::updateBeatSwitch(int beat)
-        else if(Message[0].getString() == "updateBeatSwitch"){
-            pianoRoll.updateBeatSwitch(Message[1].getInt32(), Message[2].getInt32());
-            volumePanel.updateBeatSwitch(Message[1].getInt32(), Message[2].getInt32());
-        }
-        
-        else if(Message[0].getString() == "updateVolume"){
-            const int col = Message[1].getInt32();
-            const int vol = Message[2].getInt32();
-            const int beatSwitch = Message[3].getInt32();
-            //TODO
-        }
-        
-        else if(Message[0].getString() == "updateNumOfBeats"){
-            const int beats = Message[1].getInt32();
-            const int preset = [&]() -> int{
-                if (Message.size() == 3){return Message[2].getInt32();}
-                else{return currentPreset;}
-            }();
-            //if (Message.size() == 3){preset = Message[2].getInt32();}
-            //else{preset = currentPreset;}
-            pianoRoll.updateNumOfBeats(beats, preset);
-            volumePanel.updateNumOfBeats(beats, preset);
-        }
-        
-        if(Message[0].getString() == "playCursor"){
-            playCursorWindow.setPlayCursor(Message[1].getFloat32());
-        }
-        
-        if(Message[0].getString() == "changeRhythmDiv"){
-            const int track = Message[1].getInt32();
-            const int beat = Message[2].getInt32();
-            const int beatSwitch = Message[3].getInt32();
-            pianoRoll.changeRhythmDiv(track, beat, beatSwitch);
-            volumePanel.changeRhythmDiv(track, beat, beatSwitch);
-        }
-        
-        if(Message[0].getString() == "currentPreset"){
-            const int preset = Message[1].getInt32();
-            currentPreset = preset;
-            pianoRoll.updatePreset(preset);
-            volumePanel.updatePreset(preset);
-        }
-        if(Message[0].getString() == "currentTrack"){
-            int track = Message[1].getInt32();
-            currentTrack = track;
-            trackSlider.setValue(currentTrack); //Automatically updates pianoroll and vol panel.
-            repaint();
-        }
-        
-        //void PianoRollComponent::noteOnOff(int track, int div, int note, int onOff)
-        if(Message[0].getString() == "noteOnOff"){
-            const int track = Message[1].getInt32();
-            const int div = Message[2].getInt32();
-            const int note = Message[3].getInt32();
-            const int onOff = Message[4].getInt32();
-            pianoRoll.noteOnOff(track, div, note, onOff);
-            volumePanel.noteOnOff(track, div, note, onOff);
-        }
-        
-        //void PianoRollComponent::copyPreset(int presetSource, int presetReplaced)
-        if(Message[0].getString() == "copyPresets"){
-            const int presetSource = Message[1].getInt32();
-            const int presetReplaced = Message[2].getInt32();
-            pianoRoll.copyPreset(presetSource, presetReplaced);
-            volumePanel.copyPreset(presetSource, presetReplaced);
-            currentPreset = presetReplaced;
-            repaint();
-        }
-        
-        if(Message[0].getString() == "isChildOfBeatCanvas"){
-            isChildOfBeatCanvas = true;
-            pianoRoll.isChildOfBeatCanvas = true;
-            pianoRoll.repaint();
-            repaint();
-        }
-    
-        repaint();
-    }
-    
-}
 
 void PianoRoll1AudioProcessorEditor::setMidiDisplay(int midi){
     midiLabel.setName((String) midi);

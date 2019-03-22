@@ -166,8 +166,7 @@ void PianoRoll1AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuf
         jassert (buffer.getNumChannels() == 0); //Set number of audio channels to 0
     
     const float numOfSamps = buffer.getNumSamples();
-    const float refreshCounter = (2048 / numOfSamps); //The frequency our current beat position is sent to the Plugin
-                                                //Editor.
+   
     const int midiStart = midiMessages.getFirstEventTime();
     buffer.clear();
     
@@ -496,7 +495,7 @@ void PianoRoll1AudioProcessor::oscMessageReceived(const juce::OSCMessage &Messag
             int preset;
             if (Message.size() == 3){preset = Message[2].getInt32();}
             else{preset = currentPreset;}
-            updateNumOfBeats(beats, preset);
+            parameterChanged(BEATS_ID, beats);
         }
         
         
@@ -542,8 +541,6 @@ void PianoRoll1AudioProcessor::oscMessageReceived(const juce::OSCMessage &Messag
             int preset = Message[5].getInt32();
             setPitch(track, div, note, pitch, preset);
         }
-        
-        
 
     }
 }

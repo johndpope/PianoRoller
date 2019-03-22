@@ -309,9 +309,9 @@ namespace Theory{
             case 2 : return NATURAL;
             case 3 : return SHARP;
             case 4 : return DOUBLE_SHARP;
+            default: DBG("Unrecognized Accidental"); return NATURAL;
         }
     }
-    
 };
 
 
@@ -339,6 +339,16 @@ struct NoteHead{
     String getNoteName()      { return noteName;          }
     int getDiatonicNoteValue(){ return diatonicNoteValue; }
     Accidental getAccidental(){ return accidental;        }
+};
+
+struct Note{
+    int pitch;
+    int vol;
+    bool active;
+    
+    int getPitch()  {return pitch;   }
+    int getVol()    {return vol;     }
+    bool isActive() {return active;  }
 };
 
 

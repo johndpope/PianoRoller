@@ -17,7 +17,6 @@
 #include "PianoRollComponent.h"
 #include "PlayCursorWindow.h"
 #include "Theory.h"
-#include "OSC_Messages.h"
 #include <algorithm>
 #include <random>
 
@@ -33,8 +32,6 @@ class PianoRoll1AudioProcessorEditor  : public AudioProcessorEditor,
                                         public Slider::Listener,
                                         public KeyListener,
                                         public Button::Listener,
-                                        public OSCReceiver,
-                                        public OSCReceiver::ListenerWithOSCAddress<OSCReceiver::MessageLoopCallback>,
                                         public Timer,
                                         public PianoRollComponent
 {
@@ -123,7 +120,6 @@ private:
     String arpeggioDirection;
     Slider arpSlider;
 
-    void oscMessageReceived(const OSCMessage &Message) override;
     void mouseUp(const juce::MouseEvent &event) override;
     void mouseDown(const juce::MouseEvent &event) override;
     void mouseDrag(const juce::MouseEvent &event) override;
