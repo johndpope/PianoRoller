@@ -13,10 +13,6 @@
 			isa = PBXBuildFile;
 			fileRef = 1781B07C02510D9E26B551C4;
 		};
-		1B6D66D493DE0C55E55CA838 = {
-			isa = PBXBuildFile;
-			fileRef = 09F9D035EBAE263897417718;
-		};
 		E81BA31D506E626298FB1B94 = {
 			isa = PBXBuildFile;
 			fileRef = 575A6D4259745EC1F421844D;
@@ -136,10 +132,6 @@
 		25552DAB2071484CA53C6F7E = {
 			isa = PBXBuildFile;
 			fileRef = 074D4A5353C5D46E53FF17DE;
-		};
-		19E610DB6AB8F93BBF5E5BF3 = {
-			isa = PBXBuildFile;
-			fileRef = 8F56D16F980DACFE81705A22;
 		};
 		B5238C2A593408029FBF83F8 = {
 			isa = PBXBuildFile;
@@ -368,18 +360,11 @@
 			path = System/Library/Frameworks/DiscRecording.framework;
 			sourceTree = SDKROOT;
 		};
-		3EE8F7BE11B2465FE21635CF = {
+		3F0EA7D3C676B481AC991382 = {
 			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = PlayCursorWindow.cpp;
-			path = ../../Source/PlayCursorWindow.cpp;
-			sourceTree = "SOURCE_ROOT";
-		};
-		414BF5DA612C027D271DE273 = {
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = AppConfig.h;
-			path = ../../JuceLibraryCode/AppConfig.h;
+			lastKnownFileType = file;
+			name = "juce_video";
+			path = "../../JuceLibraryCode/modules/juce_video";
 			sourceTree = "SOURCE_ROOT";
 		};
 		427219662C2DDF10A271099D = {
@@ -401,55 +386,6 @@
 			lastKnownFileType = file;
 			name = "juce_events";
 			path = "../../JuceLibraryCode/modules/juce_events";
-			sourceTree = "SOURCE_ROOT";
-		};
-		57D0FFB04128F35710579768 = {
-			isa = PBXFileReference;
-			lastKnownFileType = file;
-			name = "juce_data_structures";
-			path = "../../JuceLibraryCode/modules/juce_data_structures";
-			sourceTree = "SOURCE_ROOT";
-		};
-		B55489C5E05CD0013CBEAD00 = {
-			isa = PBXFileReference;
-			explicitFileType = wrapper.cfbundle;
-			includeInIndex = 0;
-			path = PianoRoller.vst;
-			sourceTree = "BUILT_PRODUCTS_DIR";
-		};
-		1781B07C02510D9E26B551C4 = {
-			isa = PBXFileReference;
-			explicitFileType = wrapper.cfbundle;
-			includeInIndex = 0;
-			path = PianoRoller.vst3;
-			sourceTree = "BUILT_PRODUCTS_DIR";
-		};
-		09F9D035EBAE263897417718 = {
-			isa = PBXFileReference;
-			explicitFileType = wrapper.cfbundle;
-			includeInIndex = 0;
-			path = PianoRoller.aaxplugin;
-			sourceTree = "BUILT_PRODUCTS_DIR";
-		};
-		311A8CC1975D8436892A7FF0 = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = AudioToolbox.framework;
-			path = System/Library/Frameworks/AudioToolbox.framework;
-			sourceTree = SDKROOT;
-		};
-		3BF93F47F0C6F142EBC494B2 = {
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = PluginProcessor.h;
-			path = ../../Source/PluginProcessor.h;
-			sourceTree = "SOURCE_ROOT";
-		};
-		3F0EA7D3C676B481AC991382 = {
-			isa = PBXFileReference;
-			lastKnownFileType = file;
-			name = "juce_video";
-			path = "../../JuceLibraryCode/modules/juce_video";
 			sourceTree = "SOURCE_ROOT";
 		};
 		494EFB3DD65C828A834A0A60 = {
@@ -480,6 +416,41 @@
 			path = "Info-VST.plist";
 			sourceTree = "SOURCE_ROOT";
 		};
+		B55489C5E05CD0013CBEAD00 = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.cfbundle;
+			includeInIndex = 0;
+			path = PianoRoller.vst;
+			sourceTree = "BUILT_PRODUCTS_DIR";
+		};
+		1781B07C02510D9E26B551C4 = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.cfbundle;
+			includeInIndex = 0;
+			path = PianoRoller.vst3;
+			sourceTree = "BUILT_PRODUCTS_DIR";
+		};
+		311A8CC1975D8436892A7FF0 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = AudioToolbox.framework;
+			path = System/Library/Frameworks/AudioToolbox.framework;
+			sourceTree = SDKROOT;
+		};
+		3BF93F47F0C6F142EBC494B2 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = PluginProcessor.h;
+			path = ../../Source/PluginProcessor.h;
+			sourceTree = "SOURCE_ROOT";
+		};
+		3EE8F7BE11B2465FE21635CF = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = PlayCursorWindow.cpp;
+			path = ../../Source/PlayCursorWindow.cpp;
+			sourceTree = "SOURCE_ROOT";
+		};
 		575A6D4259745EC1F421844D = {
 			isa = PBXFileReference;
 			explicitFileType = wrapper.cfbundle;
@@ -494,11 +465,25 @@
 			path = PianoRoller.app;
 			sourceTree = "BUILT_PRODUCTS_DIR";
 		};
+		414BF5DA612C027D271DE273 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = AppConfig.h;
+			path = ../../JuceLibraryCode/AppConfig.h;
+			sourceTree = "SOURCE_ROOT";
+		};
 		542A9154D26388C634C1C8B6 = {
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = PluginEditor.h;
 			path = ../../Source/PluginEditor.h;
+			sourceTree = "SOURCE_ROOT";
+		};
+		57D0FFB04128F35710579768 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			name = "juce_data_structures";
+			path = "../../JuceLibraryCode/modules/juce_data_structures";
 			sourceTree = "SOURCE_ROOT";
 		};
 		580A367F53CFDEAA6CF1435E = {
@@ -653,20 +638,6 @@
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = PianoRoll.cpp;
 			path = ../../Source/PianoRoll.cpp;
-			sourceTree = "SOURCE_ROOT";
-		};
-		8F56D16F980DACFE81705A22 = {
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.objcpp;
-			name = "include_juce_audio_plugin_client_AAX.mm";
-			path = "../../JuceLibraryCode/include_juce_audio_plugin_client_AAX.mm";
-			sourceTree = "SOURCE_ROOT";
-		};
-		90A05B0B01076595CF0E7E3A = {
-			isa = PBXFileReference;
-			lastKnownFileType = text.plist.xml;
-			name = "Info-AAX.plist";
-			path = "Info-AAX.plist";
 			sourceTree = "SOURCE_ROOT";
 		};
 		98909AB3527C1F9351CB7419 = {
@@ -907,7 +878,6 @@
 				B863DCE9E774B015A427318E,
 				6077255E1799B967DA77111D,
 				074D4A5353C5D46E53FF17DE,
-				8F56D16F980DACFE81705A22,
 				CA8DABF93D81652AEF2E03C6,
 				765BD745EFB806D61E1E22B7,
 				D4D57BF6679D58FA833C97A6,
@@ -938,7 +908,6 @@
 			children = (
 				5582801D92714A5275FAF5A1,
 				B68FA82ACD135BBB4808CF7A,
-				90A05B0B01076595CF0E7E3A,
 				85B36C6A8322E92CCFDCFF36,
 				BFFFE2969472D57476992852,
 				37F74BA4337547480E860EB0,
@@ -974,7 +943,6 @@
 			children = (
 				B55489C5E05CD0013CBEAD00,
 				1781B07C02510D9E26B551C4,
-				09F9D035EBAE263897417718,
 				575A6D4259745EC1F421844D,
 				3F3ED9F6F553BC8F84AC5567,
 				785A21FFBD81A4CCEE8C6747,
@@ -1044,9 +1012,6 @@
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK",
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/vst2.x",
 					"../../JuceLibraryCode",
-					"$(HOME)/SDKs/AAX",
-					"$(HOME)/SDKs/AAX/Interfaces",
-					"$(HOME)/SDKs/AAX/Interfaces/ACF",
 					"../../JuceLibraryCode/modules",
 					"../../JuceLibraryCode/modules/juce_audio_plugin_client",
 					"$(inherited)",
@@ -1098,9 +1063,6 @@
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK",
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/vst2.x",
 					"../../JuceLibraryCode",
-					"$(HOME)/SDKs/AAX",
-					"$(HOME)/SDKs/AAX/Interfaces",
-					"$(HOME)/SDKs/AAX/Interfaces/ACF",
 					"../../JuceLibraryCode/modules",
 					"../../JuceLibraryCode/modules/juce_audio_plugin_client",
 					"$(inherited)",
@@ -1152,9 +1114,6 @@
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK",
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/vst2.x",
 					"../../JuceLibraryCode",
-					"$(HOME)/SDKs/AAX",
-					"$(HOME)/SDKs/AAX/Interfaces",
-					"$(HOME)/SDKs/AAX/Interfaces/ACF",
 					"../../JuceLibraryCode/modules",
 					"../../JuceLibraryCode/modules/juce_audio_plugin_client",
 					"$(inherited)",
@@ -1206,9 +1165,6 @@
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK",
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/vst2.x",
 					"../../JuceLibraryCode",
-					"$(HOME)/SDKs/AAX",
-					"$(HOME)/SDKs/AAX/Interfaces",
-					"$(HOME)/SDKs/AAX/Interfaces/ACF",
 					"../../JuceLibraryCode/modules",
 					"../../JuceLibraryCode/modules/juce_audio_plugin_client",
 					"$(inherited)",
@@ -1223,122 +1179,6 @@
 				PRODUCT_NAME = "PianoRoller4";
 				USE_HEADERMAP = NO;
 				WRAPPER_EXTENSION = vst3;
-			};
-			name = Release;
-		};
-		4D8AE13475AF6DFA5569D70C = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_LINK_OBJC_RUNTIME = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/build/$(CONFIGURATION)";
-				COPY_PHASE_STRIP = NO;
-				DEPLOYMENT_LOCATION = YES;
-				DSTROOT = /;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"_DEBUG=1",
-					"DEBUG=1",
-					"JUCER_XCODE_MAC_F6D2F4CF=1",
-					"JUCE_APP_VERSION=1.0.0",
-					"JUCE_APP_VERSION_HEX=0x10000",
-					"JucePlugin_Build_VST=0",
-					"JucePlugin_Build_VST3=0",
-					"JucePlugin_Build_AU=0",
-					"JucePlugin_Build_AUv3=0",
-					"JucePlugin_Build_RTAS=0",
-					"JucePlugin_Build_AAX=1",
-					"JucePlugin_Build_Standalone=0",
-					"JucePlugin_Build_Unity=0",
-				);
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GENERATE_PKGINFO_FILE = YES;
-				HEADER_SEARCH_PATHS = (
-					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK",
-					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/vst2.x",
-					"../../JuceLibraryCode",
-					"$(HOME)/SDKs/AAX",
-					"$(HOME)/SDKs/AAX/Interfaces",
-					"$(HOME)/SDKs/AAX/Interfaces/ACF",
-					"../../JuceLibraryCode/modules",
-					"../../JuceLibraryCode/modules/juce_audio_plugin_client",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = Info-AAX.plist;
-				INFOPLIST_PREPROCESS = NO;
-				INSTALL_PATH = "/Library/Application Support/Avid/Audio/Plug-Ins/";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(HOME)/SDKs/AAX/Libs/Debug\"",
-				);
-				LIBRARY_STYLE = Bundle;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				OTHER_LDFLAGS = "-bundle -lAAXLibrary_libcpp -lPianoRoller";
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.PianoRoller;
-				PRODUCT_NAME = "PianoRoller";
-				USE_HEADERMAP = NO;
-				WRAPPER_EXTENSION = aaxplugin;
-			};
-			name = Debug;
-		};
-		A9B5F97488280DC83B13F2EB = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_LINK_OBJC_RUNTIME = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/build/$(CONFIGURATION)";
-				COPY_PHASE_STRIP = NO;
-				DEPLOYMENT_LOCATION = YES;
-				DSTROOT = /;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"_DEBUG=1",
-					"DEBUG=1",
-					"JUCER_XCODE_MAC_F6D2F4CF=1",
-					"JUCE_APP_VERSION=1.0.0",
-					"JUCE_APP_VERSION_HEX=0x10000",
-					"JucePlugin_Build_VST=0",
-					"JucePlugin_Build_VST3=0",
-					"JucePlugin_Build_AU=0",
-					"JucePlugin_Build_AUv3=0",
-					"JucePlugin_Build_RTAS=0",
-					"JucePlugin_Build_AAX=1",
-					"JucePlugin_Build_Standalone=0",
-					"JucePlugin_Build_Unity=0",
-				);
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GENERATE_PKGINFO_FILE = YES;
-				HEADER_SEARCH_PATHS = (
-					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK",
-					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/vst2.x",
-					"../../JuceLibraryCode",
-					"$(HOME)/SDKs/AAX",
-					"$(HOME)/SDKs/AAX/Interfaces",
-					"$(HOME)/SDKs/AAX/Interfaces/ACF",
-					"../../JuceLibraryCode/modules",
-					"../../JuceLibraryCode/modules/juce_audio_plugin_client",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = Info-AAX.plist;
-				INFOPLIST_PREPROCESS = NO;
-				INSTALL_PATH = "/Library/Application Support/Avid/Audio/Plug-Ins/";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(HOME)/SDKs/AAX/Libs/Debug\"",
-				);
-				LIBRARY_STYLE = Bundle;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				OTHER_LDFLAGS = "-bundle -lAAXLibrary_libcpp -lPianoRoller4";
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.PianoRoller;
-				PRODUCT_NAME = "PianoRoller4";
-				USE_HEADERMAP = NO;
-				WRAPPER_EXTENSION = aaxplugin;
 			};
 			name = Release;
 		};
@@ -1376,9 +1216,6 @@
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK",
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/vst2.x",
 					"../../JuceLibraryCode",
-					"$(HOME)/SDKs/AAX",
-					"$(HOME)/SDKs/AAX/Interfaces",
-					"$(HOME)/SDKs/AAX/Interfaces/ACF",
 					"../../JuceLibraryCode/modules",
 					"../../JuceLibraryCode/modules/juce_audio_plugin_client",
 					"$(inherited)",
@@ -1431,9 +1268,6 @@
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK",
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/vst2.x",
 					"../../JuceLibraryCode",
-					"$(HOME)/SDKs/AAX",
-					"$(HOME)/SDKs/AAX/Interfaces",
-					"$(HOME)/SDKs/AAX/Interfaces/ACF",
 					"../../JuceLibraryCode/modules",
 					"../../JuceLibraryCode/modules/juce_audio_plugin_client",
 					"$(inherited)",
@@ -1483,9 +1317,6 @@
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK",
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/vst2.x",
 					"../../JuceLibraryCode",
-					"$(HOME)/SDKs/AAX",
-					"$(HOME)/SDKs/AAX/Interfaces",
-					"$(HOME)/SDKs/AAX/Interfaces/ACF",
 					"../../JuceLibraryCode/modules",
 					"../../JuceLibraryCode/modules/juce_audio_plugin_client",
 					"$(inherited)",
@@ -1531,9 +1362,6 @@
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK",
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/vst2.x",
 					"../../JuceLibraryCode",
-					"$(HOME)/SDKs/AAX",
-					"$(HOME)/SDKs/AAX/Interfaces",
-					"$(HOME)/SDKs/AAX/Interfaces/ACF",
 					"../../JuceLibraryCode/modules",
 					"../../JuceLibraryCode/modules/juce_audio_plugin_client",
 					"$(inherited)",
@@ -1570,7 +1398,7 @@
 					"JucePlugin_Build_AU=1",
 					"JucePlugin_Build_AUv3=0",
 					"JucePlugin_Build_RTAS=0",
-					"JucePlugin_Build_AAX=1",
+					"JucePlugin_Build_AAX=0",
 					"JucePlugin_Build_Standalone=1",
 					"JucePlugin_Build_Unity=0",
 					"JUCE_SHARED_CODE=1",
@@ -1580,9 +1408,6 @@
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK",
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/vst2.x",
 					"../../JuceLibraryCode",
-					"$(HOME)/SDKs/AAX",
-					"$(HOME)/SDKs/AAX/Interfaces",
-					"$(HOME)/SDKs/AAX/Interfaces/ACF",
 					"../../JuceLibraryCode/modules",
 					"../../JuceLibraryCode/modules/juce_audio_plugin_client",
 					"$(inherited)",
@@ -1618,7 +1443,7 @@
 					"JucePlugin_Build_AU=1",
 					"JucePlugin_Build_AUv3=0",
 					"JucePlugin_Build_RTAS=0",
-					"JucePlugin_Build_AAX=1",
+					"JucePlugin_Build_AAX=0",
 					"JucePlugin_Build_Standalone=1",
 					"JucePlugin_Build_Unity=0",
 					"JUCE_SHARED_CODE=1",
@@ -1628,9 +1453,6 @@
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK",
 					"/Applications/JUCE/modules/juce_audio_processors/format_types/VST3_SDK/pluginterfaces/vst2.x",
 					"../../JuceLibraryCode",
-					"$(HOME)/SDKs/AAX",
-					"$(HOME)/SDKs/AAX/Interfaces",
-					"$(HOME)/SDKs/AAX/Interfaces/ACF",
 					"../../JuceLibraryCode/modules",
 					"../../JuceLibraryCode/modules/juce_audio_plugin_client",
 					"$(inherited)",
@@ -1744,10 +1566,6 @@
 			isa = PBXTargetDependency;
 			target = 2048BC592413FD8A44AC39FE;
 		};
-		BF28E2431113215C67DD0E5E = {
-			isa = PBXTargetDependency;
-			target = 0115E7D851CE0E407A958ABF;
-		};
 		BA7534195950F27A8A4A5C92 = {
 			isa = PBXTargetDependency;
 			target = CF8160E8E5A4CB277EBEA60E;
@@ -1786,7 +1604,6 @@
 			dependencies = (
 				DF1F012DB926D4BFA958D7AF,
 				C8B5CAE8FF220265608A633A,
-				BF28E2431113215C67DD0E5E,
 				BA7534195950F27A8A4A5C92,
 				582DF5F9C88A9188B0B2B810,
 				57B962E41236CD8F4294E0FD,
@@ -1918,69 +1735,6 @@
 			name = "PianoRoller - VST3";
 			productName = PianoRoller;
 			productReference = 1781B07C02510D9E26B551C4;
-			productType = "com.apple.product-type.bundle";
-		};
-		28E393CAAF1B4185F4C579D2 = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4D8AE13475AF6DFA5569D70C,
-				A9B5F97488280DC83B13F2EB,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		658AF6C3C88A7DB1BB67DE83 = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				19ED71B5CEB3DF01D0EEB546,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D0C506AF2C6FC36B7FC669E7 = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				19E610DB6AB8F93BBF5E5BF3,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6E6EE648553DAB35412454EC = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				9F5B27FF38A9072F5399B263,
-				CD03909B35A3A81AE4C7DE36,
-				B384D3BBF8C011A633CA2337,
-				5AF5BB93583FEA29F60F66B2,
-				A38E9F1451DB427023266EAC,
-				8CCB9A7BC58A177D28680009,
-				980680BAC5B8149F99D89C08,
-				544BFFD9FEF6BB458482262C,
-				3B22CDB4BF1510B0AD6E7AC7,
-				DBA0734791E01A9415234318,
-				72E8ABF41454C37526AF6A9B,
-				A23A5A1053350FBA3559825D,
-				C0D14FB88629E1575A4A3873,
-				428060700A2789BDEA77CC47,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0115E7D851CE0E407A958ABF = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 28E393CAAF1B4185F4C579D2;
-			buildPhases = (
-				658AF6C3C88A7DB1BB67DE83,
-				D0C506AF2C6FC36B7FC669E7,
-				6E6EE648553DAB35412454EC,
-			);
-			buildRules = ( );
-			dependencies = (
-				57B962E41236CD8F4294E0FD,
-			);
-			name = "PianoRoller - AAX";
-			productName = PianoRoller;
-			productReference = 09F9D035EBAE263897417718;
 			productType = "com.apple.product-type.bundle";
 		};
 		D7225C683F2D42E9198DD2D9 = {
@@ -2177,13 +1931,13 @@
 		615ED1EEACB6B4844E7B028B = {
 			isa = PBXProject;
 			buildConfigurationList = E17EC558EF44F38A54DDB95E;
-			attributes = { LastUpgradeCheck = 0930; ORGANIZATIONNAME = ""; TargetAttributes = { 41F65C001E0F26984F9301E4 = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; };214DFEF70F97845F2806D689 = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; };2048BC592413FD8A44AC39FE = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; };0115E7D851CE0E407A958ABF = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; };CF8160E8E5A4CB277EBEA60E = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; };4FC9C8441CD48F5A23AAE316 = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; };9A3A33E4A38C2E3B6A1717BF = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; }; }; };
+			attributes = { LastUpgradeCheck = 0930; ORGANIZATIONNAME = ""; TargetAttributes = { 41F65C001E0F26984F9301E4 = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; };214DFEF70F97845F2806D689 = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; };2048BC592413FD8A44AC39FE = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; };CF8160E8E5A4CB277EBEA60E = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; };4FC9C8441CD48F5A23AAE316 = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; };9A3A33E4A38C2E3B6A1717BF = { SystemCapabilities = {com.apple.ApplicationGroups.iOS = { enabled = 0; }; com.apple.InAppPurchase = { enabled = 0; }; com.apple.InterAppAudio = { enabled = 0; }; com.apple.Push = { enabled = 0; }; com.apple.Sandbox = { enabled = 0; }; }; }; }; };
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = 6C58BEA875F1B6F31387AED1;
 			projectDirPath = "";
 			projectRoot = "";
-			targets = (41F65C001E0F26984F9301E4, 214DFEF70F97845F2806D689, 2048BC592413FD8A44AC39FE, 0115E7D851CE0E407A958ABF, CF8160E8E5A4CB277EBEA60E, 4FC9C8441CD48F5A23AAE316, 9A3A33E4A38C2E3B6A1717BF);
+			targets = (41F65C001E0F26984F9301E4, 214DFEF70F97845F2806D689, 2048BC592413FD8A44AC39FE, CF8160E8E5A4CB277EBEA60E, 4FC9C8441CD48F5A23AAE316, 9A3A33E4A38C2E3B6A1717BF);
 		};
 	};
 	rootObject = 615ED1EEACB6B4844E7B028B;

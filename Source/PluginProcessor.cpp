@@ -281,29 +281,38 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 
 
 void PianoRoll1AudioProcessor::prepToPlayNote(const int note, const int div){
+    const auto thisTrack = presets[currentPreset]->tracks[currentTrack];
     int pitch;
     int vol;
     const int beatSwitch = [&]() -> int{
-        if(div==4){return presets[currentPreset]->tracks[currentTrack]->beatSwitch[note/4];}
-        else if(div==3){return presets[currentPreset]->tracks[currentTrack]->beatSwitch[note/3];}
+        if(div==4){return thisTrack->beatSwitch[note/4];}
+        else if(div==3){return thisTrack->beatSwitch[note/3];}
         else{return 0;}
     }();
     
     if(presets[currentPreset]->isMono){
         if (div == 4 && beatSwitch==0){
-            pitch = presets[currentPreset]->tracks[currentTrack]->sixteenths[note];
-            vol = presets[currentPreset]->tracks[currentTrack]->sixteenthVols[note];
+            pitch = thisTrack->sixteenths[note];
+            vol = thisTrack->sixteenthVols[note];
         }
         else if(div == 3 && beatSwitch==1){
-            pitch = presets[currentPreset]->tracks[currentTrack]->triplets[note];
-            vol = presets[currentPreset]->tracks[currentTrack]->tripletVols[note];
+            pitch = thisTrack->triplets[note];
+            vol = thisTrack->tripletVols[note];
         }else{pitch=0;vol=0;}
         playNote(pitch, vol);
         
     }else{ //isPoly
+        auto [noteArrays, thisNoteArray] = [&](){
+            switch (beatSwitch){
+                case 0: return  std::make_pair(thisTrack->polySixteenths, thisTrack->polySixteenths[note]);
+                case 1: return  std::make_pair(thisTrack->polyTriplets, thisTrack->polyTriplets[note]);
+                default: DBG("Not a valid noteArray");
+                        return std::make_pair(thisTrack->polySixteenths, thisTrack->polySixteenths[note]);
+            }
+        }();
+        
         if (div == 4 && beatSwitch==0){
-            Array<Array<int>> * noteArrays = &presets[currentPreset]->tracks[currentTrack]->polySixteenths;
-            Array<int> thisNoteArray = noteArrays->operator[](note);
+            //Array<int> thisNoteArray = noteArrays->operator[](note);
             vol = presets[currentPreset]->tracks[currentTrack]->polySixteenthVols[note];
             for(int i=0;i<thisNoteArray.size();i++){
                 pitch = thisNoteArray[i];
@@ -311,8 +320,7 @@ void PianoRoll1AudioProcessor::prepToPlayNote(const int note, const int div){
             }
         }
         else if(div == 3 && beatSwitch==1){
-            Array<Array<int>> * noteArrays = &presets[currentPreset]->tracks[currentTrack]->polyTriplets;
-            Array<int> thisNoteArray = noteArrays->operator[](note);
+            //Array<int> thisNoteArray = noteArrays->operator[](note);
             vol = presets[currentPreset]->tracks[currentTrack]->polyTripletVols[note];
             for(int i=0;i<thisNoteArray.size();i++){
                 pitch = thisNoteArray[i];
@@ -550,27 +558,15 @@ void PianoRoll1AudioProcessor::resetAll(){
 }
 
 void PianoRoll1AudioProcessor::octaveShift(int numOfOctaves){
-    int currentOctaveShift = presets[currentPreset]->tracks[currentTrack]->octaveShift;
+    auto thisTrack = presets[currentPreset]->tracks[currentTrack];
+    int currentOctaveShift = thisTrack->octaveShift;
     if(currentOctaveShift + numOfOctaves < 6 && currentOctaveShift + numOfOctaves > -6){
-        for(int beat=0;beat<presets[currentPreset]->numOfBeats;beat++){
-            int beatSwitch = presets[currentPreset]->tracks[currentTrack]->beatSwitch[beat];
-            int pitchShift = numOfOctaves*12;
-            if(beatSwitch == 0){
-                for(int sixteenthIndex=0;sixteenthIndex<4;sixteenthIndex++){
-                    int noteIndex = beat*4+sixteenthIndex;
-                    previousVal = presets[currentPreset]->tracks[currentTrack]->sixteenths[noteIndex];
-                    presets[currentPreset]->tracks[currentTrack]->sixteenths.set(noteIndex, previousVal+pitchShift);
-                }
-            }else if(beatSwitch == 1){
-                for(int tripletIndex=0;tripletIndex<3;tripletIndex++){
-                    int noteIndex = beat*3+tripletIndex;
-                    previousVal = presets[currentPreset]->tracks[currentTrack]->triplets[noteIndex];
-                    presets[currentPreset]->tracks[currentTrack]->triplets.set(noteIndex, previousVal+pitchShift);
-                }
-            }
+        if (presets[currentPreset]->isMono){
+            for(auto &note : thisTrack->sixteenths) note+=(numOfOctaves*12);
+            for(auto &note : thisTrack->triplets)   note+=(numOfOctaves*12);
+        }else{ //isPoly
+
         }
-        
-        presets[currentPreset]->tracks[currentTrack]->octaveShift += numOfOctaves;
     }
 }
 
