@@ -341,12 +341,6 @@ struct NoteHead{
     Accidental getAccidental(){ return accidental;        }
 };
 
-struct Note{
-    int pitch;
-    int vol;
-    bool active;
-};
-
 
 class OpusLookAndFeel : public LookAndFeel_V4
 {

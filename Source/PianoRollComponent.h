@@ -21,6 +21,12 @@ namespace PianoRollerColours {
     const inline Colour calmGreen             = Colour(156,168,152);
 }
 
+struct Note{
+    int pitch;
+    int vol;
+    bool active;
+};
+
 class PianoRollComponent
 {
 public:
@@ -41,6 +47,10 @@ public:
     public:
         Array<int> sixteenths;
         Array<int> triplets;
+//        Array<Note> sixteenths;
+//        Array<Note> triplets;
+        Array<Note> sixteenthNotes;
+        Array<Note> tripletNotes;
         Array<int> sixteenthVols;
         Array<int> tripletVols;
         Array<int> beatSwitch;
@@ -61,10 +71,12 @@ public:
             selectedScale = "Major";
             selectedGenerator = "random";
             selectedArpDirection = "ascend";
+            //sixteenthTest.fill(juce::Array<Note, juce::DummyCriticalSection, 0>);
             
             for(int note=0;note<maxBeats*4;note++){
                 //Mono
                 sixteenths.add(0);
+                sixteenthNotes.add(Note{0,96,false});
                 sixteenthVols.add(96);
                 sixteenthUserSelected.add(false);
                 //Poly
@@ -75,6 +87,7 @@ public:
             for(int note=0;note<maxBeats*3;note++){
                 //Mono
                 triplets.add(0);
+                tripletNotes.add(Note{0,96,false});
                 tripletVols.add(96);
                 tripletUserSelected.add(false);
                 //Poly
@@ -148,6 +161,8 @@ public:
     int midiLimit(int midiVal);
     int limitRange(int val, int low, int high);
     bool checkIfBlackKey(const int pitch);
+    Note& getMonoNote(int col, int beatSwitch);
+    Note& getPolyNote(int col, int beatSwitch);
     
     //==================PAINTING FUNCTIONS==================
     void drawColumnLine(PaintData p, const int subDiv, const int col, const float noteWidth);

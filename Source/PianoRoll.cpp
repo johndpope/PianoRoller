@@ -194,6 +194,7 @@ void PianoRoll::mouseDown(const MouseEvent& event){
     const bool isDragging = event.mouseWasDraggedSinceMouseDown();
     if(isDoubleClick){rightClick = true; isDoubleClick=false;}
     
+    auto thisTrack = &presets[currentPreset]->tracks.;
     const Point<int> pos = {getMouseXYRelative().getX(), getMouseXYRelative().getY()};
     float x = getMouseXYRelative().getX();
     float y = getMouseXYRelative().getY();
@@ -222,11 +223,11 @@ void PianoRoll::mouseDown(const MouseEvent& event){
         if(beatSwitch==0){
             beatDiv=4;
             thisCol = col;
-            prevPitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenths[col];
+            prevPitch = presets[currentPreset]->tracks[currentTrack]->sixteenths[col];
         }else{
             beatDiv=3;
             thisCol = tripCol;
-            prevPitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->triplets[tripCol];
+            prevPitch = presets[currentPreset]->tracks[currentTrack]->triplets[tripCol];
         };
 
         if(isMono){

@@ -18,23 +18,29 @@ OwnedArray<PianoRollComponent::Preset> PianoRollComponent::presets = []()->Owned
     return output;
 }();
 
+Note& PianoRollComponent::getMonoNote(int col, int beatSwitch){
+    if(beatSwitch==0){
+        return presets[currentPreset]->tracks[currentTrack]->sixteenthNotes.getReference(col);
+    }else if (beatSwitch==1){
+        return presets[currentPreset]->tracks[currentTrack]->sixteenthNotes.getReference(col);
+    }else{
+        DBG("getNote: not a valid beatSwitch"); jassert(true);
+    }
+}
+
+Note& PianoRollComponent::getPolyNote(int col, int beatSwitch){
+    
+}
+
 
 void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch){
-    bool userSelected;
+    //bool userSelected;
     bool isMono = (*processorPresets)[currentPreset]->isMono;
-    userSelected = (pitch>0); //TODO
+    //userSelected = (pitch>0); //TODO
     
     if (isMono){
-        if (beatSwitch == 0){
-            //(*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenths.set(col, pitch);
-            //(*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenthUserSelected = userSelected;
-            presets[currentPreset]->tracks[currentTrack]->sixteenths.set(col, pitch);
-            presets[currentPreset]->tracks[currentTrack]->sixteenthUserSelected = userSelected;
-        }
-        if (beatSwitch == 1){
-            (*processorPresets)[currentPreset]->tracks[currentTrack]->triplets.set(col,pitch);
-            (*processorPresets)[currentPreset]->tracks[currentTrack]->tripletUserSelected = userSelected;
-        }
+        auto& [thisPitch, thisVol, userSelected] = getMonoNote(col, beatSwitch);
+        thisPitch = pitch;
     }else{ //isPoly
         
         Array<Array<int>> * polyNotes;
@@ -60,38 +66,29 @@ void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch){
 }
 
 void PianoRollComponent::updateVolume(int col, int vol, int beatSwitch){
-    if (beatSwitch == 0){
-        (*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenthVols.set(col, vol);
-    }
-    if (beatSwitch == 1){
-        (*processorPresets)[currentPreset]->tracks[currentTrack]->tripletVols.set(col,vol);
-    }
-    //repaint();
+    auto& [thisPitch, thisVol, userSelected] = getMonoNote(col, beatSwitch);
+    thisVol = vol;
 }
 
 void PianoRollComponent::updateBeatSwitch(int beat, int switchVal){
-    (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch.set(beat,switchVal);
-    //repaint();
+    presets[currentPreset]->tracks[currentTrack]->beatSwitch.set(beat,switchVal);
 }
 
 void PianoRollComponent::updateNumOfBeats(int beats){
     updateNumOfBeats(beats, currentPreset);
-    //repaint();
 }
 
 void PianoRollComponent::updateNumOfBeats(int beats, const int preset){
     beats = limitRange(beats, 1, maxBeats);
-    (*processorPresets)[preset]->numOfBeats = beats;
+    presets[preset]->numOfBeats = beats;
 }
 
 void PianoRollComponent::changeRhythmDiv(int track, int beat, int beatSwitch){
     (*processorPresets)[currentPreset]->tracks[track]->beatSwitch.set(beat, beatSwitch);
-    //repaint();
 }
 
 void PianoRollComponent::updatePreset(const int preset){
     currentPreset = preset;
-    //repaint();
 }
 
 int PianoRollComponent::midiLimit(int midiVal){
@@ -116,32 +113,16 @@ bool PianoRollComponent::checkIfBlackKey(const int pitch){
 
 void PianoRollComponent::updateTrack(const int track){
     currentTrack = track;
-    //repaint();
 }
 
 void PianoRollComponent::noteOnOff(const int track, const int div, const int note, const int onOff){
-    
-    
-    int newPitch;
-    if(onOff==1){newPitch=65;}
-    else        {newPitch=0;}
-    
-    if(div==4){
-        (*processorPresets)[currentPreset]->tracks[track]->sixteenths.set(note,newPitch);
-    }
-    else if(div==3){
-        (*processorPresets)[currentPreset]->tracks[track]->triplets.set(note,newPitch);
-    }
-    //repaint();
+    int beatSwitch = (div==4) ? 0 : 1;
+    auto& [thisPitch, thisVol, userSelected] = getMonoNote(note, beatSwitch);
+    userSelected = (onOff) ? true : false;
 }
 
 void PianoRollComponent::copyPreset(const int presetSource,const  int presetReplaced){
-    int copyBeats = presets[presetSource]->numOfBeats;
-    (*processorPresets)[presetReplaced]->numOfBeats = copyBeats;
-    (*processorPresets)[presetReplaced]->tracks.clearQuick(true);
-    (*processorPresets)[presetReplaced]->tracks.addCopiesOf(presets[presetSource]->tracks);
-
-    //repaint();
+    presets.set(presetReplaced, presets[presetSource]);
 }
 
 //From Java
