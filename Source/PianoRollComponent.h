@@ -15,10 +15,10 @@
 #include <map>
 
 namespace PianoRollerColours {
-    inline Colour greyOff               = Colour(110,110,110);
-    inline Colour whiteBlue             = Colour(195,223,226);
-    inline Colour beatCanvasJungleGreen = Colour(152,152,115);
-    inline Colour calmGreen             = Colour(156,168,152);
+    const inline Colour greyOff               = Colour(110,110,110);
+    const inline Colour whiteBlue             = Colour(195,223,226);
+    const inline Colour beatCanvasJungleGreen = Colour(152,152,115);
+    const inline Colour calmGreen             = Colour(156,168,152);
 }
 
 class PianoRollComponent
@@ -34,7 +34,6 @@ public:
                       currentTrack  = 1;
     
     
-    static std::shared_ptr<int> currentPresetPtr;
     
     struct PaintData;
     
@@ -118,7 +117,7 @@ public:
     
 
     ////THE ALMIGHTY PRESET ARRAY////
-    OwnedArray<Preset> presets;
+    static OwnedArray<Preset> presets;
     ////========================////
     
     //OwnedArray<Preset> * processorPresets;
@@ -130,9 +129,9 @@ public:
         currentTrack = 1;
         
         //SETUP PRESETS
-        for(int preset=0;preset<=numOfPresets;preset++){
-            presets.add(new Preset);
-        }
+//        for(int preset=0;preset<=numOfPresets;preset++){
+//            presets.add(new Preset);
+//        }
     }
     
     void updateNote(int col, int pitch, int beatSwitch);
@@ -207,6 +206,7 @@ private:
     
     
 };
+
 
 
 

@@ -10,7 +10,13 @@
 
 #include "PianoRollComponent.h"
 
-std::shared_ptr<int> PianoRollComponent::currentPresetPtr = std::make_shared<int>(1);
+OwnedArray<PianoRollComponent::Preset> PianoRollComponent::presets = []()->OwnedArray<PianoRollComponent::Preset>{
+    OwnedArray<PianoRollComponent::Preset> output;
+    for(int preset=0;preset<=PianoRollComponent::numOfPresets;preset++){
+        output.add(new PianoRollComponent::Preset);
+    }
+    return output;
+}();
 
 
 void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch){
@@ -20,8 +26,10 @@ void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch){
     
     if (isMono){
         if (beatSwitch == 0){
-            (*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenths.set(col, pitch);
-            (*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenthUserSelected = userSelected;
+            //(*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenths.set(col, pitch);
+            //(*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenthUserSelected = userSelected;
+            presets[currentPreset]->tracks[currentTrack]->sixteenths.set(col, pitch);
+            presets[currentPreset]->tracks[currentTrack]->sixteenthUserSelected = userSelected;
         }
         if (beatSwitch == 1){
             (*processorPresets)[currentPreset]->tracks[currentTrack]->triplets.set(col,pitch);

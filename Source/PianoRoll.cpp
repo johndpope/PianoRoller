@@ -306,6 +306,10 @@ void PianoRoll::changeBeatCanvasTriplet(const int beat, const int val){
 
 //=============================================================================================================
 
+PianoKeys::PianoKeys(PianoRoll * pianoRollInput){
+    pianoRoll = pianoRollInput;
+}
+
 
 void PianoKeys::paint(juce::Graphics &g){
     const int topNote = pianoRoll->topNote;

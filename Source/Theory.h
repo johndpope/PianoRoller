@@ -345,10 +345,6 @@ struct Note{
     int pitch;
     int vol;
     bool active;
-    
-    int getPitch()  {return pitch;   }
-    int getVol()    {return vol;     }
-    bool isActive() {return active;  }
 };
 
 

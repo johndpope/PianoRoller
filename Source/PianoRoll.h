@@ -31,22 +31,14 @@ public:
     PianoRoll(OwnedArray<Preset> * processorPresetLocation, Staff * auditionStaffLocation, PianoRollComponent * pianoKeyLocation);
     ~PianoRoll();
     
-    void resized() override;
-    void (*setParentMidiDisplay)(int);
-    MidiMessage midiMessage;
+    int topNote;
+    
     void changeBeatCanvasPreset(const int preset);
     void changeBeatCanvasTrack(const int track);
     void changeBeatCanvasBeats(const int beats);
     void changeBeatCanvasTriplet(const int beat, int val);
-    int topNote;
-    int polySelectedNote;
-    bool canScroll;
-    bool isChildOfBeatCanvas;
     void spacebar();
-    bool isDoubleClick;
     Value * noteName;
-    PianoRollComponent * pianoKeys;
-    Staff * auditionStaff;
     
 private:
     void paint (Graphics&) override;
@@ -63,7 +55,16 @@ private:
     void mouseDrag (const MouseEvent& event) override;
     void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) override;
     void mouseDoubleClick (const MouseEvent&) override;
+    void resized() override;
     
+    MidiMessage midiMessage;
+    void (*setParentMidiDisplay)(int);
+    int polySelectedNote;
+    bool canScroll;
+    bool isChildOfBeatCanvas;
+    bool isDoubleClick;
+    PianoRollComponent * pianoKeys;
+    Staff * auditionStaff;
     
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PianoRoll)
@@ -81,9 +82,7 @@ public:
     PianoRoll * pianoRoll;
     Staff * auditionStaff;
     
-    PianoKeys(PianoRoll * pianoRollInput){
-        pianoRoll = pianoRollInput;
-    }
+    PianoKeys(PianoRoll * pianoRollInput);
     
 private:
     void paint (Graphics&) override;
@@ -93,6 +92,7 @@ private:
     void mouseDrag (const MouseEvent& event) override;
     
     int currentSelectedKey;
+    int topNote;
     
 };
 
