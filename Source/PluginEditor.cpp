@@ -515,8 +515,6 @@ void PianoRoll1AudioProcessorEditor::sliderValueChanged(juce::Slider *slider){
 }
 
 
-
-
 void PianoRoll1AudioProcessorEditor::valueChanged(juce::Value &value){
     if(value.refersToSameSourceAs(processor.playPosition)){
         auto val = value.getValue();
@@ -529,32 +527,12 @@ void PianoRoll1AudioProcessorEditor::valueChanged(juce::Value &value){
 }
 
 
-
 void PianoRoll1AudioProcessorEditor::prepToPlayNote(const int note, const int div){
+    int beatSwitch = divToBeatSwitch(div);
+    auto& [thisPitch, thisVol, active] = getMonoNote(note, beatSwitch);
     
-    
-    if (div == 4){
-        if (pianoRoll.presets[currentPreset]->tracks[currentTrack]->beatSwitch[beatIndex] == 0){
-            int pitch = pianoRoll.presets[currentPreset]->tracks[currentTrack]->sixteenths[note];
-            
-            if (pitch > 0){
-                int vol = volumePanel.presets[currentPreset]->tracks[currentTrack]->sixteenthVols[note];
-                //playPosition = std::to_string(pitch) + " " + std::to_string(vol);
-                playNote(pitch, vol);
-            }
-        }
-    }
-    else if(div == 3){
-        if (pianoRoll.presets[currentPreset]->tracks[currentTrack]->beatSwitch[beatIndex] == 1){
-            int pitch = pianoRoll.presets[currentPreset]->tracks[currentTrack]->triplets[note];
-            
-            if (pitch > 0){
-                int vol = volumePanel.presets[currentPreset]->tracks[currentTrack]->tripletVols[note];
-                playNote(pitch, vol);
-            }
-        }
-        
-    }
+    if (active)
+        playNote(thisPitch, thisVol);
 }
 
 
@@ -574,6 +552,7 @@ bool PianoRoll1AudioProcessorEditor::keyPressed(const juce::KeyPress &key, juce:
         pianoRoll.repaint();
     }
     pianoRoll.repaint();
+    return true;
 }
 
 void PianoRoll1AudioProcessorEditor::rootMenuChanged(){

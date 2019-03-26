@@ -24,7 +24,7 @@ Note& PianoRollComponent::getMonoNote(int col, int beatSwitch){
     }else if (beatSwitch==1){
         return presets[currentPreset]->tracks[currentTrack]->sixteenthNotes.getReference(col);
     }else{
-        DBG("getNote: not a valid beatSwitch"); jassert(true);
+        DBG("getNote: not a valid beatSwitch"); jassert(true); return getMonoNote(0, 0);
     }
 }
 
@@ -34,12 +34,10 @@ Note& PianoRollComponent::getPolyNote(int col, int beatSwitch){
 
 
 void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch){
-    //bool userSelected;
     bool isMono = (*processorPresets)[currentPreset]->isMono;
-    //userSelected = (pitch>0); //TODO
     
     if (isMono){
-        auto& [thisPitch, thisVol, userSelected] = getMonoNote(col, beatSwitch);
+        auto& [thisPitch, thisVol, active] = getMonoNote(col, beatSwitch);
         thisPitch = pitch;
     }else{ //isPoly
         
@@ -66,7 +64,7 @@ void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch){
 }
 
 void PianoRollComponent::updateVolume(int col, int vol, int beatSwitch){
-    auto& [thisPitch, thisVol, userSelected] = getMonoNote(col, beatSwitch);
+    auto& [thisPitch, thisVol, active] = getMonoNote(col, beatSwitch);
     thisVol = vol;
 }
 
@@ -117,8 +115,8 @@ void PianoRollComponent::updateTrack(const int track){
 
 void PianoRollComponent::noteOnOff(const int track, const int div, const int note, const int onOff){
     int beatSwitch = (div==4) ? 0 : 1;
-    auto& [thisPitch, thisVol, userSelected] = getMonoNote(note, beatSwitch);
-    userSelected = (onOff) ? true : false;
+    auto& [thisPitch, thisVol, active] = getMonoNote(note, beatSwitch);
+    active = (onOff) ? true : false;
 }
 
 void PianoRollComponent::copyPreset(const int presetSource,const  int presetReplaced){
@@ -128,12 +126,8 @@ void PianoRollComponent::copyPreset(const int presetSource,const  int presetRepl
 //From Java
 //public void setPitch(int track, int div, int note, int pitch, int preset)
 void PianoRollComponent::setPitch(const int track, const int div, const int note, const int pitch, const int preset){
-    if (div == 4){
-        (*processorPresets)[preset]->tracks[track]->sixteenths.set(note, pitch);
-    }
-    if (div == 3){
-        (*processorPresets)[preset]->tracks[track]->triplets.set(note,pitch);
-    }
+    auto& [thisPitch, thisVol, active] = getMonoNote(note, divToBeatSwitch(div));
+    thisPitch = pitch;
 }
 
 void PianoRollComponent::drawColumnLine(PaintData p, const int subDiv, const int col, const float noteWidth){
@@ -144,3 +138,18 @@ void PianoRollComponent::drawColumnLine(PaintData p, const int subDiv, const int
     p.g->drawLine(xPosition, 0., xPosition, p.height, lineWidth);
 }
 
+int PianoRollComponent::divToBeatSwitch(int div){
+    switch(div){
+        case 4: return 0;
+        case 3: return 1;
+        default: DBG("divToBeatSwitch: not a valid div.\n"); return -1;
+    }
+}
+
+int PianoRollComponent::beatSwitchToDiv(int beatSwitch){
+    switch(beatSwitch){
+        case 0: return 4;
+        case 1: return 3;
+        default: DBG("beatSwitchToDiv: not a valid div.\n"); return -1;
+    }
+}

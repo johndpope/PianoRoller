@@ -93,7 +93,7 @@ void PianoRoll::drawRowLines(PaintData p){
 }
 
 void PianoRoll::drawNotes(PaintData p){
-    auto track = (*processorPresets)[currentPreset]->tracks[currentTrack];
+    auto track = presets[currentPreset]->tracks[currentTrack];
     for(int beat=0;beat<p.numOfBeats;beat++){
         const int beatSwitch = track->beatSwitch[beat];
         const bool isMono = (*processorPresets)[currentPreset]->isMono;
@@ -106,10 +106,10 @@ void PianoRoll::drawNotes(PaintData p){
         
         auto [noteArray, polyNoteArray] = [&](){
             switch (beatSwitch){
-                case 0:  return std::make_pair( &track->sixteenths     ,
-                                                &track->polySixteenths );
-                case 1:  return std::make_pair( &track->triplets       ,
-                                                &track->polyTriplets   );
+                case 0:  return std::make_pair( &track->sixteenthNotes  ,
+                                                &track->polySixteenths ); //POLY TODO
+                case 1:  return std::make_pair( &track->tripletNotes    ,
+                                                &track->polyTriplets   ); //POLY TODO
             }
         }();
         
@@ -194,21 +194,19 @@ void PianoRoll::mouseDown(const MouseEvent& event){
     const bool isDragging = event.mouseWasDraggedSinceMouseDown();
     if(isDoubleClick){rightClick = true; isDoubleClick=false;}
     
-    auto thisTrack = &presets[currentPreset]->tracks.;
+    auto thisTrack = presets[currentPreset]->tracks[currentTrack];
     const Point<int> pos = {getMouseXYRelative().getX(), getMouseXYRelative().getY()};
-    float x = getMouseXYRelative().getX();
-    float y = getMouseXYRelative().getY();
+    auto [x, y]= std::make_pair(getMouseXYRelative().getX(), getMouseXYRelative().getY());
     
-    const int numOfBeats = (*processorPresets)[currentPreset]->numOfBeats;
+    const int numOfBeats = presets[currentPreset]->numOfBeats;
     const int row = (int) (y/(float)getHeight() * (float) numOfRows); //Final (int) cast rounds it down.
     const int col = (int) (x/(float)getWidth() * (float) (numOfBeats*4)); //Final (int) cast rounds it down.
     const int tripCol = (int) (x/(float)getWidth() * (float) (numOfBeats*3)); //Final (int) cast rounds it down.
     const int currentBeat = col / 4;
-    const int beatSwitch = (*processorPresets)[currentPreset]->tracks[currentTrack]->beatSwitch[currentBeat];
+    const int beatSwitch = thisTrack->beatSwitch[currentBeat];
+    const int beatDiv = beatSwitchToDiv(beatSwitch);
     int pitch = topNote - row;
-    int beatDiv;
-    int thisCol;
-    int prevPitch;
+    int thisCol = (beatSwitch==0) ? col : tripCol;
 
     if(pitch<128 && pitch>8){
         //Scroll up and down
@@ -220,16 +218,8 @@ void PianoRoll::mouseDown(const MouseEvent& event){
             else if(pitch<topNote-numOfRows){pitch = topNote-numOfRows;}
         }
         //Setup previous pitch
-        if(beatSwitch==0){
-            beatDiv=4;
-            thisCol = col;
-            prevPitch = presets[currentPreset]->tracks[currentTrack]->sixteenths[col];
-        }else{
-            beatDiv=3;
-            thisCol = tripCol;
-            prevPitch = presets[currentPreset]->tracks[currentTrack]->triplets[tripCol];
-        };
-
+        auto& [prevPitch, prevVol, active] = getMonoNote(col, beatSwitch);
+        
         if(isMono){
             if(pitch != prevPitch && leftClick){
                 updateNote(thisCol, pitch, beatSwitch);
@@ -238,7 +228,6 @@ void PianoRoll::mouseDown(const MouseEvent& event){
 
                 //========Send to BeatCanvasJava.Java=======
                 //public void setPitch(int track, int div, int note, int pitch)
-                //int content[] = {currentTrack, beatDiv, col, pitch};
                 BeatCanvasOSC_MessageOut("/BeatCanvas/setPitch",currentTrack, beatDiv, thisCol, pitch);
                 BeatCanvasOSC_MessageOut("/BeatCanvas/noteOnOff",currentTrack, beatDiv, thisCol, 1);
             }

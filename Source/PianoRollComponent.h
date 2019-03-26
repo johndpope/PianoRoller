@@ -163,6 +163,8 @@ public:
     bool checkIfBlackKey(const int pitch);
     Note& getMonoNote(int col, int beatSwitch);
     Note& getPolyNote(int col, int beatSwitch);
+    int divToBeatSwitch(int div);
+    int beatSwitchToDiv(int beatSwitch);
     
     //==================PAINTING FUNCTIONS==================
     void drawColumnLine(PaintData p, const int subDiv, const int col, const float noteWidth);
