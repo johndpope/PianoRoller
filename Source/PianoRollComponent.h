@@ -45,8 +45,6 @@ public:
     
     class Track{
     public:
-        Array<int> sixteenths;
-        Array<int> triplets;
         Array<Note> sixteenthNotes;
         Array<Note> tripletNotes;
         Array<int> sixteenthVols;
@@ -54,6 +52,8 @@ public:
         Array<int> beatSwitch;
         Array<bool> sixteenthUserSelected;
         Array<bool> tripletUserSelected;
+        Array<Array<Note>> polySixteenthNotes;
+        Array<Array<Note>> polyTripletNotes;
         Array<Array<int>> polySixteenths;
         Array<Array<int>> polyTriplets;
         Array<int> polySixteenthVols;
@@ -72,22 +72,14 @@ public:
             //sixteenthTest.fill(juce::Array<Note, juce::DummyCriticalSection, 0>);
             
             for(int note=0;note<maxBeats*4;note++){
-                //Mono
-                sixteenths.add(0);
                 sixteenthNotes.add(Note{0,96,false});
-                sixteenthVols.add(96);
-                sixteenthUserSelected.add(false);
                 //Poly
                 polySixteenths.add({-1});
                 polySixteenthVols.add(96);
 
             }
             for(int note=0;note<maxBeats*3;note++){
-                //Mono
-                triplets.add(0);
                 tripletNotes.add(Note{0,96,false});
-                tripletVols.add(96);
-                tripletUserSelected.add(false);
                 //Poly
                 polyTriplets.add({-1});
                 polyTripletVols.add(96);
@@ -160,7 +152,7 @@ public:
     int limitRange(int val, int low, int high);
     bool checkIfBlackKey(const int pitch);
     Note& getMonoNote(int col, int beatSwitch);
-    Note& getPolyNote(int col, int beatSwitch);
+    Array<Note>& getPolyNote(int col, int beatSwitch);
     int divToBeatSwitch(int div);
     int beatSwitchToDiv(int beatSwitch);
     

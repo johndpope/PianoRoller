@@ -29,7 +29,6 @@ PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioP
     previousOrder = {0};
     arpeggioDirection = "Ascending";
     
-    presets = &pianoRoll.presets;
     playPosition = "";
     generateButton.setButtonText("Generate");
     
@@ -97,21 +96,13 @@ PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioP
     generateButton.addListener(this);
     
     processor.playPosition.addListener(this); //The original way to update playhead,
-    //processor.playPositionToSendPlayheadUpdate.addListener(this);
     setWantsKeyboardFocus(true);
     addKeyListener(this);
     
     presetSlider.setValue(processor.currentPreset);
     trackSlider.setValue(processor.currentTrack);
     beatSlider.setValue(processor.presets[currentPreset]->numOfBeats);
-    
-    
-    //Setup Dropdown Menus======================================================
-    /*
-    for(int i=0;i<12;i++){
-        rootMenu.addItem(Theory::setClassToPitchName[i], i+1);
-    }
-    */
+
     
     for(int i=0;i<17;i++){
         rootMenu.addItem(Theory::rootNames[i], i+1);
@@ -122,25 +113,10 @@ PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioP
     });
     
     
-    
-    monoPolyMenu.addItem("mono", 1);
-    monoPolyMenu.addItem("poly", 2);
-    generatorMenu.addItem("random", 3);
-    generatorMenu.addItem("arp16th", 4);
-    generatorMenu.addItem("arp16th Broken", 5);
-    generatorMenu.addItem("arp8th", 6);
-    generatorMenu.addItem("arp8th Broken", 7);
-    generatorMenu.addItem("arpTriplet", 8);
-    generatorMenu.addItem("arpTriplet Broken", 9);
-    arpDirectionMenu.addItem("ascend", 1);
-    arpDirectionMenu.addItem("descend", 2);
-    arpDirectionMenu.addItem("expand", 3);
-    arpDirectionMenu.addItem("seq1", 4);
-    arpDirectionMenu.addItem("seq2", 5);
-    arpDirectionMenu.addItem("seq3", 6);
-    arpDirectionMenu.addItem("seq4", 7);
-    arpDirectionMenu.addItem("seq4", 8);
-    arpDirectionMenu.addItem("seq5", 9);
+    addItemsToMenu(monoPolyMenu, {"mono", "poly"});
+    addItemsToMenu(generatorMenu, {"random","arp16th", "arp16th Broken", "arp8th",
+                                   "arp8th Broken", "arpTriplet", "arpTriplet Broken"});
+    addItemsToMenu(arpDirectionMenu, {"ascend","descend", "expand", "seq1", "seq2", "seq3", "seq4", "seq5"});
     
     //Dropdown look&feel and onChange============================================
     getLookAndFeel().setColour(ComboBox::backgroundColourId, PianoRollerColours::greyOff);
@@ -188,9 +164,14 @@ PianoRoll1AudioProcessorEditor::~PianoRoll1AudioProcessorEditor()
     processor.treeState.removeParameterListener(TRACK_ID, this);
     processor.treeState.removeParameterListener(BEATS_ID, this);
     processor.playPosition.removeListener(this);
-
 }
+//==============================================================================
 
+void PianoRoll1AudioProcessorEditor::addItemsToMenu(ComboBox &comboBox, Array<String> list){
+    for_indexed(auto& item : list){
+        comboBox.addItem(item, (int)i+1);
+    }
+}
 
 
 //==============================================================================
@@ -563,11 +544,8 @@ void PianoRoll1AudioProcessorEditor::rootMenuChanged(){
 
 void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
     String scaleName = scaleMenu.getText();
-    //Theory::Mode * myMode = new Theory::Mode(Theory::modeMap[scaleName]);
-    //Array<int> scaleRef = myMode->getMode();
     Theory::Mode thisMode = Theory::modeMap.at(scaleName);
     Array<int> scaleRef = thisMode.getMode();
-    //.getMode();
     int root = processor.root;
     
     processor.scale.clear();
@@ -659,7 +637,6 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
         }
     }else if(generatorType == "arp16th" || generatorType == "arp8th"){
         Array<int> currentScale = thisMode.getMode();
-        //pianoRoll.stuff = (String) currentScale[2];
         int scaleSize = currentScale.size();
         int root = processor.presets[currentPreset]->root;
         int arpOctave = 4 + currentOctaveShift; //How many extra octaves before arpeggio

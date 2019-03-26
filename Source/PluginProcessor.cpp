@@ -294,23 +294,6 @@ void PianoRoll1AudioProcessor::prepToPlayNote(const int note, const int div){
                             return std::make_pair(thisTrack->polySixteenths, thisTrack->polySixteenths[note]);
                 }
             }();
-            
-    //        if (div == 4 && beatSwitch==0){
-    //            //Array<int> thisNoteArray = noteArrays->operator[](note);
-    //            vol = presets[currentPreset]->tracks[currentTrack]->polySixteenthVols[note];
-    //            for(int i=0;i<thisNoteArray.size();i++){
-    //                pitch = thisNoteArray[i];
-    //                playNote(pitch, vol);
-    //            }
-    //        }
-    //        else if(div == 3 && beatSwitch==1){
-    //            //Array<int> thisNoteArray = noteArrays->operator[](note);
-    //            vol = presets[currentPreset]->tracks[currentTrack]->polyTripletVols[note];
-    //            for(int i=0;i<thisNoteArray.size();i++){
-    //                pitch = thisNoteArray[i];
-    //                playNote(pitch, vol);
-    //            }
-    //        }else{}
         }
     }
 }
@@ -322,10 +305,10 @@ void PianoRoll1AudioProcessor::playNote(int pitch, int volume){
 
 
 void PianoRoll1AudioProcessor::sequencerCheck(juce::Value &value){
-    auto val = value.getValue();
-    float floatVal = val.toString().getFloatValue();
+    const auto val = value.getValue();
+    const float floatVal = val.toString().getFloatValue();
     float valDecimals = std::fmod(floatVal, 1.0f);
-    bool isPlaying = lastPosInfo.isPlaying;
+    const bool isPlaying = lastPosInfo.isPlaying;
     int sixteenth, triplet;
     
     //Check if beat has changed (example: 1st to 2nd beat of measure.)
@@ -333,108 +316,88 @@ void PianoRoll1AudioProcessor::sequencerCheck(juce::Value &value){
         beatIndex = (beatIndex+1) % presets[currentPreset]->numOfBeats;
     }
     
-    if (isPlaying == false){
+    currentBeat = (float)beatIndex + valDecimals;
+    
+    midiInputStreamToNoteArrays();
+    
+    if(isPlaying){
+        checkIfNoteGridPassed(sixteenthCounter, sixteenth, tripletCounter, triplet, valDecimals);
+    }else{
         beatIndex = 0;
         valDecimals = 0.0f;
         sixteenthCounter = 3;
         tripletCounter = 2;
     }
     
-    currentBeat = (float)beatIndex + valDecimals;
-    
-    //THIS CODE IS CALLED WHEN THE USER IS PLAYING A MIDI INSTRUMENT.
-    //Move incoming midi instrument stream into the actual sequencer. Performed notes are thus saved.
-    while(midiInstrumentStream.size()>0){
-        int beatSwitch = presets[currentPreset]->tracks[currentTrack]->beatSwitch[beatIndex];
-        uint8 pitch = midiInstrumentStream[0].first;
-        uint8 vol = midiInstrumentStream[0].second;
-        Array<Array<int>> * polyNotes;
-        Array<int>newPitchArray;
-        
-        if(beatSwitch==0){
-            float sixteenth = currentBeat*4.0f;
-            int roundedSixteenth = (int)std::round(sixteenth) % (presets[currentPreset]->numOfBeats*4);
-            if (std::fmod(sixteenth, 1.0f) >= 0.5){ //Rounding into the upcoming note on the grid.
-                notesToIgnore.add(pitch);
-            }
-            
-            if (presets[currentPreset]->isMono){
-                presets[currentPreset]->tracks[currentTrack]->sixteenths.set(roundedSixteenth, pitch);
-                presets[currentPreset]->tracks[currentTrack]->sixteenthVols.set(roundedSixteenth, vol);
-            }else{ //isPoly
-                polyNotes = &presets[currentPreset]->tracks[currentTrack]->polySixteenths;
-                newPitchArray = (*polyNotes).operator[](roundedSixteenth);
-                newPitchArray.add(pitch);
-                presets[currentPreset]->tracks[currentTrack]->polySixteenths.set(roundedSixteenth, newPitchArray);
-                //presets[currentPreset]->tracks[currentTrack]->polySixteenths[roundedSixteenth].add(pitch);
-                presets[currentPreset]->tracks[currentTrack]->polySixteenthVols.set(roundedSixteenth, vol);
-            }
-        }else if(beatSwitch==1){
-            float triplet = currentBeat*3.0f;
-            int roundedTriplet = (int)std::round(triplet) % (presets[currentPreset]->numOfBeats*3);
-            if (presets[currentPreset]->isMono){
-                presets[currentPreset]->tracks[currentTrack]->sixteenths.set(roundedTriplet, pitch);
-                presets[currentPreset]->tracks[currentTrack]->tripletVols.set(roundedTriplet, vol);
-            }else{ //isPoly
-                polyNotes = &presets[currentPreset]->tracks[currentTrack]->polyTriplets;
-                newPitchArray = (*polyNotes).operator[](roundedTriplet);
-                newPitchArray.add(pitch);
-                presets[currentPreset]->tracks[currentTrack]->polyTriplets.set(roundedTriplet, newPitchArray);
-                //presets[currentPreset]->tracks[currentTrack]->polyTriplets[roundedTriplet].add(pitch);
-                presets[currentPreset]->tracks[currentTrack]->polyTripletVols.set(roundedTriplet, vol);
-            }
-        }
-        
-        midiInstrumentStream.remove(0);
-        
-    }
-    
-    if(isPlaying){
-        
-        if(valDecimals>=0.0f && valDecimals<0.25f && sixteenthCounter == 3){
-            sixteenthCounter = 0;
-            sixteenth = beatIndex*4;
-            prepToPlayNote(sixteenth, 4);
-        }else if(valDecimals>=0.25f && sixteenthCounter == 0){
-            sixteenthCounter = 1;
-            sixteenth = beatIndex*4 + 1;
-            prepToPlayNote(sixteenth, 4);
-        }else if(valDecimals>=0.50f && sixteenthCounter == 1){
-            sixteenthCounter = 2;
-            sixteenth = beatIndex*4 + 2;
-            prepToPlayNote(sixteenth, 4);
-        }else if(valDecimals>=0.75f && sixteenthCounter == 2){
-            sixteenthCounter = 3;
-            sixteenth = beatIndex*4 + 3;
-            prepToPlayNote(sixteenth, 4);
-        }
-        
-        
-        if(valDecimals>=0.0f && valDecimals<0.33f && tripletCounter == 2){
-            tripletCounter = 0;
-            triplet = beatIndex*3;
-            prepToPlayNote(triplet, 3);
-        }else if(valDecimals>=0.33f && tripletCounter == 0){
-            tripletCounter = 1;
-            triplet = beatIndex*3 + 1;
-            prepToPlayNote(triplet, 3);
-        }else if(valDecimals>=0.66f && tripletCounter == 1){
-            tripletCounter = 2;
-            triplet = beatIndex*3 + 2;
-            prepToPlayNote(triplet, 3);
-        }
-        
-        
-    }
-    
-    int currentNumOfBeats = presets[currentPreset]->numOfBeats;
+    const int currentNumOfBeats = presets[currentPreset]->numOfBeats;
 
     playPosition.setValue(std::fmod(currentBeat, (float)currentNumOfBeats) / (float)currentNumOfBeats);
     previousVal = floatVal;
 }
 
 
+void PianoRoll1AudioProcessor::midiInputStreamToNoteArrays(){
+    //THIS CODE IS CALLED WHEN THE USER IS PLAYING A MIDI INSTRUMENT.
+    //Move incoming midi instrument stream into the actual sequencer. Performed notes are thus saved.
+    while(midiInstrumentStream.size()>0){
+        int beatSwitch = presets[currentPreset]->tracks[currentTrack]->beatSwitch[beatIndex];
+        int div = beatSwitchToDiv(beatSwitch);
+        uint8 pitch = midiInstrumentStream[0].first;
+        uint8 vol = midiInstrumentStream[0].second;
+        Array<int>newPitchArray;
+        float val = currentBeat*(float)div;
+        int roundedVal = (int)std::round(val) % (presets[currentPreset]->numOfBeats*div);
+        
+        if (presets[currentPreset]->isMono){
+            auto& [thisPitch, thisVol, active] = getMonoNote(roundedVal, beatSwitch);
+            
+            thisPitch = pitch;
+            thisVol = vol;
+        }else{ //isPoly
+            auto& thisPolyNote = getPolyNote(roundedVal, beatSwitch);
+            
+            thisPolyNote.add(Note{pitch, vol, true});
+        }
+        if (std::fmod(val, 1.0f) >= 0.5) //Rounding into the upcoming note on the grid.
+            notesToIgnore.add(pitch);
+        midiInstrumentStream.remove(0);
+    }
+}
 
+void PianoRoll1AudioProcessor::checkIfNoteGridPassed(int &sixteenthCounter, int &sixteenth, int &tripletCounter,
+                                                     int &triplet, const int valDecimals){
+    if(valDecimals>=0.0f && valDecimals<0.25f && sixteenthCounter == 3){
+        sixteenthCounter = 0;
+        sixteenth = beatIndex*4;
+        prepToPlayNote(sixteenth, 4);
+    }else if(valDecimals>=0.25f && sixteenthCounter == 0){
+        sixteenthCounter = 1;
+        sixteenth = beatIndex*4 + 1;
+        prepToPlayNote(sixteenth, 4);
+    }else if(valDecimals>=0.50f && sixteenthCounter == 1){
+        sixteenthCounter = 2;
+        sixteenth = beatIndex*4 + 2;
+        prepToPlayNote(sixteenth, 4);
+    }else if(valDecimals>=0.75f && sixteenthCounter == 2){
+        sixteenthCounter = 3;
+        sixteenth = beatIndex*4 + 3;
+        prepToPlayNote(sixteenth, 4);
+    }
+    
+    if(valDecimals>=0.0f && valDecimals<0.33f && tripletCounter == 2){
+        tripletCounter = 0;
+        triplet = beatIndex*3;
+        prepToPlayNote(triplet, 3);
+    }else if(valDecimals>=0.33f && tripletCounter == 0){
+        tripletCounter = 1;
+        triplet = beatIndex*3 + 1;
+        prepToPlayNote(triplet, 3);
+    }else if(valDecimals>=0.66f && tripletCounter == 1){
+        tripletCounter = 2;
+        triplet = beatIndex*3 + 2;
+        prepToPlayNote(triplet, 3);
+    }
+}
 
 
 void PianoRoll1AudioProcessor::parameterChanged(const juce::String &parameterID, float newValue){
@@ -540,8 +503,8 @@ void PianoRoll1AudioProcessor::octaveShift(int numOfOctaves){
     int currentOctaveShift = thisTrack->octaveShift;
     if(currentOctaveShift + numOfOctaves < 6 && currentOctaveShift + numOfOctaves > -6){
         if (presets[currentPreset]->isMono){
-            for(auto &note : thisTrack->sixteenths) note+=(numOfOctaves*12);
-            for(auto &note : thisTrack->triplets)   note+=(numOfOctaves*12);
+            for(auto &note : thisTrack->sixteenthNotes) note.pitch+=(numOfOctaves*12);
+            for(auto &note : thisTrack->tripletNotes)   note.pitch+=(numOfOctaves*12);
         }else{ //isPoly
 
         }

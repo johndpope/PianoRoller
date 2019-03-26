@@ -128,6 +128,8 @@ private:
     void paint (Graphics&) override;
     void drawTripletSwitches(Graphics * g, int numOfBeats, float height, float width);
     
+    void addItemsToMenu(ComboBox& comboBox, Array<String> list);
+    
     std::vector<int> brokenArpeggio(Array<int> currentScale);
     std::vector<int> previousOrder;
     // This reference is provided as a quick way for your editor to

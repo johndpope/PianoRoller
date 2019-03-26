@@ -22,14 +22,20 @@ Note& PianoRollComponent::getMonoNote(int col, int beatSwitch){
     if(beatSwitch==0){
         return presets[currentPreset]->tracks[currentTrack]->sixteenthNotes.getReference(col);
     }else if (beatSwitch==1){
-        return presets[currentPreset]->tracks[currentTrack]->sixteenthNotes.getReference(col);
+        return presets[currentPreset]->tracks[currentTrack]->tripletNotes.getReference(col);
     }else{
         DBG("getNote: not a valid beatSwitch"); jassert(true); return getMonoNote(0, 0);
     }
 }
 
-Note& PianoRollComponent::getPolyNote(int col, int beatSwitch){
-    
+Array<Note>& PianoRollComponent::getPolyNote(int col, int beatSwitch){
+    if(beatSwitch==0){
+        return presets[currentPreset]->tracks[currentTrack]->polySixteenthNotes.getReference(col);
+    }else if (beatSwitch==1){
+        return presets[currentPreset]->tracks[currentTrack]->polyTripletNotes.getReference(col);
+    }else{
+        DBG("getNote: not a valid beatSwitch"); jassert(true); return getPolyNote(0, 0);
+    }
 }
 
 

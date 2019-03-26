@@ -119,6 +119,9 @@ private:
     void parameterChanged(const String& parameterID, float newValue) override;
     void oscMessageReceived(const OSCMessage &Message) override;
     
+    void midiInputStreamToNoteArrays();
+    void checkIfNoteGridPassed(int& sixteenthCounter, int& sixteenth, int& tripletCounter, int& triplet, const int valDecimals);
+    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PianoRoll1AudioProcessor)
 };
