@@ -387,10 +387,7 @@ float PianoRoll1AudioProcessorEditor::volumeToDB(float vol){
 }
 
 void PianoRoll1AudioProcessorEditor::playNote(int pitch, int volume){
-    Array<int> toPlay;
-    toPlay.add(pitch);
-    toPlay.add(volume);
-    processor.midiStream.add(toPlay);
+    processor.playNote(pitch, volume);
 }
 
 
@@ -652,12 +649,12 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
     int currentOctaveShift = processor.presets[currentPreset]->tracks[currentTrack]->octaveShift;
     if(generatorType == "random"){
         for(int sixteenth=0;sixteenth<processor.presets[currentPreset]->numOfBeats * 4;sixteenth++){
-            if (random.nextInt(100) > 60 || //40 percent chance of a note.
-                processor.presets[currentPreset]->tracks[processor.currentTrack]->sixteenths[sixteenth] > 0
-                ){
+            auto& [thisPitch, thisVol, active] = getMonoNote(sixteenth, 0);
+            
+            if (random.nextInt(100) > 60 || active){ //40 percent chance of a note.
                 int pitchClass = processor.scale[random.nextInt(processor.scale.size())];
                 int octave = 12 * (4 + random.nextInt(2) + currentOctaveShift);
-                processor.presets[currentPreset]->tracks[processor.currentTrack]->sixteenths.set(sixteenth, pitchClass+octave);
+                thisPitch = pitchClass+octave;
             }
         }
     }else if(generatorType == "arp16th" || generatorType == "arp8th"){

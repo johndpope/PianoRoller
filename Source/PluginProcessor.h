@@ -91,7 +91,7 @@ public:
     Value playPosition;
     Value playPositionToSendPlayheadUpdate;
     Value internalPlayPosition;
-    Array<Array<int>> midiStream;
+    Array<Note> midiStream;
     Array<std::pair<int8, int8>> midiInstrumentStream;
     Array<Atomic<int>> newMidiStream[12];
     Array<int> notesToIgnore; //Just played on the midi controller. Avoid double play.

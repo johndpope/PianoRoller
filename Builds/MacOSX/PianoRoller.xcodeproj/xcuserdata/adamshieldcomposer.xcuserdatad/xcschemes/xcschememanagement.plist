@@ -7,12 +7,12 @@
 		<key>PianoRoller - AU.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>3</integer>
+			<integer>0</integer>
 		</dict>
 		<key>PianoRoller - All.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>3</integer>
 		</dict>
 		<key>PianoRoller - Shared Code.xcscheme</key>
 		<dict>

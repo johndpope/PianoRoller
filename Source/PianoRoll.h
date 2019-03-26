@@ -44,7 +44,7 @@ private:
     void paint (Graphics&) override;
     void drawRows(PaintData p);
     void drawRowLines(PaintData p);
-    void monoNoteFill(PaintData p, const Array<int> * noteArray, const int col, const float thisNoteWidth);
+    void monoNoteFill(PaintData p, const Array<Note> * noteArray, const int col, const float thisNoteWidth);
     void polyNoteFill(PaintData p, const Array<Array<int>> * polyNoteArray, const int col, const float thisNoteWidth);
     void drawNotes(PaintData p);
 

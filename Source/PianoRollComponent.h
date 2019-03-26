@@ -47,8 +47,6 @@ public:
     public:
         Array<int> sixteenths;
         Array<int> triplets;
-//        Array<Note> sixteenths;
-//        Array<Note> triplets;
         Array<Note> sixteenthNotes;
         Array<Note> tripletNotes;
         Array<int> sixteenthVols;

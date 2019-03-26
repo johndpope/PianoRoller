@@ -101,6 +101,8 @@ void PianoRoll::drawNotes(PaintData p){
             switch(beatSwitch){
                 case 0: return std::make_pair(4, p.noteWidth);
                 case 1: return std::make_pair(3, p.tripNoteWidth);
+                default: DBG("DrawNotes/subDivisions, thisNoteWidth: not a valid beatSwitch\n");
+                    return std::make_pair(4, p.noteWidth);
             }
         }();
         
@@ -110,6 +112,8 @@ void PianoRoll::drawNotes(PaintData p){
                                                 &track->polySixteenths ); //POLY TODO
                 case 1:  return std::make_pair( &track->tripletNotes    ,
                                                 &track->polyTriplets   ); //POLY TODO
+                default: DBG("DrawNotes/noteArray, polyNoteArray: not a valid beatSwitch\n");
+                    return std::make_pair(&track->sixteenthNotes, &track->polySixteenths);
             }
         }();
         
@@ -123,12 +127,12 @@ void PianoRoll::drawNotes(PaintData p){
     }
 }
 
-void PianoRoll::monoNoteFill(PaintData p, const Array<int> * noteArray, const int col, const float thisNoteWidth){
-    int pitch = (*noteArray)[col];
-    if(pitch > 0){ //If note is active.
+void PianoRoll::monoNoteFill(PaintData p, const Array<Note> * noteArray, const int col, const float thisNoteWidth){
+    auto& [thisPitch, thisVol, active] = getMonoNote(col, 0);
+    if(active){ //If note is active.
         p.g->setColour (PianoRollerColours::whiteBlue);
         float x = ( col * thisNoteWidth );
-        float y = ( ((float)topNote-(float)pitch)/(float)numOfRows * p.height );
+        float y = ( ((float)topNote-(float)thisPitch)/(float)numOfRows * p.height );
         p.g->fillRect(x, y, thisNoteWidth, p.noteHeight);
     }
 }

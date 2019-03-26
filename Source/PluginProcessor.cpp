@@ -211,16 +211,13 @@ void PianoRoll1AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuf
     //Midi notes are put into a "midi stream" in the PluginEditor and extracted below to send out.
     if(lastPosInfo.isPlaying){
         
-        for(int newMidiNote = 0; newMidiNote<midiStream.size(); newMidiNote++){
-            Array<int> toPlay = midiStream[newMidiNote];
-            uint8 pitch = toPlay[0];
-            uint8 velocity = toPlay[1];
+        for(auto& [thisPitch, thisVol, active] : midiStream){
             
-            if(notesToIgnore.contains(pitch)){
-                notesToIgnore.removeAllInstancesOf(pitch);
+            if(notesToIgnore.contains(thisPitch)){
+                notesToIgnore.removeAllInstancesOf(thisPitch);
             }else{
-                midiMessages.addEvent(MidiMessage::noteOff(1, pitch), midiStart);
-                midiMessages.addEvent(MidiMessage::noteOn(1, pitch, (uint8) velocity), midiStart);
+                midiMessages.addEvent(MidiMessage::noteOff(1, thisPitch), midiStart);
+                midiMessages.addEvent(MidiMessage::noteOn(1, thisPitch, (uint8) thisVol), midiStart);
             }
         }
         midiStream.clearQuick();
@@ -281,62 +278,46 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 
 void PianoRoll1AudioProcessor::prepToPlayNote(const int note, const int div){
     const auto thisTrack = presets[currentPreset]->tracks[currentTrack];
-    int pitch;
-    int vol;
-    const int beatSwitch = [&]() -> int{
-        if(div==4){return thisTrack->beatSwitch[note/4];}
-        else if(div==3){return thisTrack->beatSwitch[note/3];}
-        else{return 0;}
-    }();
+    const int beatSwitch = divToBeatSwitch(div);
+    auto& [thisPitch, thisVol, active] = getMonoNote(note, beatSwitch);
     
-    if(presets[currentPreset]->isMono){
-        if (div == 4 && beatSwitch==0){
-            pitch = thisTrack->sixteenths[note];
-            vol = thisTrack->sixteenthVols[note];
+    if(active){
+        if(presets[currentPreset]->isMono){
+            playNote(thisPitch, thisVol);
+            
+        }else{ //isPoly
+            auto [noteArrays, thisNoteArray] = [&](){
+                switch (beatSwitch){
+                    case 0: return  std::make_pair(thisTrack->polySixteenths, thisTrack->polySixteenths[note]);
+                    case 1: return  std::make_pair(thisTrack->polyTriplets, thisTrack->polyTriplets[note]);
+                    default: DBG("Not a valid noteArray");
+                            return std::make_pair(thisTrack->polySixteenths, thisTrack->polySixteenths[note]);
+                }
+            }();
+            
+    //        if (div == 4 && beatSwitch==0){
+    //            //Array<int> thisNoteArray = noteArrays->operator[](note);
+    //            vol = presets[currentPreset]->tracks[currentTrack]->polySixteenthVols[note];
+    //            for(int i=0;i<thisNoteArray.size();i++){
+    //                pitch = thisNoteArray[i];
+    //                playNote(pitch, vol);
+    //            }
+    //        }
+    //        else if(div == 3 && beatSwitch==1){
+    //            //Array<int> thisNoteArray = noteArrays->operator[](note);
+    //            vol = presets[currentPreset]->tracks[currentTrack]->polyTripletVols[note];
+    //            for(int i=0;i<thisNoteArray.size();i++){
+    //                pitch = thisNoteArray[i];
+    //                playNote(pitch, vol);
+    //            }
+    //        }else{}
         }
-        else if(div == 3 && beatSwitch==1){
-            pitch = thisTrack->triplets[note];
-            vol = thisTrack->tripletVols[note];
-        }else{pitch=0;vol=0;}
-        playNote(pitch, vol);
-        
-    }else{ //isPoly
-        auto [noteArrays, thisNoteArray] = [&](){
-            switch (beatSwitch){
-                case 0: return  std::make_pair(thisTrack->polySixteenths, thisTrack->polySixteenths[note]);
-                case 1: return  std::make_pair(thisTrack->polyTriplets, thisTrack->polyTriplets[note]);
-                default: DBG("Not a valid noteArray");
-                        return std::make_pair(thisTrack->polySixteenths, thisTrack->polySixteenths[note]);
-            }
-        }();
-        
-        if (div == 4 && beatSwitch==0){
-            //Array<int> thisNoteArray = noteArrays->operator[](note);
-            vol = presets[currentPreset]->tracks[currentTrack]->polySixteenthVols[note];
-            for(int i=0;i<thisNoteArray.size();i++){
-                pitch = thisNoteArray[i];
-                playNote(pitch, vol);
-            }
-        }
-        else if(div == 3 && beatSwitch==1){
-            //Array<int> thisNoteArray = noteArrays->operator[](note);
-            vol = presets[currentPreset]->tracks[currentTrack]->polyTripletVols[note];
-            for(int i=0;i<thisNoteArray.size();i++){
-                pitch = thisNoteArray[i];
-                playNote(pitch, vol);
-            }
-        }else{pitch=0;vol=0;}
     }
 }
 
 
 void PianoRoll1AudioProcessor::playNote(int pitch, int volume){
-    if (pitch > 0){
-        Array<int> toPlay;
-        toPlay.add(pitch);
-        toPlay.add(volume);
-        midiStream.add(toPlay);
-    }
+    midiStream.add(Note{pitch, volume, true});
 }
 
 
