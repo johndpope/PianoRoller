@@ -93,9 +93,9 @@ void PianoRoll::drawRowLines(PaintData p){
 }
 
 void PianoRoll::drawNotes(PaintData p){
-    auto track = presets[currentPreset]->tracks[currentTrack];
+    auto thisTrack = presets[currentPreset]->tracks[currentTrack];
     for(int beat=0;beat<p.numOfBeats;beat++){
-        const int beatSwitch = track->beatSwitch[beat];
+        const int beatSwitch = thisTrack->beatSwitch[beat];
         const bool isMono = (*processorPresets)[currentPreset]->isMono;
         auto [subDivisions, thisNoteWidth] = [&](){
             switch(beatSwitch){
@@ -108,12 +108,12 @@ void PianoRoll::drawNotes(PaintData p){
         
         auto [noteArray, polyNoteArray] = [&](){
             switch (beatSwitch){
-                case 0:  return std::make_pair( &track->sixteenthNotes  ,
-                                                &track->polySixteenths ); //POLY TODO
-                case 1:  return std::make_pair( &track->tripletNotes    ,
-                                                &track->polyTriplets   ); //POLY TODO
+                case 0:  return std::make_pair( &thisTrack->sixteenthNotes  ,
+                                                &thisTrack->polySixteenths ); //POLY TODO
+                case 1:  return std::make_pair( &thisTrack->tripletNotes    ,
+                                                &thisTrack->polyTriplets   ); //POLY TODO
                 default: DBG("DrawNotes/noteArray, polyNoteArray: not a valid beatSwitch\n");
-                    return std::make_pair(&track->sixteenthNotes, &track->polySixteenths);
+                    return std::make_pair(&thisTrack->sixteenthNotes, &thisTrack->polySixteenths);
             }
         }();
         
@@ -135,6 +135,7 @@ void PianoRoll::monoNoteFill(PaintData p, const Array<Note> * noteArray, const i
         float y = ( ((float)topNote-(float)thisPitch)/(float)numOfRows * p.height );
         p.g->fillRect(x, y, thisNoteWidth, p.noteHeight);
     }
+    DBG("Your pitch is " + (String)thisPitch + " " +  (active ? "True" : "False"));
 }
 
 void PianoRoll::polyNoteFill(PaintData p, const Array<Array<int>> * polyNoteArray, const int col, const float thisNoteWidth){
@@ -174,7 +175,6 @@ void PianoRoll::mouseWheelMove(const juce::MouseEvent &event, const juce::MouseW
     verticalAdjust = verticalAdjust < 0 ? floor(verticalAdjust) : ceil(verticalAdjust);
     
     topNote = limitRange( (topNote + (int)verticalAdjust), 8+numOfRows, 127);
-    
     repaint();
 }
 
@@ -239,7 +239,7 @@ void PianoRoll::mouseDown(const MouseEvent& event){
                       (pitch == prevPitch+2) || (pitch == prevPitch-2) )
                     && rightClick)
             {
-                updateNote(thisCol, 0, beatSwitch);
+                updateNote(thisCol, 0, beatSwitch, false);
                 
                 //========Send to BeatCanvasJava.Java=======
                 //public void noteOnOff(int track, int div, int note, int onOff)

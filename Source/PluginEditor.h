@@ -95,8 +95,6 @@ public:
     Random random;
     bool isChildOfBeatCanvas;
     
-    OwnedArray<PianoRoll::Preset> * presets;
-    
 private:
     int currentNumOfBeats;
     int internalBeat;

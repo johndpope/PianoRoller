@@ -29,12 +29,12 @@ VolumePanel::~VolumePanel(){
 
 void VolumePanel::paint (Graphics& g)
 {
-    const int numOfBeats = (*processorPresets)[currentPreset]->numOfBeats;
+    const int numOfBeats = presets[currentPreset]->numOfBeats;
     const float width = getWidth();
     const float height = getHeight();
     const float noteWidth = (width / ((float)numOfBeats * 4.0f) );
     const float tripNoteWidth = width / ((float)numOfBeats * 3.0f);
-    const bool isMono = (*processorPresets)[currentPreset]->isMono;
+    const bool isMono = presets[currentPreset]->isMono;
     
     PaintData paintData(&g, width, height, NAN, noteWidth, tripNoteWidth, numOfBeats, NAN, NAN);
     
@@ -43,7 +43,6 @@ void VolumePanel::paint (Graphics& g)
     drawVolumes(paintData, isMono);
     
     g.drawLine(width, 0.0f, width, height, 3); //Right side line.
-    DBG((String) currentPreset);
 }
 
 void VolumePanel::drawVolumes(PaintData p, bool isMono){

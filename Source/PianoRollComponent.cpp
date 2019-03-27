@@ -40,11 +40,16 @@ Array<Note>& PianoRollComponent::getPolyNote(int col, int beatSwitch){
 
 
 void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch){
+    updateNote(col, pitch, beatSwitch, true);
+}
+
+void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch, bool isActive){
     bool isMono = (*processorPresets)[currentPreset]->isMono;
     
     if (isMono){
         auto& [thisPitch, thisVol, active] = getMonoNote(col, beatSwitch);
         thisPitch = pitch;
+        active = isActive;
     }else{ //isPoly
         
         Array<Array<int>> * polyNotes;
@@ -53,7 +58,7 @@ void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch){
         }else if (beatSwitch == 1){
             polyNotes = &((*processorPresets)[currentPreset]->tracks[currentTrack]->polyTriplets);
         }else{polyNotes = nullptr;}
-    
+        
         
         Array<int>newPitchArray = (*polyNotes).operator[](col);
         if (pitch > 0){ //leftClick
@@ -65,8 +70,6 @@ void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch){
         }
         polyNotes->set(col, newPitchArray);
     }
-    
-    //repaint();
 }
 
 void PianoRollComponent::updateVolume(int col, int vol, int beatSwitch){

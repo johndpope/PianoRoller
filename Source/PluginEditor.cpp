@@ -603,8 +603,6 @@ void PianoRoll1AudioProcessorEditor::monoPolyMenuChanged(){
     monoPoly == "mono" ? isMono=true: isMono=false;
     processor.presets[processor.currentPreset]->isMono = isMono;
     repaint();
-    pianoRoll.repaint();
-    volumePanel.repaint();
 }
 
 void PianoRoll1AudioProcessorEditor::generatorMenuChanged(){
@@ -620,13 +618,15 @@ void PianoRoll1AudioProcessorEditor::arpDirectionMenuChanged(){
 }
 
 void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
-    currentPreset = processor.currentPreset;
+    currentNumOfBeats = presets[currentPreset]->numOfBeats;
+    auto thisTrack = presets[currentPreset]->tracks[currentTrack];
     Theory::Mode thisMode = Theory::modeMap.at(processor.presets[currentPreset]->currentMode);
     Array<int> currentScale = thisMode.getMode();
     String generatorType = generatorMenu.getText();
-    int currentOctaveShift = processor.presets[currentPreset]->tracks[currentTrack]->octaveShift;
+    int currentOctaveShift = presets[currentPreset]->tracks[currentTrack]->octaveShift;
+    
     if(generatorType == "random"){
-        for(int sixteenth=0;sixteenth<processor.presets[currentPreset]->numOfBeats * 4;sixteenth++){
+        for(int sixteenth=0;sixteenth<presets[currentPreset]->numOfBeats * 4;sixteenth++){
             auto& [thisPitch, thisVol, active] = getMonoNote(sixteenth, 0);
             
             if (random.nextInt(100) > 60 || active){ //40 percent chance of a note.
@@ -638,72 +638,72 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
     }else if(generatorType == "arp16th" || generatorType == "arp8th"){
         Array<int> currentScale = thisMode.getMode();
         int scaleSize = currentScale.size();
-        int root = processor.presets[currentPreset]->root;
-        int arpOctave = 4 + currentOctaveShift; //How many extra octaves before arpeggio
-        int rhythmDiv;
-            if(generatorType == "arp16th"){rhythmDiv=4;}
-            else if(generatorType == "arp8th"){rhythmDiv=2;}
-            else{rhythmDiv=4;}
+        int root = presets[currentPreset]->root;
+        int arpOctave = (4 + currentOctaveShift) * 12; //How many extra octaves before arpeggio
+        int rhythmDiv, stepMod;
+        if(generatorType == "arp16th"){rhythmDiv=4;stepMod=0;}
+        else if(generatorType == "arp8th"){rhythmDiv=2;stepMod=1;}
+        else{rhythmDiv=4;}
         
         for(int sixteenth=0;sixteenth<(processor.presets[currentPreset]->numOfBeats) * rhythmDiv;sixteenth++){;
-            int note;
-            note = currentScale[sixteenth%scaleSize] + root + (arpOctave*12);
-
-            processor.presets[currentPreset]->tracks[processor.currentTrack]->sixteenths.set(sixteenth * (4/rhythmDiv), note);
-            if(generatorType == "arp8th"){
-                processor.presets[currentPreset]->tracks[processor.currentTrack]->sixteenths.set(sixteenth * (4/rhythmDiv)+1, 0);
-            }
+            const int pitch = currentScale[sixteenth%scaleSize] + root + arpOctave;
+            auto& [thisPitch, thisVol, active] = getMonoNote(sixteenth * (4/rhythmDiv) + stepMod, 0);
+            
+            thisPitch = pitch;
         }
     }else if(generatorType == "arpTriplet"){
-        int root = processor.presets[currentPreset]->root;
-        int arpOctave = 4 + currentOctaveShift; //How many extra octaves before arpeggio
+        const int root = processor.presets[currentPreset]->root;
+        const int arpOctave = (4 + currentOctaveShift) * 12; //How many extra octaves before arpeggio
         
         for(int triplet=0;triplet<currentNumOfBeats*3;triplet++){;
-            int note = currentScale[triplet%currentScale.size()] + root + (arpOctave*12);
-            processor.presets[currentPreset]->tracks[processor.currentTrack]->triplets.set(triplet, note);
+            int pitch = currentScale[triplet%currentScale.size()] + root + arpOctave;
+            auto& [thisPitch, thisVol, active] = getMonoNote(triplet, 0);
+            
+            thisPitch = pitch;
         }
-        for(int beat=0;beat<processor.presets[currentPreset]->numOfBeats;beat++){
-            processor.presets[currentPreset]->tracks[currentTrack]->beatSwitch.set(beat, 1);
-        }
+        
+        for_indexed(auto& beatSwitch : thisTrack->beatSwitch)
+            if(i<currentNumOfBeats) beatSwitch=1;
+        
         repaint();
-    }else if(generatorType == "arp16th Broken"){
-        std::vector<int> shuffledScale = brokenArpeggio(currentScale);
-        auto scaleSize = shuffledScale.size();
-        
-        for(int sixteenth=0;sixteenth<currentNumOfBeats*4;sixteenth++){;
-            int note = shuffledScale[sixteenth%scaleSize];
-            processor.presets[currentPreset]->tracks[processor.currentTrack]->sixteenths.set(sixteenth, note);
-        }
-        for(int beat=0;beat<processor.presets[currentPreset]->numOfBeats;beat++){
-            processor.presets[currentPreset]->tracks[currentTrack]->beatSwitch.set(beat, 0);
-        }
-    }else if(generatorType == "arp8th Broken"){
-        std::vector<int> shuffledScale = brokenArpeggio(currentScale);
-        auto scaleSize = shuffledScale.size();
-        
-        for(int eighth=0;eighth<currentNumOfBeats*2;eighth++){;
-            int note = shuffledScale[eighth%scaleSize];
-            processor.presets[currentPreset]->tracks[processor.currentTrack]->sixteenths.set(eighth*2, note);
-            processor.presets[currentPreset]->tracks[processor.currentTrack]->sixteenths.set(eighth*2+1, 0);
-        }
-        for(int beat=0;beat<processor.presets[currentPreset]->numOfBeats;beat++){
-            processor.presets[currentPreset]->tracks[currentTrack]->beatSwitch.set(beat, 0);
-        }
-    }else if(generatorType == "arpTriplet Broken"){
-        std::vector<int> shuffledScale = brokenArpeggio(currentScale);
-        auto scaleSize = shuffledScale.size();
-        
-        for(int triplet=0;triplet<currentNumOfBeats*3;triplet++){;
-            int note = shuffledScale[triplet%scaleSize];
-            processor.presets[currentPreset]->tracks[processor.currentTrack]->triplets.set(triplet, note);
-        }
-        for(int beat=0;beat<processor.presets[currentPreset]->numOfBeats;beat++){
-            processor.presets[currentPreset]->tracks[currentTrack]->beatSwitch.set(beat, 1);
-        }
     }
+//    else if(generatorType == "arp16th Broken"){
+//        std::vector<int> shuffledScale = brokenArpeggio(currentScale);
+//        auto scaleSize = shuffledScale.size();
+//
+//        for(int sixteenth=0;sixteenth<currentNumOfBeats*4;sixteenth++){;
+//            int note = shuffledScale[sixteenth%scaleSize];
+//            presets[currentPreset]->tracks[processor.currentTrack]->sixteenths.set(sixteenth, note);
+//        }
+//        for(int beat=0;beat<processor.presets[currentPreset]->numOfBeats;beat++){
+//            presets[currentPreset]->tracks[currentTrack]->beatSwitch.set(beat, 0);
+//        }
+//    }else if(generatorType == "arp8th Broken"){
+//        std::vector<int> shuffledScale = brokenArpeggio(currentScale);
+//        auto scaleSize = shuffledScale.size();
+//
+//        for(int eighth=0;eighth<currentNumOfBeats*2;eighth++){;
+//            int note = shuffledScale[eighth%scaleSize];
+//            presets[currentPreset]->tracks[processor.currentTrack]->sixteenths.set(eighth*2, note);
+//            presets[currentPreset]->tracks[processor.currentTrack]->sixteenths.set(eighth*2+1, 0);
+//        }
+//        for(int beat=0;beat<processor.presets[currentPreset]->numOfBeats;beat++){
+//            presets[currentPreset]->tracks[currentTrack]->beatSwitch.set(beat, 0);
+//        }
+//    }else if(generatorType == "arpTriplet Broken"){
+//        std::vector<int> shuffledScale = brokenArpeggio(currentScale);
+//        auto scaleSize = shuffledScale.size();
+//
+//        for(int triplet=0;triplet<currentNumOfBeats*3;triplet++){;
+//            int note = shuffledScale[triplet%scaleSize];
+//            presets[currentPreset]->tracks[processor.currentTrack]->triplets.set(triplet, note);
+//        }
+//        for(int beat=0;beat<processor.presets[currentPreset]->numOfBeats;beat++){
+//            presets[currentPreset]->tracks[currentTrack]->beatSwitch.set(beat, 1);
+//        }
+//    }
     
     repaint();
-    //pianoRoll.repaint();
 }
 
 std::vector<int> PianoRoll1AudioProcessorEditor::brokenArpeggio(Array<int> currentScale){

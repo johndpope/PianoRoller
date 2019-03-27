@@ -138,6 +138,7 @@ public:
     }
     
     void updateNote(int col, int pitch, int beatSwitch);
+    void updateNote(int col, int pitch, int beatSwitch, bool isActive);
     void setPitch(int track, int div, int note, int pitch, int preset);
     void updateVolume(int col, int vol, int beatSwitch);
     void updateBeatSwitch(int beat, int switchVal);
