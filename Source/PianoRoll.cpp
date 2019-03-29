@@ -105,51 +105,37 @@ void PianoRoll::drawNotes(PaintData p){
             }
         }();
         
-        auto [noteArray, polyNoteArray] = [&](){
-            switch (beatSwitch){
-                case 0:  return std::make_pair( &thisTrack->sixteenthNotes  ,
-                                                &thisTrack->polySixteenths ); //POLY TODO
-                case 1:  return std::make_pair( &thisTrack->tripletNotes    ,
-                                                &thisTrack->polyTriplets   ); //POLY TODO
-                default: DBG("DrawNotes/noteArray, polyNoteArray: not a valid beatSwitch\n");
-                    return std::make_pair(&thisTrack->sixteenthNotes, &thisTrack->polySixteenths);
-            }
-        }();
-        
         for(int subDiv=0;subDiv<subDivisions;subDiv++){
             float col = beat * subDivisions + subDiv;
             
-            (isMono()) ? monoNoteFill(p, noteArray, col, thisNoteWidth) : polyNoteFill(p, polyNoteArray, col, thisNoteWidth);
+            (isMono()) ? monoNoteFill(p, col, beatSwitch, thisNoteWidth) : polyNoteFill(p, col, beatSwitch, thisNoteWidth);
             drawColumnLine(p, subDiv, col, thisNoteWidth);
         }
         
     }
 }
 
-void PianoRoll::monoNoteFill(PaintData p, const Array<Note> * noteArray, const int col, const float thisNoteWidth){
-    auto& [thisPitch, thisVol, active] = getMonoNote(col, 0);
+void PianoRoll::monoNoteFill(PaintData p, const int col, const int beatSwitch, const float thisNoteWidth){
+    auto& [pitch, vol, active] = getMonoNote(col, 0);
     if(active){ //If note is active.
         p.g->setColour (PianoRollerColours::whiteBlue);
         float x = ( col * thisNoteWidth );
-        float y = ( ((float)topNote-(float)thisPitch)/(float)numOfRows * p.height );
+        float y = ( ((float)topNote-(float)pitch)/(float)numOfRows * p.height );
         p.g->fillRect(x, y, thisNoteWidth, p.noteHeight);
     }
-    DBG("Your pitch is " + (String)thisPitch + " " +  (active ? "True" : "False"));
+    DBG("Your pitch is " + (String)pitch + " " +  (active ? "True" : "False"));
 }
 
-void PianoRoll::polyNoteFill(PaintData p, const Array<Array<int>> * polyNoteArray, const int col, const float thisNoteWidth){
+void PianoRoll::polyNoteFill(PaintData p, const int col, const int beatSwitch, const float thisNoteWidth){
     //TODO******
+    auto& [pitches, vol] = getPolyNote(col, beatSwitch);
 
-    for(int polyNote=0; polyNote<(*polyNoteArray)[col].size(); polyNote++){
-        //int pitch = polyArray[polyNote];
-        int pitch = (*polyNoteArray)[col][polyNote];
-        if(pitch > 0){ //If note is active.
-            p.g->setColour (PianoRollerColours::whiteBlue);
-            float x = ( col * thisNoteWidth );
-            float y = ( ((float)topNote-(float)pitch)/(float)numOfRows * p.height );
-            p.g->fillRect(x, y, thisNoteWidth, p.noteHeight);
-
-        }
+    for(int polyNote=0; polyNote<pitches.size(); polyNote++){
+        int pitch = pitches[polyNote];
+        p.g->setColour (PianoRollerColours::whiteBlue);
+        float x = ( col * thisNoteWidth );
+        float y = ( ((float)topNote-(float)pitch)/(float)numOfRows * p.height );
+        p.g->fillRect(x, y, thisNoteWidth, p.noteHeight);
     }
 }
 

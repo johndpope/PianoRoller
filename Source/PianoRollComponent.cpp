@@ -28,13 +28,11 @@ Note& PianoRollComponent::getMonoNote(int col, int beatSwitch){
     }
 }
 
-PolyNote PianoRollComponent::getPolyNote(int col, int beatSwitch){
+PolyNote& PianoRollComponent::getPolyNote(int col, int beatSwitch){
     if(beatSwitch==0){
-        return {presets[currentPreset]->tracks[currentTrack]->polySixteenths.getReference(col),
-                presets[currentPreset]->tracks[currentTrack]->polySixteenthVols.getReference(col)};
+        return {presets[currentPreset]->tracks[currentTrack]->polySixteenths.getReference(col)};
     }else if (beatSwitch==1){
-        return {presets[currentPreset]->tracks[currentTrack]->polyTriplets.getReference(col),
-                presets[currentPreset]->tracks[currentTrack]->polyTripletVols.getReference(col)};
+        return {presets[currentPreset]->tracks[currentTrack]->polyTriplets.getReference(col)};
         
     }else{
         DBG("getNote: not a valid beatSwitch"); return getPolyNote(0, 0);
@@ -47,33 +45,20 @@ void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch){
 }
 
 void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch, bool isActive){
-    bool isMono = presets[currentPreset]->isMono;
-    auto thisTrack = presets[currentPreset]->tracks[currentTrack];
-    
-    if (isMono){
+    if (isMono()){
         auto& [thisPitch, thisVol, active] = getMonoNote(col, beatSwitch);
+        
         thisPitch = pitch;
         active = isActive;
     }else{ //isPoly
+        auto& [pitches, vol] = getPolyNote(col, beatSwitch);
         
-        auto polyNotes = [beatSwitch, &thisTrack](){
-            switch (beatSwitch){
-                case 0 : return &(thisTrack->polySixteenths);
-                case 1 : return &(thisTrack->polyTriplets);
-                default: return &(thisTrack->polySixteenths);
-            }
-        }();
-        
-        
-        auto newPitchArray = (*polyNotes).operator[](col);
-        if (pitch > 0){ //leftClick
-            if(newPitchArray.size()<=12){
-                newPitchArray.addIfNotAlreadyThere(pitch);
-            }
+        if (isActive){ //leftClick
+            if(pitches.size()<=12)
+                pitches.addIfNotAlreadyThere(pitch);
         }else{ //rightClick
-            newPitchArray.removeFirstMatchingValue(pitch * -1);
+            pitches.removeFirstMatchingValue(pitch * -1);
         }
-        polyNotes->set(col, newPitchArray);
     }
 }
 

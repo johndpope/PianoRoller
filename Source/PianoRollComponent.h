@@ -28,8 +28,8 @@ struct Note{
 };
 
 struct PolyNote{
-    Array<int>& pitches;
-    int& vol;
+    Array<int> pitches;
+    int vol;
 };
 
 class PianoRollComponent
@@ -59,12 +59,10 @@ public:
         Array<bool> tripletUserSelected;
         //Array<Array<Note>> polySixteenthNotes;
         //Array<Array<Note>> polyTripletNotes;
-        Array<Array<int>> polySixteenths;
-        Array<Array<int>> polyTriplets;
+        Array<PolyNote> polySixteenths;
+        Array<PolyNote> polyTriplets;
         Array<int> polySixteenthVols;
         Array<int> polyTripletVols;
-        Array<Array<int>> polySixteenthUserSelected; //Not in use
-        Array<Array<int>> polyTripletUserSelected; //Not in use
         int octaveShift;
         String selectedScale, selectedGenerator, selectedRoot, selectedArpDirection;
         
@@ -77,15 +75,17 @@ public:
             
             for(int note=0;note<maxBeats*4;note++){
                 sixteenthNotes.add(Note{0,96,false});
+                
                 //Poly
-                polySixteenths.add({-1});
+                polySixteenths.add(PolyNote{{},96});
                 polySixteenthVols.add(96);
 
             }
             for(int note=0;note<maxBeats*3;note++){
                 tripletNotes.add(Note{0,96,false});
+                
                 //Poly
-                polyTriplets.add({-1});
+                polyTriplets.add(PolyNote{{},96});
                 polyTripletVols.add(96);
             }
             for(int note=0;note<maxBeats;note++){
@@ -158,7 +158,7 @@ public:
     bool checkIfBlackKey(const int pitch);
     bool isMono();
     Note& getMonoNote(int col, int beatSwitch);
-    PolyNote getPolyNote(int col, int beatSwitch);
+    PolyNote& getPolyNote(int col, int beatSwitch);
     int divToBeatSwitch(int div);
     int beatSwitchToDiv(int beatSwitch);
     

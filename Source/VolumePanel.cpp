@@ -99,20 +99,15 @@ void VolumePanel::mouseDown(const MouseEvent &event){
     if(rightClick) vol = 96;
     
     if(isMono()){
-        if(beatSwitch==0){
-            (*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenthVols.set(col, vol);
-        }
-        else{
-            (*processorPresets)[currentPreset]->tracks[currentTrack]->tripletVols.set(tripCol, vol);
-        };
-        
+        auto& [thisPitch, thisVol, active] =
+            (beatSwitch==0) ? getMonoNote(col, 0)
+                            : getMonoNote(col, 1);
+        thisVol = vol;
     }else{ //isPoly
-        if(beatSwitch==0){
-            (*processorPresets)[currentPreset]->tracks[currentTrack]->polySixteenthVols.set(col, vol);
-        }
-        else{
-            (*processorPresets)[currentPreset]->tracks[currentTrack]->polyTripletVols.set(tripCol, vol);
-        };
+        auto [pitches, polyVol] =
+        (beatSwitch==0) ? getPolyNote(col, 0)
+                        : getPolyNote(col, 1);
+        polyVol = vol;
     }
     
     //========Send to BeatCanvasJava.Java=======
