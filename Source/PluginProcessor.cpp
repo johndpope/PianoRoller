@@ -277,24 +277,14 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 
 
 void PianoRoll1AudioProcessor::prepToPlayNote(const int note, const int div){
-    const auto thisTrack = presets[currentPreset]->tracks[currentTrack];
     const int beatSwitch = divToBeatSwitch(div);
-    auto& [thisPitch, thisVol, active] = getMonoNote(note, beatSwitch);
+    auto& [monoPitch, monoVol, active] = getMonoNote(note, beatSwitch);
     
-    if(active){
-        if(presets[currentPreset]->isMono){
-            playNote(thisPitch, thisVol);
-            
-        }else{ //isPoly
-            auto [noteArrays, thisNoteArray] = [&](){
-                switch (beatSwitch){
-                    case 0: return  std::make_pair(thisTrack->polySixteenths, thisTrack->polySixteenths[note]);
-                    case 1: return  std::make_pair(thisTrack->polyTriplets, thisTrack->polyTriplets[note]);
-                    default: DBG("Not a valid noteArray");
-                            return std::make_pair(thisTrack->polySixteenths, thisTrack->polySixteenths[note]);
-                }
-            }();
-        }
+    if(isMono() && active)
+        playNote(monoPitch, monoVol);
+    else if(!isMono()){ //isPoly
+        auto [pitches, polyVol] = getPolyNote(note, beatSwitch);
+        for(auto& pitch : pitches) playNote(pitch, polyVol);
     }
 }
 
@@ -348,7 +338,7 @@ void PianoRoll1AudioProcessor::midiInputStreamToNoteArrays(){
         float val = currentBeat*(float)div;
         int roundedVal = (int)std::round(val) % (presets[currentPreset]->numOfBeats*div);
         
-        if (presets[currentPreset]->isMono){
+        if (isMono()){
             auto& [thisPitch, thisVol, active] = getMonoNote(roundedVal, beatSwitch);
             
             thisPitch = pitch;
@@ -503,7 +493,7 @@ void PianoRoll1AudioProcessor::octaveShift(int numOfOctaves){
     int currentOctaveShift = thisTrack->octaveShift;
     
     if(currentOctaveShift + numOfOctaves < 6 && currentOctaveShift + numOfOctaves > -6){
-        if (presets[currentPreset]->isMono){
+        if (isMono()){
             for(auto &note : thisTrack->sixteenthNotes) note.pitch+=(numOfOctaves*12);
             for(auto &note : thisTrack->tripletNotes)   note.pitch+=(numOfOctaves*12);
         }else{ //isPoly
