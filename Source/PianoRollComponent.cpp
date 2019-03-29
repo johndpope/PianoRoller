@@ -28,13 +28,16 @@ Note& PianoRollComponent::getMonoNote(int col, int beatSwitch){
     }
 }
 
-Array<Note>& PianoRollComponent::getPolyNote(int col, int beatSwitch){
+PolyNote PianoRollComponent::getPolyNote(int col, int beatSwitch){
     if(beatSwitch==0){
-        return presets[currentPreset]->tracks[currentTrack]->polySixteenthNotes.getReference(col);
+        return {presets[currentPreset]->tracks[currentTrack]->polySixteenths.getReference(col),
+                presets[currentPreset]->tracks[currentTrack]->polySixteenthVols.getReference(col)};
     }else if (beatSwitch==1){
-        return presets[currentPreset]->tracks[currentTrack]->polyTripletNotes.getReference(col);
+        return {presets[currentPreset]->tracks[currentTrack]->polyTriplets.getReference(col),
+                presets[currentPreset]->tracks[currentTrack]->polyTripletVols.getReference(col)};
+        
     }else{
-        DBG("getNote: not a valid beatSwitch"); jassert(true); return getPolyNote(0, 0);
+        DBG("getNote: not a valid beatSwitch"); return getPolyNote(0, 0);
     }
 }
 
@@ -44,7 +47,8 @@ void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch){
 }
 
 void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch, bool isActive){
-    bool isMono = (*processorPresets)[currentPreset]->isMono;
+    bool isMono = presets[currentPreset]->isMono;
+    auto thisTrack = presets[currentPreset]->tracks[currentTrack];
     
     if (isMono){
         auto& [thisPitch, thisVol, active] = getMonoNote(col, beatSwitch);
@@ -52,15 +56,16 @@ void PianoRollComponent::updateNote(int col, int pitch, int beatSwitch, bool isA
         active = isActive;
     }else{ //isPoly
         
-        Array<Array<int>> * polyNotes;
-        if (beatSwitch == 0){
-            polyNotes = &((*processorPresets)[currentPreset]->tracks[currentTrack]->polySixteenths);
-        }else if (beatSwitch == 1){
-            polyNotes = &((*processorPresets)[currentPreset]->tracks[currentTrack]->polyTriplets);
-        }else{polyNotes = nullptr;}
+        auto polyNotes = [beatSwitch, &thisTrack](){
+            switch (beatSwitch){
+                case 0 : return &(thisTrack->polySixteenths);
+                case 1 : return &(thisTrack->polyTriplets);
+                default: return &(thisTrack->polySixteenths);
+            }
+        }();
         
         
-        Array<int>newPitchArray = (*polyNotes).operator[](col);
+        auto newPitchArray = (*polyNotes).operator[](col);
         if (pitch > 0){ //leftClick
             if(newPitchArray.size()<=12){
                 newPitchArray.addIfNotAlreadyThere(pitch);
@@ -161,4 +166,8 @@ int PianoRollComponent::beatSwitchToDiv(int beatSwitch){
         case 1: return 3;
         default: DBG("beatSwitchToDiv: not a valid div.\n"); return -1;
     }
+}
+
+bool PianoRollComponent::isMono(){
+    return presets[currentPreset]->isMono;
 }

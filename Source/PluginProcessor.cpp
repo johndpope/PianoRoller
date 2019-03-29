@@ -354,9 +354,9 @@ void PianoRoll1AudioProcessor::midiInputStreamToNoteArrays(){
             thisPitch = pitch;
             thisVol = vol;
         }else{ //isPoly
-            auto& thisPolyNote = getPolyNote(roundedVal, beatSwitch);
+            //auto& thisPolyNote = getPolyNote(roundedVal, beatSwitch);
             
-            thisPolyNote.add(Note{pitch, vol, true});
+            //thisPolyNote.add(pitch);
         }
         if (std::fmod(val, 1.0f) >= 0.5) //Rounding into the upcoming note on the grid.
             notesToIgnore.add(pitch);
@@ -501,6 +501,7 @@ void PianoRoll1AudioProcessor::resetAll(){
 void PianoRoll1AudioProcessor::octaveShift(int numOfOctaves){
     auto thisTrack = presets[currentPreset]->tracks[currentTrack];
     int currentOctaveShift = thisTrack->octaveShift;
+    
     if(currentOctaveShift + numOfOctaves < 6 && currentOctaveShift + numOfOctaves > -6){
         if (presets[currentPreset]->isMono){
             for(auto &note : thisTrack->sixteenthNotes) note.pitch+=(numOfOctaves*12);

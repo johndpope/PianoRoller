@@ -156,6 +156,7 @@ PianoRoll1AudioProcessorEditor::PianoRoll1AudioProcessorEditor (PianoRoll1AudioP
     setSize (monitorWidth*0.85, monitorHeight*0.85);
     noteLabel.setText("foo", dontSendNotification);
     noteLabel.setColour(Label::backgroundColourId, PianoRollerColours::greyOff);
+    
 }
 
 PianoRoll1AudioProcessorEditor::~PianoRoll1AudioProcessorEditor()
@@ -379,7 +380,7 @@ void PianoRoll1AudioProcessorEditor::parameterChanged(const juce::String &parame
         processor.currentPreset = preset;
         pianoRoll.updatePreset(preset);
         volumePanel.updatePreset(preset);
-        processor.presets[preset]->isMono ? monoPoly="mono": monoPoly="poly";
+        isMono() ? monoPoly="mono": monoPoly="poly";
         monoPolyMenu.setText(monoPoly);
         repaint();
         
@@ -598,10 +599,8 @@ void PianoRoll1AudioProcessorEditor::scaleMenuChanged(){
 }
 
 void PianoRoll1AudioProcessorEditor::monoPolyMenuChanged(){
-    String monoPoly = monoPolyMenu.getText();
-    bool isMono;
-    monoPoly == "mono" ? isMono=true: isMono=false;
-    processor.presets[processor.currentPreset]->isMono = isMono;
+    bool monoPoly = monoPolyMenu.getText() == "mono";
+    presets[currentPreset]->isMono = monoPoly;
     repaint();
 }
 
@@ -620,7 +619,7 @@ void PianoRoll1AudioProcessorEditor::arpDirectionMenuChanged(){
 void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
     currentNumOfBeats = presets[currentPreset]->numOfBeats;
     auto thisTrack = presets[currentPreset]->tracks[currentTrack];
-    Theory::Mode thisMode = Theory::modeMap.at(processor.presets[currentPreset]->currentMode);
+    Theory::Mode thisMode = Theory::modeMap.at(presets[currentPreset]->currentMode);
     Array<int> currentScale = thisMode.getMode();
     String generatorType = generatorMenu.getText();
     int currentOctaveShift = presets[currentPreset]->tracks[currentTrack]->octaveShift;
@@ -645,14 +644,14 @@ void PianoRoll1AudioProcessorEditor::buttonClicked(Button*){
         else if(generatorType == "arp8th"){rhythmDiv=2;stepMod=1;}
         else{rhythmDiv=4;}
         
-        for(int sixteenth=0;sixteenth<(processor.presets[currentPreset]->numOfBeats) * rhythmDiv;sixteenth++){;
+        for(int sixteenth=0;sixteenth<(presets[currentPreset]->numOfBeats) * rhythmDiv;sixteenth++){;
             const int pitch = currentScale[sixteenth%scaleSize] + root + arpOctave;
             auto& [thisPitch, thisVol, active] = getMonoNote(sixteenth * (4/rhythmDiv) + stepMod, 0);
             
             thisPitch = pitch;
         }
     }else if(generatorType == "arpTriplet"){
-        const int root = processor.presets[currentPreset]->root;
+        const int root = presets[currentPreset]->root;
         const int arpOctave = (4 + currentOctaveShift) * 12; //How many extra octaves before arpeggio
         
         for(int triplet=0;triplet<currentNumOfBeats*3;triplet++){;
@@ -728,10 +727,6 @@ std::vector<int> PianoRoll1AudioProcessorEditor::brokenArpeggio(Array<int> curre
             }
         }while(order == previousOrder); //Always change to a different order.
     }else if(arpType == "seq1"){
-        //order.push_back({scaleSize+1});
-        //currentScale.add(currentScale[0]+12); //Add octave note
-        //currentScale.add(currentScale[1]+12); //Add ninth
-        
         for(int i=0;i<order.size();i++){
             int indexOffset = 0;
             if(i % 2 == 0 && i != 0){ //If even number other than 0.

@@ -27,6 +27,11 @@ struct Note{
     bool active;
 };
 
+struct PolyNote{
+    Array<int>& pitches;
+    int& vol;
+};
+
 class PianoRollComponent
 {
 public:
@@ -52,8 +57,8 @@ public:
         Array<int> beatSwitch;
         Array<bool> sixteenthUserSelected;
         Array<bool> tripletUserSelected;
-        Array<Array<Note>> polySixteenthNotes;
-        Array<Array<Note>> polyTripletNotes;
+        //Array<Array<Note>> polySixteenthNotes;
+        //Array<Array<Note>> polyTripletNotes;
         Array<Array<int>> polySixteenths;
         Array<Array<int>> polyTriplets;
         Array<int> polySixteenthVols;
@@ -69,7 +74,6 @@ public:
             selectedScale = "Major";
             selectedGenerator = "random";
             selectedArpDirection = "ascend";
-            //sixteenthTest.fill(juce::Array<Note, juce::DummyCriticalSection, 0>);
             
             for(int note=0;note<maxBeats*4;note++){
                 sixteenthNotes.add(Note{0,96,false});
@@ -152,10 +156,12 @@ public:
     int midiLimit(int midiVal);
     int limitRange(int val, int low, int high);
     bool checkIfBlackKey(const int pitch);
+    bool isMono();
     Note& getMonoNote(int col, int beatSwitch);
-    Array<Note>& getPolyNote(int col, int beatSwitch);
+    PolyNote getPolyNote(int col, int beatSwitch);
     int divToBeatSwitch(int div);
     int beatSwitchToDiv(int beatSwitch);
+    
     
     //==================PAINTING FUNCTIONS==================
     void drawColumnLine(PaintData p, const int subDiv, const int col, const float noteWidth);

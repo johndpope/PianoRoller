@@ -34,19 +34,19 @@ void VolumePanel::paint (Graphics& g)
     const float height = getHeight();
     const float noteWidth = (width / ((float)numOfBeats * 4.0f) );
     const float tripNoteWidth = width / ((float)numOfBeats * 3.0f);
-    const bool isMono = presets[currentPreset]->isMono;
     
     PaintData paintData(&g, width, height, NAN, noteWidth, tripNoteWidth, numOfBeats, NAN, NAN);
     
     g.fillAll (PianoRollerColours::greyOff); //BACKGROUND COLOR
     
-    drawVolumes(paintData, isMono);
+    drawVolumes(paintData, isMono());
     
     g.drawLine(width, 0.0f, width, height, 3); //Right side line.
 }
 
-void VolumePanel::drawVolumes(PaintData p, bool isMono){
-    auto thisTrack = (*processorPresets)[currentPreset]->tracks[currentTrack];
+void VolumePanel::drawVolumes(PaintData p, bool mono){
+    auto thisTrack = presets[currentPreset]->tracks[currentTrack];
+    mono = presets[currentPreset]->isMono;
     
     for(int beat=0;beat<p.numOfBeats;beat++){
         const int currentBeatSwitch = thisTrack->beatSwitch[beat];
@@ -57,18 +57,12 @@ void VolumePanel::drawVolumes(PaintData p, bool isMono){
         
         for(int subDiv=0;subDiv<div;subDiv++){
             const int col = (beat*div) + subDiv;
-            const int vol = [&]() -> int{
-                if(currentBeatSwitch==0){
-                    if(isMono) return thisTrack->sixteenthVols[col];
-                    else       return thisTrack->polySixteenthVols[col];
-                }else if(currentBeatSwitch==1){
-                    if(isMono) return thisTrack->tripletVols[col];
-                    else       return thisTrack->polyTripletVols[col];
-                }else return 0;
-            }();
+            auto& thisVol =
+                (mono) ? getMonoNote(col, currentBeatSwitch).vol
+                       : getPolyNote(col, currentBeatSwitch).vol;
             
             Point<float> volSlider{col * thisNoteWidth,
-                                   p.height - ( p.height/127.f * (float)vol ) };
+                                   p.height - ( p.height/127.f * (float)thisVol ) };
             
             p.g->setColour (PianoRollerColours::whiteBlue);
             p.g->fillRect(volSlider.getX(), volSlider.getY(), thisNoteWidth, p.height);
@@ -104,7 +98,7 @@ void VolumePanel::mouseDown(const MouseEvent &event){
     }();
     if(rightClick) vol = 96;
     
-    if((*processorPresets)[currentPreset]->isMono){
+    if(isMono()){
         if(beatSwitch==0){
             (*processorPresets)[currentPreset]->tracks[currentTrack]->sixteenthVols.set(col, vol);
         }

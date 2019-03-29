@@ -96,7 +96,6 @@ void PianoRoll::drawNotes(PaintData p){
     auto thisTrack = presets[currentPreset]->tracks[currentTrack];
     for(int beat=0;beat<p.numOfBeats;beat++){
         const int beatSwitch = thisTrack->beatSwitch[beat];
-        const bool isMono = (*processorPresets)[currentPreset]->isMono;
         auto [subDivisions, thisNoteWidth] = [&](){
             switch(beatSwitch){
                 case 0: return std::make_pair(4, p.noteWidth);
@@ -120,7 +119,7 @@ void PianoRoll::drawNotes(PaintData p){
         for(int subDiv=0;subDiv<subDivisions;subDiv++){
             float col = beat * subDivisions + subDiv;
             
-            (isMono) ? monoNoteFill(p, noteArray, col, thisNoteWidth) : polyNoteFill(p, polyNoteArray, col, thisNoteWidth);
+            (isMono()) ? monoNoteFill(p, noteArray, col, thisNoteWidth) : polyNoteFill(p, polyNoteArray, col, thisNoteWidth);
             drawColumnLine(p, subDiv, col, thisNoteWidth);
         }
         
@@ -194,7 +193,6 @@ void PianoRoll::mouseDoubleClick(const juce::MouseEvent &event){
 void PianoRoll::mouseDown(const MouseEvent& event){
     const bool leftClick = event.mods.isLeftButtonDown();
     bool rightClick = event.mods.isRightButtonDown();
-    const bool isMono = (*processorPresets)[currentPreset]->isMono;
     const bool isDragging = event.mouseWasDraggedSinceMouseDown();
     if(isDoubleClick){rightClick = true; isDoubleClick=false;}
     
@@ -224,7 +222,7 @@ void PianoRoll::mouseDown(const MouseEvent& event){
         //Setup previous pitch
         auto& [prevPitch, prevVol, active] = getMonoNote(col, beatSwitch);
         
-        if(isMono){
+        if(isMono()){
             if(pitch != prevPitch && leftClick){
                 updateNote(thisCol, pitch, beatSwitch);
                 String newNoteName = Theory::setClassToPitchName[pitch%12];
@@ -247,7 +245,7 @@ void PianoRoll::mouseDown(const MouseEvent& event){
             }
         }else{ //isPoly
             if(leftClick && !rightClick){
-                if(isDragging==false){
+                if(!isDragging){
                     polySelectedNote = pitch;
                 }else{ //isDragging
                     updateNote(thisCol, polySelectedNote * -1, beatSwitch); //Remove previous note (move it to new pitch)
